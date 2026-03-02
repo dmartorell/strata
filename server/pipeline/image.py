@@ -30,12 +30,12 @@ def download_model_weights():
 gpu_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("ffmpeg", "libsndfile1")
+    .pip_install("numpy")  # vamp (chord-extractor dep) needs numpy at setup time
     .pip_install(
         "torch",
         "torchaudio",
         "demucs==4.0.1",
         "soundfile",
-        "numpy",
         "chord-extractor",
         "faster-whisper",
         "whisperx",
