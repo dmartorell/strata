@@ -41,8 +41,8 @@ gpu_image = (
         "whisperx",
         "yt-dlp",
     )
+    .add_local_dir("pipeline", remote_path="/root/pipeline")
     .run_function(download_model_weights, gpu="T4")
     .add_local_dir("auth", remote_path="/root/auth")
-    .add_local_dir("pipeline", remote_path="/root/pipeline")
     .add_local_dir("usage", remote_path="/root/usage")
 )
