@@ -45,6 +45,7 @@ image = (
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("processors", remote_path="/root/processors")
     .add_local_dir("usage", remote_path="/root/usage")
+    .add_local_dir("pipeline", remote_path="/root/pipeline")
 )
 
 
@@ -76,9 +77,44 @@ class ProcessingService:
         from demucs.pretrained import get_model
         self.demucs_model = get_model("htdemucs")
 
-        # WhisperX / faster-whisper
-        from faster_whisper import WhisperModel
-        self.whisper_model = WhisperModel("base", compute_type="float16")
+        # WhisperX large-v2 — transcripcion con word-level timestamps
+        import whisperx
+        self.whisper_model = whisperx.load_model(
+            "large-v2", device="cuda", compute_type="float16"
+        )
+
+    @modal.method()
+    def transcribe(self, vocals_bytes: bytes) -> dict:
+        """Transcribe el stem vocal con WhisperX large-v2.
+
+        Args:
+            vocals_bytes: Bytes WAV del stem vocals (output de separacion Demucs).
+
+        Returns:
+            Dict con language y segments con word-level timestamps.
+            Fallback a timestamps por segmento si idioma no soportado.
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+        from pipeline.transcription import transcribe_vocals
+        return transcribe_vocals(self.whisper_model, vocals_bytes)
+
+    @modal.method()
+    def detect_chords(self, other_stem_bytes: bytes) -> list:
+        """Detecta acordes con timestamps sobre el stem 'other'.
+
+        Args:
+            other_stem_bytes: Contenido WAV del stem 'other' de Demucs.
+
+        Returns:
+            Lista de [{chord, start, end}]. Retorna [] si falla (resultado parcial).
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+        from pipeline.chords import detect_chords
+        return detect_chords(other_stem_bytes)
 
     @modal.method()
     async def process_job(self, source_type: str, source_name: str, username: str):
