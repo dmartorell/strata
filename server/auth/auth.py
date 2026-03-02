@@ -24,12 +24,8 @@ JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret-change-in-prod")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_DAYS = 90
 
-# Ruta al fichero de usuarios dentro de la imagen Modal
-USERS_FILE = Path("/app/auth/users.json")
-
-# Soporte para desarrollo local: usar ruta relativa si no existe la ruta de la imagen
-if not USERS_FILE.exists():
-    USERS_FILE = Path(__file__).parent / "users.json"
+# Ruta al fichero de usuarios (junto al modulo auth)
+USERS_FILE = Path(__file__).parent / "users.json"
 
 _bearer = HTTPBearer(auto_error=False)
 

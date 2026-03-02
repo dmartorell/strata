@@ -1,5 +1,4 @@
 import modal
-from fastapi import FastAPI
 
 # Modal App definition
 app = modal.App("strata")
@@ -13,14 +12,14 @@ image = (
         "bcrypt",
         "python-multipart",
     )
-    .add_local_file("server/auth/users.json", "/app/auth/users.json")
+    .add_local_dir("auth", remote_path="/root/auth")
 )
 
 
 @app.function(image=image)
 @modal.concurrent(max_inputs=10)
 @modal.asgi_app()
-def web() -> FastAPI:
+def web():
     from fastapi import FastAPI
     from auth.auth import router as auth_router
 
