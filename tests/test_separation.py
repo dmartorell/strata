@@ -82,15 +82,15 @@ def audio_pipeline():
     import modal
 
     try:
-        fn = modal.Function.from_name("strata", "AudioPipeline.separate")
-        return fn
+        cls = modal.Cls.from_name("strata", "AudioPipeline")
+        return cls()
     except Exception as exc:
         pytest.skip(f"AudioPipeline not deployed — run `modal deploy server/app.py` first: {exc}")
 
 
 def test_separate_returns_four_stems(audio_pipeline, short_mp3_bytes):
     """Verificar que separate devuelve exactamente 4 stems."""
-    result = audio_pipeline.remote(short_mp3_bytes)
+    result = audio_pipeline.separate.remote(short_mp3_bytes)
 
     assert isinstance(result, dict), f"Expected dict, got {type(result)}"
     assert set(result.keys()) == {"vocals", "drums", "bass", "other"}, (
@@ -102,7 +102,7 @@ def test_stems_are_valid_wav_bytes(audio_pipeline, short_mp3_bytes):
     """Verificar que cada stem es bytes WAV parseable por soundfile."""
     import soundfile as sf
 
-    result = audio_pipeline.remote(short_mp3_bytes)
+    result = audio_pipeline.separate.remote(short_mp3_bytes)
 
     for stem_name, stem_bytes in result.items():
         assert isinstance(stem_bytes, bytes), f"{stem_name}: expected bytes, got {type(stem_bytes)}"
@@ -117,7 +117,7 @@ def test_stems_sample_rate_is_44100(audio_pipeline, short_mp3_bytes):
     """Verificar que cada stem tiene sample rate 44100 Hz (nativo de htdemucs)."""
     import soundfile as sf
 
-    result = audio_pipeline.remote(short_mp3_bytes)
+    result = audio_pipeline.separate.remote(short_mp3_bytes)
 
     for stem_name, stem_bytes in result.items():
         buffer = io.BytesIO(stem_bytes)

@@ -156,7 +156,8 @@ class ProcessingService:
             await asyncio.sleep(1.5)
 
         # Registrar uso antes de marcar como completado
-        record_usage(username=username, source_type=source_type, source_name=source_name)
+        if record_usage is not None:
+            record_usage(username=username, source_type=source_type, source_name=source_name)
 
         # Construir y devolver el ZIP
         zip_bytes = build_stub_zip(source_type=source_type, source_name=source_name)
@@ -299,7 +300,10 @@ class AudioPipeline:
         # Step 4: Empaquetar todo en ZIP
         progress[job_id] = "packaging"
         from pipeline.packaging import package_results
-        from usage.tracker import record_usage
+        try:
+            from usage.tracker import record_usage
+        except ImportError:
+            record_usage = None
 
         metadata = {
             "title": source_name,
@@ -314,7 +318,8 @@ class AudioPipeline:
             metadata.update(youtube_metadata)
 
         # Registrar uso antes de marcar como completado
-        record_usage(username=username, source_type=source_type, source_name=source_name)
+        if record_usage is not None:
+            record_usage(username=username, source_type=source_type, source_name=source_name)
 
         result = package_results(stems, lyrics, chords, metadata)
 
@@ -338,7 +343,7 @@ class AudioPipeline:
 
         from pipeline.downloader import download_youtube_audio
         audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
-        return self.process(
+        return self.process.local(
             audio_bytes,
             "youtube",
             url,
@@ -357,7 +362,7 @@ class AudioPipeline:
             sys.path.insert(0, "/root")
 
         from pipeline.separation import separate_stems
-        return separate_stems(self.separator, audio_bytes)
+        return separate_stems(self.demucs_model, audio_bytes)
 
     @modal.method()
     def detect_chords(self, other_stem_bytes: bytes) -> list:
