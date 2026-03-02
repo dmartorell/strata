@@ -195,3 +195,61 @@ def web():
     web_app.include_router(usage_router)
 
     return web_app
+
+
+# ---------------------------------------------------------------------------
+# AudioPipeline — GPU T4, Demucs separation with @modal.enter warm-up
+# ---------------------------------------------------------------------------
+
+from pipeline.image import gpu_image  # noqa: E402
+
+
+@app.cls(
+    image=gpu_image,
+    gpu="T4",
+    max_containers=2,
+    scaledown_window=300,
+    timeout=120,
+)
+class AudioPipeline:
+    """Pipeline de separacion de audio con Demucs htdemucs.
+
+    El modelo se carga una sola vez por contenedor en @modal.enter y se
+    reutiliza entre requests, garantizando cold starts predecibles.
+    """
+
+    @modal.enter()
+    def load_models(self):
+        """Carga Demucs Separator al arrancar el contenedor."""
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+
+        from demucs.api import Separator
+        self.separator = Separator(model="htdemucs")
+
+    @modal.method()
+    def separate(self, audio_bytes: bytes) -> dict:
+        """Separa audio en 4 stems WAV usando el separator pre-cargado."""
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+
+        from pipeline.separation import separate_stems
+        return separate_stems(self.separator, audio_bytes)
+
+    @modal.method()
+    def detect_chords(self, other_stem_bytes: bytes) -> list:
+        """Detecta acordes con timestamps sobre el stem 'other'.
+
+        Args:
+            other_stem_bytes: Contenido WAV del stem 'other' de Demucs.
+
+        Returns:
+            Lista de [{chord, start, end}]. Retorna [] si falla (resultado parcial).
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+        from pipeline.chords import detect_chords
+        return detect_chords(other_stem_bytes)
