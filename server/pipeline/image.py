@@ -29,6 +29,7 @@ gpu_image = (
         "demucs==4.0.1",
         "soundfile",
         "numpy",
+        "chord-extractor",
     )
     .run_function(download_demucs_weights, gpu="T4")
     .add_local_dir("auth", remote_path="/root/auth")
