@@ -25,8 +25,8 @@ gpu_image = (
     .apt_install("ffmpeg", "libsndfile1")
     .pip_install("numpy")  # vamp (chord-extractor dep) needs numpy at setup time
     .pip_install(
-        "torch",
-        "torchaudio",
+        "torch<2.9",
+        "torchaudio<2.9",
         "demucs==4.0.1",
         "soundfile",
         "chord-extractor",

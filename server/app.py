@@ -26,8 +26,8 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("ffmpeg", "libsndfile1")
     .pip_install(
-        "torch",
-        "torchaudio",
+        "torch<2.9",
+        "torchaudio<2.9",
         "demucs==4.0.1",
         "faster-whisper",
         "whisperx",
