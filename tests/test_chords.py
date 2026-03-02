@@ -73,7 +73,7 @@ def test_detect_chords_returns_list(tonal_wav_bytes):
     """detect_chords retorna una lista (puede estar vacia si audio no tonal claro)."""
     import modal
     with modal.enable_output():
-        result = modal.Function.lookup("strata", "ProcessingService.detect_chords").remote(
+        result = modal.Cls.from_name("strata", "AudioPipeline")().detect_chords.remote(
             tonal_wav_bytes
         )
 
@@ -85,7 +85,7 @@ def test_detect_chords_schema(tonal_wav_bytes):
     """Si la lista no esta vacia, cada item tiene las keys {chord, start, end} correctas."""
     import modal
     with modal.enable_output():
-        result = modal.Function.lookup("strata", "ProcessingService.detect_chords").remote(
+        result = modal.Cls.from_name("strata", "AudioPipeline")().detect_chords.remote(
             tonal_wav_bytes
         )
 
@@ -126,7 +126,7 @@ def test_detect_chords_invalid_bytes_returns_empty():
     invalid_bytes = b"this is not a valid wav file at all"
 
     with modal.enable_output():
-        result = modal.Function.lookup("strata", "ProcessingService.detect_chords").remote(
+        result = modal.Cls.from_name("strata", "AudioPipeline")().detect_chords.remote(
             invalid_bytes
         )
 
@@ -139,7 +139,7 @@ def test_detect_chords_empty_bytes_returns_empty():
     import modal
 
     with modal.enable_output():
-        result = modal.Function.lookup("strata", "ProcessingService.detect_chords").remote(
+        result = modal.Cls.from_name("strata", "AudioPipeline")().detect_chords.remote(
             b""
         )
 
