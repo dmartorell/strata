@@ -20,9 +20,10 @@ def download_models():
     from demucs.pretrained import get_model
     get_model("htdemucs")
 
-    # WhisperX / faster-whisper — transcripcion
-    from faster_whisper import WhisperModel
-    WhisperModel("base", compute_type="float16")
+    # WhisperX large-v2 — transcripcion con word-level timestamps
+    # CPU + int8 en build time para minimizar VRAM durante imagen build
+    import whisperx
+    whisperx.load_model("large-v2", device="cpu", compute_type="int8")
 
 
 # Image pesada con dependencias ML y pesos baked in
