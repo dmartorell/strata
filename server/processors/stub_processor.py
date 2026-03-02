@@ -1,23 +1,24 @@
 """
-Stub processor HTTP endpoints para Strata — Task 01-02
+Endpoints HTTP de procesamiento de audio para Strata.
 
 FastAPI router con:
-  - POST /process-file: acepta archivo de audio, lanza job, devuelve job_id
-  - POST /process-url: acepta URL, lanza job, devuelve job_id
+  - POST /process-file: acepta archivo de audio, valida tamano, lanza pipeline real
+  - POST /process-url: acepta URL de YouTube, lanza pipeline real
   - GET /result/{job_id}: devuelve progreso o ZIP cuando completado
 
-La funcion de procesamiento real (process_job) esta en app.py como Modal function
-top-level. Estos endpoints son solo el HTTP handler (ASGI web container).
-
-Re-exporta build_stub_zip de stub_builder para compatibilidad.
+El procesamiento real se ejecuta en AudioPipeline (GPU Modal) via .spawn.
+Los endpoints son solo el HTTP handler (ASGI web container, CPU).
 """
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import Response
 from auth.auth import require_auth
-from processors.stub_builder import build_stub_zip  # noqa: F401 (re-export)
 
 router = APIRouter(tags=["processor"])
+
+# Limite de tamano pre-GPU (PROC-07): rechazar antes de invocar GPU
+_MAX_UPLOAD_MB = 50
+_MAX_UPLOAD_BYTES = _MAX_UPLOAD_MB * 1024 * 1024
 
 
 def _get_job_dict():
@@ -26,23 +27,45 @@ def _get_job_dict():
     return modal.Dict.from_name("strata-job-progress", create_if_missing=True)
 
 
+def _get_pipeline():
+    """Obtiene una instancia remota de AudioPipeline."""
+    import modal
+    return modal.Cls.from_name("strata", "AudioPipeline")()
+
+
 @router.post("/process-file")
 async def process_file(
     audio_file: UploadFile,
     username: str = Depends(require_auth),
 ):
-    """Acepta un archivo de audio, lanza job stub y devuelve job_id."""
+    """Acepta un archivo de audio, valida limites y lanza el pipeline GPU.
+
+    Rechaza archivos >50 MB con HTTP 400 antes de invocar la GPU (PROC-07).
+    El procesamiento real ocurre en AudioPipeline.process via Modal spawn.
+    """
     import modal
 
-    job_dict = _get_job_dict()
-    process_fn = modal.Cls.from_name("strata", "ProcessingService")().process_job
+    # Leer bytes del archivo
+    audio_bytes = await audio_file.read()
 
-    call = await process_fn.spawn.aio(
+    # Validar tamano pre-GPU — rechazar antes de tocar GPU
+    if len(audio_bytes) > _MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Archivo excede limite de {_MAX_UPLOAD_MB} MB",
+        )
+
+    job_dict = _get_job_dict()
+    pipeline = _get_pipeline()
+
+    call = await pipeline.process.spawn.aio(
+        audio_bytes=audio_bytes,
         source_type="file",
         source_name=audio_file.filename or "upload.mp3",
         username=username,
     )
     job_id = call.object_id
+    # El pipeline usa modal.current_function_call_id() internamente para el progreso
     job_dict[job_id] = "queued"
     return {"job_id": job_id}
 
@@ -52,7 +75,11 @@ async def process_url(
     body: dict,
     username: str = Depends(require_auth),
 ):
-    """Acepta una URL, lanza job stub y devuelve job_id."""
+    """Acepta una URL de YouTube y lanza el pipeline GPU completo.
+
+    AudioPipeline.process_youtube descarga el audio con yt-dlp (cookies via Modal
+    Secret) y ejecuta el pipeline completo: Demucs + WhisperX + chord-extractor.
+    """
     import modal
 
     url = body.get("url", "")
@@ -60,14 +87,14 @@ async def process_url(
         raise HTTPException(status_code=400, detail="URL requerida")
 
     job_dict = _get_job_dict()
-    process_fn = modal.Cls.from_name("strata", "ProcessingService")().process_job
+    pipeline = _get_pipeline()
 
-    call = await process_fn.spawn.aio(
-        source_type="youtube",
-        source_name=url,
+    call = await pipeline.process_youtube.spawn.aio(
+        url=url,
         username=username,
     )
     job_id = call.object_id
+    # El pipeline usa modal.current_function_call_id() internamente para el progreso
     job_dict[job_id] = "queued"
     return {"job_id": job_id}
 
@@ -90,7 +117,7 @@ async def get_result(
     if status != "completed":
         return {"status": status if status != "unknown" else "processing", "job_id": job_id}
 
-    # Job completado — obtener resultado
+    # Job completado — obtener resultado ZIP
     try:
         call = modal.FunctionCall.from_id(job_id)
         result = await call.get.aio(timeout=0)

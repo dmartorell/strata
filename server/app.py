@@ -1,4 +1,5 @@
 import modal
+from datetime import datetime
 
 # Modal App definition
 app = modal.App("strata")
@@ -209,28 +210,153 @@ from pipeline.image import gpu_image  # noqa: E402
     gpu="T4",
     max_containers=2,
     scaledown_window=300,
-    timeout=120,
+    timeout=600,
+    secrets=[modal.Secret.from_name("youtube-cookies")],
 )
 class AudioPipeline:
-    """Pipeline de separacion de audio con Demucs htdemucs.
+    """Pipeline end-to-end de audio: Demucs + WhisperX + chord-extractor.
 
-    El modelo se carga una sola vez por contenedor en @modal.enter y se
-    reutiliza entre requests, garantizando cold starts predecibles.
+    Los modelos se cargan una sola vez por contenedor en @modal.enter y se
+    reutilizan entre requests, garantizando cold starts predecibles.
+
+    Flujo principal (process):
+        validate -> separate_stems -> transcribe_vocals -> detect_chords -> package_results
     """
 
     @modal.enter()
     def load_models(self):
-        """Carga Demucs Separator al arrancar el contenedor."""
+        """Carga Demucs y WhisperX al arrancar el contenedor."""
         import sys
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
+        # Demucs htdemucs — separacion de stems
         from demucs.api import Separator
         self.separator = Separator(model="htdemucs")
 
+        # WhisperX large-v2 — transcripcion con word-level timestamps
+        import whisperx
+        self.whisper_model = whisperx.load_model(
+            "large-v2", device="cuda", compute_type="float16"
+        )
+
+    @modal.method()
+    def process(
+        self,
+        audio_bytes: bytes,
+        source_type: str,
+        source_name: str,
+        username: str,
+        youtube_metadata: dict | None = None,
+    ) -> bytes:
+        """Pipeline end-to-end: audio_bytes -> ZIP con stems + JSONs.
+
+        Args:
+            audio_bytes: Bytes del archivo de audio (MP3, M4A, WAV...).
+            source_type: "file" o "youtube".
+            source_name: Nombre del archivo original o URL de YouTube.
+            username: Usuario que solicita el procesamiento (para usage).
+            youtube_metadata: Metadatos YouTube de download_youtube_audio().
+                              Si se pasa, se hace merge sobre metadata.json.
+
+        Returns:
+            Bytes del ZIP con 4 stems WAV + lyrics.json + chords.json + metadata.json.
+        """
+        import sys
+        import soundfile as sf
+        import io as _io
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+
+        # Obtener job_id del contexto Modal (es el object_id del FunctionCall)
+        job_id = modal.current_function_call_id()
+        progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
+
+        # Validar limites antes de tocar GPU
+        from pipeline.validators import validate_audio
+        validate_audio(audio_bytes)
+
+        # Step 1: Separar stems (Demucs htdemucs)
+        progress[job_id] = "separating"
+        from pipeline.separation import separate_stems
+        stems = separate_stems(self.separator, audio_bytes)
+
+        # Calcular duracion a partir del stem vocals (disponible siempre)
+        duration_seconds: float | None = None
+        try:
+            vocals_bytes = stems.get("vocals", b"")
+            if vocals_bytes:
+                with sf.SoundFile(_io.BytesIO(vocals_bytes)) as f:
+                    duration_seconds = len(f) / f.samplerate
+        except Exception:
+            pass
+
+        # Step 2: Transcribir vocals (WhisperX)
+        progress[job_id] = "transcribing"
+        from pipeline.transcription import transcribe_vocals
+        lyrics = transcribe_vocals(self.whisper_model, stems.get("vocals", b""))
+
+        # Step 3: Detectar acordes sobre stem 'other'
+        progress[job_id] = "detecting_chords"
+        from pipeline.chords import detect_chords
+        chords = detect_chords(stems.get("other", b""))
+
+        # Step 4: Empaquetar todo en ZIP
+        progress[job_id] = "packaging"
+        from pipeline.packaging import package_results
+        from usage.tracker import record_usage
+
+        metadata = {
+            "title": source_name,
+            "duration_seconds": duration_seconds,
+            "sample_rate": 44100,
+            "source_type": source_type,
+            "processed_at": datetime.utcnow().isoformat() + "Z",
+            "original_filename": source_name if source_type == "file" else None,
+        }
+        # Merge YouTube metadata (sobreescribe campos base con info de YT)
+        if youtube_metadata:
+            metadata.update(youtube_metadata)
+
+        # Registrar uso antes de marcar como completado
+        record_usage(username=username, source_type=source_type, source_name=source_name)
+
+        result = package_results(stems, lyrics, chords, metadata)
+
+        progress[job_id] = "completed"
+        return result
+
+    @modal.method()
+    def process_youtube(self, url: str, username: str) -> bytes:
+        """Descarga audio de YouTube y ejecuta el pipeline completo.
+
+        Args:
+            url: URL de YouTube a descargar.
+            username: Usuario que solicita el procesamiento.
+
+        Returns:
+            Bytes del ZIP resultado del pipeline.
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+
+        from pipeline.downloader import download_youtube_audio
+        audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
+        return self.process(
+            audio_bytes,
+            "youtube",
+            url,
+            username,
+            youtube_metadata=yt_metadata,
+        )
+
     @modal.method()
     def separate(self, audio_bytes: bytes) -> dict:
-        """Separa audio en 4 stems WAV usando el separator pre-cargado."""
+        """Separa audio en 4 stems WAV usando el separator pre-cargado.
+
+        Mantenido para compatibilidad con tests de integracion de 02-01.
+        """
         import sys
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
@@ -242,8 +368,7 @@ class AudioPipeline:
     def detect_chords(self, other_stem_bytes: bytes) -> list:
         """Detecta acordes con timestamps sobre el stem 'other'.
 
-        Args:
-            other_stem_bytes: Contenido WAV del stem 'other' de Demucs.
+        Mantenido para compatibilidad con tests de integracion de 02-03.
 
         Returns:
             Lista de [{chord, start, end}]. Retorna [] si falla (resultado parcial).
