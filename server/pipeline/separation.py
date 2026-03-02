@@ -1,10 +1,10 @@
 """Demucs stem separation logic for the audio pipeline.
 
-La funcion separate_stems recibe un separator pre-cargado (instanciado en
-@modal.enter para reusar el modelo entre requests) y bytes de audio,
-y devuelve los 4 stems WAV como bytes.
+Usa la API de bajo nivel de demucs (pretrained + apply_model) en lugar de
+demucs.api.Separator, que no está disponible en todas las versiones instalables
+junto a torch<2.9.
 
-Sample rate de salida: 44100 Hz (nativo de htdemucs, sin resampling).
+Sample rate de salida: el nativo del modelo (44100 Hz para htdemucs).
 """
 
 import gc
@@ -16,11 +16,11 @@ import numpy as np
 import soundfile as sf
 
 
-def separate_stems(separator, audio_bytes: bytes) -> dict[str, bytes]:
+def separate_stems(demucs_model, audio_bytes: bytes) -> dict[str, bytes]:
     """Separa un archivo de audio en 4 stems usando Demucs htdemucs.
 
     Args:
-        separator: Instancia de demucs.api.Separator pre-cargada en @modal.enter.
+        demucs_model: Modelo demucs pre-cargado en @modal.enter (output de get_model).
         audio_bytes: Contenido del archivo de audio (MP3, WAV, etc.) como bytes.
 
     Returns:
@@ -28,54 +28,55 @@ def separate_stems(separator, audio_bytes: bytes) -> dict[str, bytes]:
         {"vocals": bytes, "drums": bytes, "bass": bytes, "other": bytes}
 
     Raises:
-        RuntimeError: Si la separacion falla por OOM incluso con segment reducido.
+        RuntimeError: Si la separacion falla por OOM incluso reduciendo el segmento.
     """
     import torch
+    import torchaudio
+    from demucs.apply import apply_model
+    from demucs.audio import convert_audio
 
-    stems_result: dict[str, bytes] = {}
     tmp_input: Path | None = None
 
     try:
-        # Escribir audio a fichero temporal para que Demucs pueda leerlo
+        # Escribir audio a fichero temporal para que torchaudio pueda leerlo
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
             f.write(audio_bytes)
             tmp_input = Path(f.name)
 
-        # Intentar separacion; si hay OOM, reintentar con segment mas pequeno
+        # Cargar audio y convertir al formato esperado por el modelo
+        wav, sr = torchaudio.load(str(tmp_input))
+        wav = convert_audio(wav, sr, demucs_model.samplerate, demucs_model.audio_channels)
+        wav = wav.unsqueeze(0).cuda()  # (1, channels, samples)
+
+        # Separar stems; reintentar con overlap reducido si OOM
         try:
-            _, separated = separator.separate_audio_file(tmp_input)
+            with torch.no_grad():
+                sources = apply_model(demucs_model, wav, device="cuda")[0]
         except torch.cuda.OutOfMemoryError:
-            # Reintentar con segment=7.5 para reducir uso de VRAM en canciones largas
-            separator.update_parameter(segment=7.5)
             torch.cuda.empty_cache()
-            _, separated = separator.separate_audio_file(tmp_input)
+            with torch.no_grad():
+                sources = apply_model(
+                    demucs_model, wav, device="cuda", overlap=0.1, segment=7.5
+                )[0]
 
-        # Convertir cada stem a bytes WAV
-        stem_names = ["vocals", "drums", "bass", "other"]
-        for stem_name in stem_names:
-            if stem_name not in separated:
-                continue
+        # sources shape: (stems, channels, samples)
+        stem_names = demucs_model.sources  # ["drums", "bass", "other", "vocals"]
+        stems_result: dict[str, bytes] = {}
 
-            # Mover tensor a CPU y convertir a numpy: shape (channels, samples) -> (samples, channels)
-            tensor = separated[stem_name].cpu()
-            audio_array = tensor.numpy().T  # (samples, channels)
-
-            # Escribir a WAV en memoria a 44100 Hz (sample rate nativo de htdemucs)
+        for i, stem_name in enumerate(stem_names):
+            audio_array = sources[i].cpu().numpy().T  # (samples, channels)
             buffer = io.BytesIO()
-            sf.write(buffer, audio_array, samplerate=44100, format="WAV")
+            sf.write(buffer, audio_array, samplerate=demucs_model.samplerate, format="WAV")
             stems_result[stem_name] = buffer.getvalue()
 
+        return stems_result
+
     finally:
-        # Limpiar fichero temporal de entrada
         if tmp_input is not None and tmp_input.exists():
             tmp_input.unlink()
 
-        # Liberar VRAM para los siguientes modelos (WhisperX, chord-extractor)
         gc.collect()
         try:
-            import torch
             torch.cuda.empty_cache()
         except Exception:
             pass
-
-    return stems_result

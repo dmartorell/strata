@@ -224,9 +224,10 @@ class AudioPipeline:
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
-        # Demucs htdemucs — separacion de stems
-        from demucs.api import Separator
-        self.separator = Separator(model="htdemucs")
+        # Demucs htdemucs — separacion de stems (pretrained API, no demucs.api)
+        from demucs.pretrained import get_model
+        self.demucs_model = get_model("htdemucs")
+        self.demucs_model.cuda()
 
         # WhisperX large-v2 — transcripcion con word-level timestamps
         import whisperx
@@ -273,7 +274,7 @@ class AudioPipeline:
         # Step 1: Separar stems (Demucs htdemucs)
         progress[job_id] = "separating"
         from pipeline.separation import separate_stems
-        stems = separate_stems(self.separator, audio_bytes)
+        stems = separate_stems(self.demucs_model, audio_bytes)
 
         # Calcular duracion a partir del stem vocals (disponible siempre)
         duration_seconds: float | None = None
