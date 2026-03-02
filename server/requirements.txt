@@ -1,0 +1,5 @@
+modal
+fastapi[standard]
+pyjwt
+bcrypt
+python-multipart
