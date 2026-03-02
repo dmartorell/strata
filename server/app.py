@@ -14,15 +14,12 @@ usage_vol = modal.Volume.from_name("strata-usage", create_if_missing=True)
 # Inline script to bake ML model weights at build time.
 # Using run_commands instead of run_function avoids Modal importing app.py
 # (which needs the pipeline module) inside the build container.
-_DOWNLOAD_WEIGHTS = """\
-python -c "
-from demucs.pretrained import get_model
-get_model('htdemucs')
-
-import whisperx
-whisperx.load_model('large-v2', device='cpu', compute_type='int8')
-"
-"""
+_DOWNLOAD_WEIGHTS = (
+    "python -c \""
+    "from demucs.pretrained import get_model; get_model('htdemucs'); "
+    "import whisperx; whisperx.load_model('large-v2', device='cpu', compute_type='int8')"
+    "\""
+)
 
 # Image pesada con dependencias ML y pesos baked in
 image = (

@@ -13,15 +13,12 @@ import modal
 # Inline script to download model weights during image build.
 # Using run_commands instead of run_function avoids Modal importing app.py
 # (which needs the pipeline module) inside the build container.
-_DOWNLOAD_WEIGHTS_SCRIPT = """\
-python -c "
-from demucs import pretrained
-pretrained.get_model('htdemucs')
-
-import whisperx
-whisperx.load_model('large-v2', device='cpu', compute_type='int8')
-"
-"""
+_DOWNLOAD_WEIGHTS_CMD = (
+    "python -c \""
+    "from demucs import pretrained; pretrained.get_model('htdemucs'); "
+    "import whisperx; whisperx.load_model('large-v2', device='cpu', compute_type='int8')"
+    "\""
+)
 
 gpu_image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -37,7 +34,7 @@ gpu_image = (
         "whisperx",
         "yt-dlp",
     )
-    .run_commands(_DOWNLOAD_WEIGHTS_SCRIPT, gpu="T4")
+    .run_commands(_DOWNLOAD_WEIGHTS_CMD, gpu="T4")
     .add_local_dir("pipeline", remote_path="/root/pipeline")
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("usage", remote_path="/root/usage")
