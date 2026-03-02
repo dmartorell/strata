@@ -211,7 +211,8 @@ from pipeline.image import gpu_image  # noqa: E402
     max_containers=2,
     scaledown_window=300,
     timeout=600,
-    secrets=[modal.Secret.from_name("youtube-cookies", required=False)],
+    # youtube-cookies secret: add when available via `modal secret create youtube-cookies ...`
+    # secrets=[modal.Secret.from_name("youtube-cookies")],
 )
 class AudioPipeline:
     """Pipeline end-to-end de audio: Demucs + WhisperX + chord-extractor.
