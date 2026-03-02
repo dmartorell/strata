@@ -24,10 +24,6 @@ def download_models():
     from faster_whisper import WhisperModel
     WhisperModel("base", compute_type="float16")
 
-    # CREMA — reconocimiento de acordes
-    import crema
-    crema.models.chord.ChordModel()
-
 
 # Image pesada con dependencias ML y pesos baked in
 image = (
@@ -39,7 +35,6 @@ image = (
         "demucs==4.0.1",
         "faster-whisper",
         "whisperx",
-        "crema==0.2.0",
         "fastapi[standard]",
         "pyjwt",
         "bcrypt",
@@ -84,10 +79,6 @@ class ProcessingService:
         from faster_whisper import WhisperModel
         self.whisper_model = WhisperModel("base", compute_type="float16")
 
-        # CREMA chord recognition
-        import crema
-        self.crema_model = crema.models.chord.ChordModel()
-
     @modal.method()
     async def process_job(self, source_type: str, source_name: str, username: str):
         """Stub processing job.
@@ -96,8 +87,8 @@ class ProcessingService:
           queued -> downloading -> separating -> transcribing ->
           detecting_chords -> packaging -> completed
 
-        Los modelos estan pre-cargados en self.demucs_model, self.whisper_model,
-        self.crema_model (Phase 2 los usara para procesamiento real).
+        Los modelos estan pre-cargados en self.demucs_model, self.whisper_model
+        (Phase 2 los usara para procesamiento real, + chord-extractor para acordes).
         """
         import asyncio
         import sys
