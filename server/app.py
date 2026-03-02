@@ -11,21 +11,18 @@ job_progress = modal.Dict.from_name("strata-job-progress", create_if_missing=Tru
 usage_vol = modal.Volume.from_name("strata-usage", create_if_missing=True)
 
 
-def download_models():
-    """Bake ML model weights into the image at build time.
+# Inline script to bake ML model weights at build time.
+# Using run_commands instead of run_function avoids Modal importing app.py
+# (which needs the pipeline module) inside the build container.
+_DOWNLOAD_WEIGHTS = """\
+python -c "
+from demucs.pretrained import get_model
+get_model('htdemucs')
 
-    Se ejecuta con gpu="T4" para que CUDA se inicialice correctamente.
-    Los pesos quedan en el sistema de archivos de la imagen (cache de cada libreria).
-    """
-    # Demucs htdemucs — separacion de stems
-    from demucs.pretrained import get_model
-    get_model("htdemucs")
-
-    # WhisperX large-v2 — transcripcion con word-level timestamps
-    # CPU + int8 en build time para minimizar VRAM durante imagen build
-    import whisperx
-    whisperx.load_model("large-v2", device="cpu", compute_type="int8")
-
+import whisperx
+whisperx.load_model('large-v2', device='cpu', compute_type='int8')
+"
+"""
 
 # Image pesada con dependencias ML y pesos baked in
 image = (
@@ -42,7 +39,7 @@ image = (
         "bcrypt",
         "python-multipart",
     )
-    .run_function(download_models, gpu="T4")
+    .run_commands(_DOWNLOAD_WEIGHTS, gpu="T4")
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("processors", remote_path="/root/processors")
     .add_local_dir("usage", remote_path="/root/usage")
