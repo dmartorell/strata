@@ -9,10 +9,37 @@ job_progress = modal.Dict.from_name("strata-job-progress", create_if_missing=Tru
 # Modal Volume para persistencia de datos de uso
 usage_vol = modal.Volume.from_name("strata-usage", create_if_missing=True)
 
-# Image with all dependencies and auth data baked in
+
+def download_models():
+    """Bake ML model weights into the image at build time.
+
+    Se ejecuta con gpu="T4" para que CUDA se inicialice correctamente.
+    Los pesos quedan en el sistema de archivos de la imagen (cache de cada libreria).
+    """
+    # Demucs htdemucs — separacion de stems
+    from demucs.pretrained import get_model
+    get_model("htdemucs")
+
+    # WhisperX / faster-whisper — transcripcion
+    from faster_whisper import WhisperModel
+    WhisperModel("base", compute_type="float16")
+
+    # CREMA — reconocimiento de acordes
+    import crema
+    crema.models.chord.ChordModel()
+
+
+# Image pesada con dependencias ML y pesos baked in
 image = (
     modal.Image.debian_slim(python_version="3.11")
+    .apt_install("ffmpeg", "libsndfile1")
     .pip_install(
+        "torch",
+        "torchaudio",
+        "demucs==4.0.1",
+        "faster-whisper",
+        "whisperx",
+        "crema==0.2.0",
         "fastapi[standard]",
         "pyjwt",
         "bcrypt",
@@ -21,71 +48,99 @@ image = (
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("processors", remote_path="/root/processors")
     .add_local_dir("usage", remote_path="/root/usage")
+    .run_function(download_models, gpu="T4")
 )
 
 
 # ---------------------------------------------------------------------------
-# Processing function — GPU T4, max 2 containers
-# Runs in a separate container, communicates via modal.Dict + FunctionCall
+# Processing service — GPU T4, max 2 containers, @modal.enter para preloading
 # ---------------------------------------------------------------------------
 
-@app.function(
+@app.cls(
     image=image,
     gpu="T4",
     max_containers=2,
     volumes={"/data": usage_vol},
 )
-async def process_job(source_type: str, source_name: str, username: str):
-    """Stub processing function.
+class ProcessingService:
+    """Servicio de procesamiento de audio con modelos ML pre-cargados en memoria."""
 
-    Simula el pipeline de procesamiento con delays por etapa:
-      queued -> downloading -> separating -> transcribing ->
-      detecting_chords -> packaging -> completed
+    @modal.enter()
+    def preload_models(self):
+        """Carga modelos en memoria al arrancar el contenedor.
 
-    Al final registra el uso y devuelve el ZIP con datos ficticios.
-    """
-    import asyncio
-    import sys
+        Se ejecuta una vez por contenedor antes de la primera request,
+        no en cada llamada. Garantiza cold start predecible.
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
 
-    # Asegurar que /root esta en sys.path para importar modulos montados
-    if "/root" not in sys.path:
-        sys.path.insert(0, "/root")
+        # Demucs htdemucs
+        from demucs.pretrained import get_model
+        self.demucs_model = get_model("htdemucs")
 
-    from processors.stub_builder import build_stub_zip
-    from usage.tracker import record_usage
+        # WhisperX / faster-whisper
+        from faster_whisper import WhisperModel
+        self.whisper_model = WhisperModel("base", compute_type="float16")
 
-    # Obtener job_id del contexto Modal actual
-    current_call = modal.current_function_call_id()
-    job_id = current_call
+        # CREMA chord recognition
+        import crema
+        self.crema_model = crema.models.chord.ChordModel()
 
-    stages = [
-        "downloading",
-        "separating",
-        "transcribing",
-        "detecting_chords",
-        "packaging",
-    ]
+    @modal.method()
+    async def process_job(self, source_type: str, source_name: str, username: str):
+        """Stub processing job.
 
-    # Actualizar stage en el Dict
-    def update_progress(stage: str):
-        job_progress[job_id] = stage
+        Simula el pipeline de procesamiento con delays por etapa:
+          queued -> downloading -> separating -> transcribing ->
+          detecting_chords -> packaging -> completed
 
-    update_progress("queued")
-    await asyncio.sleep(1.5)
+        Los modelos estan pre-cargados en self.demucs_model, self.whisper_model,
+        self.crema_model (Phase 2 los usara para procesamiento real).
+        """
+        import asyncio
+        import sys
 
-    for stage in stages:
-        update_progress(stage)
+        # Asegurar que /root esta en sys.path para importar modulos montados
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+
+        from processors.stub_builder import build_stub_zip
+        from usage.tracker import record_usage
+
+        # Obtener job_id del contexto Modal actual
+        current_call = modal.current_function_call_id()
+        job_id = current_call
+
+        stages = [
+            "downloading",
+            "separating",
+            "transcribing",
+            "detecting_chords",
+            "packaging",
+        ]
+
+        # Actualizar stage en el Dict
+        def update_progress(stage: str):
+            job_progress[job_id] = stage
+
+        update_progress("queued")
         await asyncio.sleep(1.5)
 
-    # Registrar uso antes de marcar como completado
-    record_usage(username=username, source_type=source_type, source_name=source_name)
+        for stage in stages:
+            update_progress(stage)
+            await asyncio.sleep(1.5)
 
-    # Construir y devolver el ZIP
-    zip_bytes = build_stub_zip(source_type=source_type, source_name=source_name)
+        # Registrar uso antes de marcar como completado
+        record_usage(username=username, source_type=source_type, source_name=source_name)
 
-    update_progress("completed")
+        # Construir y devolver el ZIP
+        zip_bytes = build_stub_zip(source_type=source_type, source_name=source_name)
 
-    return zip_bytes
+        update_progress("completed")
+
+        return zip_bytes
 
 
 # ---------------------------------------------------------------------------

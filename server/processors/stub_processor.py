@@ -35,7 +35,7 @@ async def process_file(
     import modal
 
     job_dict = _get_job_dict()
-    process_fn = modal.Function.from_name("strata", "process_job")
+    process_fn = modal.Cls.from_name("strata", "ProcessingService")().process_job
 
     call = await process_fn.spawn.aio(
         source_type="file",
@@ -60,7 +60,7 @@ async def process_url(
         raise HTTPException(status_code=400, detail="URL requerida")
 
     job_dict = _get_job_dict()
-    process_fn = modal.Function.from_name("strata", "process_job")
+    process_fn = modal.Cls.from_name("strata", "ProcessingService")().process_job
 
     call = await process_fn.spawn.aio(
         source_type="youtube",
