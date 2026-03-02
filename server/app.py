@@ -40,10 +40,10 @@ image = (
         "bcrypt",
         "python-multipart",
     )
+    .run_function(download_models, gpu="T4")
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("processors", remote_path="/root/processors")
     .add_local_dir("usage", remote_path="/root/usage")
-    .run_function(download_models, gpu="T4")
 )
 
 
