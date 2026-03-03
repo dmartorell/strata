@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 // MARK: - Protocol
@@ -10,6 +11,9 @@ protocol CacheManagerProtocol: Actor {
     func stemURL(songID: UUID, stem: String) -> URL
     func lyricsURL(songID: UUID) -> URL
     func chordsURL(songID: UUID) -> URL
+    func sha256(of fileURL: URL) throws -> String
+    func youtubeVideoID(from urlString: String) -> String?
+    func materializeSong(id: UUID, from tempDir: URL) throws
 }
 
 // MARK: - Implementation
@@ -76,5 +80,69 @@ extension CacheManager {
 
     func chordsURL(songID: UUID) -> URL {
         songDirectory(for: songID).appendingPathComponent("chords.json")
+    }
+}
+
+// MARK: - SHA256 incremental para archivos locales
+
+extension CacheManager {
+    func sha256(of fileURL: URL) throws -> String {
+        var hasher = SHA256()
+        let handle = try FileHandle(forReadingFrom: fileURL)
+        defer { try? handle.close() }
+        let chunkSize = 65_536  // 64 KB chunks — nunca carga mas de 64 KB en memoria
+        while true {
+            let chunk = handle.readData(ofLength: chunkSize)
+            guard !chunk.isEmpty else { break }
+            hasher.update(data: chunk)
+        }
+        return hasher.finalize().compactMap { String(format: "%02x", $0) }.joined()
+    }
+}
+
+// MARK: - Extraccion de YouTube video ID
+
+extension CacheManager {
+    func youtubeVideoID(from urlString: String) -> String? {
+        guard let url = URL(string: urlString),
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
+        // youtube.com/watch?v=VIDEO_ID (y variantes con parametros extra como &t=30s)
+        if let videoID = components.queryItems?.first(where: { $0.name == "v" })?.value,
+           !videoID.isEmpty {
+            return videoID
+        }
+        // youtu.be/VIDEO_ID
+        if url.host == "youtu.be" {
+            let path = url.path
+            let id = path.hasPrefix("/") ? String(path.dropFirst()) : path
+            return id.isEmpty ? nil : id
+        }
+        return nil
+    }
+}
+
+// MARK: - Materializacion de cancion desde tempDir
+
+extension CacheManager {
+    func materializeSong(id: UUID, from tempDir: URL) throws {
+        let destDir = songDirectory(for: id)
+        try FileManager.default.createDirectory(
+            at: destDir,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+        let files = ["vocals.wav", "drums.wav", "bass.wav", "other.wav",
+                     "lyrics.json", "chords.json", "metadata.json"]
+        for filename in files {
+            let src = tempDir.appendingPathComponent(filename)
+            let dest = destDir.appendingPathComponent(filename)
+            if FileManager.default.fileExists(atPath: dest.path) {
+                try FileManager.default.removeItem(at: dest)
+            }
+            try FileManager.default.moveItem(at: src, to: dest)
+        }
+        try? FileManager.default.removeItem(at: tempDir)
     }
 }
