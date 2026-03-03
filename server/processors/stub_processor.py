@@ -114,6 +114,15 @@ async def get_result(
     except Exception:
         status = "unknown"
 
+    # Error propagado desde el pipeline (formato "error:{mensaje}")
+    if isinstance(status, str) and status.startswith("error:"):
+        error_detail = status[len("error:"):]
+        raise HTTPException(status_code=500, detail=f"Pipeline error: {error_detail}")
+
+    # Error sin mensaje adjunto
+    if status == "error":
+        raise HTTPException(status_code=500, detail="Pipeline failed with unknown error")
+
     if status != "completed":
         return {"status": status if status != "unknown" else "processing", "job_id": job_id}
 
@@ -126,6 +135,8 @@ async def get_result(
             media_type="application/zip",
             headers={"Content-Disposition": "attachment; filename=result.zip"},
         )
+    except modal.exception.FunctionCallError as e:
+        raise HTTPException(status_code=500, detail=f"Pipeline error: {e}")
     except TimeoutError:
         return {"status": "processing", "job_id": job_id}
     except modal.exception.OutputExpiredError:
