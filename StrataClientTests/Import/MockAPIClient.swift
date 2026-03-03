@@ -1,7 +1,17 @@
 import Foundation
 @testable import StrataClient
 
-actor MockAPIClient: ImportAPIClientProtocol {
+// MARK: - MockAuthTokenProvider
+
+final class MockAuthTokenProvider: AuthTokenProviderProtocol, @unchecked Sendable {
+    var token: String?
+
+    init(token: String? = "test-token-123") {
+        self.token = token
+    }
+}
+
+actor MockImportAPIClient: ImportAPIClientProtocol {
     var uploadAudioResult: Result<String, Error> = .success("job-123")
     var uploadURLResult: Result<String, Error> = .success("job-456")
     var pollResult: Result<JobResult, Error> = .success(JobResult(zipData: nil, status: "completed"))

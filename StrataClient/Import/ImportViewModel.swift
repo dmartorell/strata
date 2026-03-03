@@ -10,10 +10,10 @@ final class ImportViewModel {
     private let apiClient: any ImportAPIClientProtocol
     private let cacheManager: CacheManager
     private let libraryStore: LibraryStore
-    private var authViewModel: AuthViewModel
+    private var authViewModel: any AuthTokenProviderProtocol
     private var currentTask: Task<Void, Never>?
 
-    init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: AuthViewModel) {
+    init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: any AuthTokenProviderProtocol) {
         self.apiClient = apiClient
         self.cacheManager = cacheManager
         self.libraryStore = libraryStore

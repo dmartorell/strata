@@ -15,10 +15,15 @@ protocol APIClientProtocol: Sendable {
     func renewToken(current: String) async throws -> String
 }
 
+protocol AuthTokenProviderProtocol: AnyObject {
+    var token: String? { get }
+}
+
 // MARK: - Conformances de tipos concretos
 
 extension KeychainService: KeychainServiceProtocol {}
 extension APIClient: APIClientProtocol {}
+extension AuthViewModel: AuthTokenProviderProtocol {}
 
 // MARK: - AuthViewModel
 
