@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 4 of 7 (Library Cache) — IN PROGRESS
-Plan: 1 of 3 in current phase (04-01 COMPLETE — SongEntry + SongMetadata + CacheManager + LibraryStore)
-Status: Phase 04 en progreso — Plan 01 completado (model + persistencia local)
-Last activity: 2026-03-03 — Plan 04-01 completo (4 ficheros Swift nuevos en StrataClient/Library/, BUILD SUCCEEDED)
+Plan: 2 of 3 in current phase (04-02 COMPLETE — CacheManager extensions + LibraryStore wiring en StrataApp)
+Status: Phase 04 en progreso — Plan 02 completado (SHA256 + YouTube ID + materializeSong + StrataApp wiring)
+Last activity: 2026-03-03 — Plan 04-02 completo (CacheManager.swift extendido, StrataApp.swift actualizado, BUILD SUCCEEDED)
 
 Progress: [████░░░░░░] 25%
 
@@ -60,6 +60,7 @@ Progress: [████░░░░░░] 25%
 | Phase 03-swift-client-auth P03 | 65 | 2 tasks | 5 files |
 | Phase 03-swift-client-auth P03 | 75 | 3 tasks | 5 files |
 | Phase 04-library-cache P01 | 10 | 3 tasks | 4 files |
+| Phase 04-library-cache P02 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting current work:
 - [Phase 03-swift-client-auth]: Ventana 900x600 por defecto con .windowResizability(.contentMinSize): tamano util para ContentView sin forzar redimension al usuario
 - [Phase 04-library-cache]: CacheManager como actor Swift: aislamiento de concurrencia para todo I/O de filesystem en Library
 - [Phase 04-library-cache]: Schema additive-only en SongEntry: campos nuevos como optional con nil por defecto — sin migraciones disruptivas
+- [Phase 04-library-cache P02]: try! en CacheManager init() en StrataApp: si ~/Music no es accesible la app no puede funcionar — error fatal aceptable
+- [Phase 04-library-cache P02]: Group {} en WindowGroup body: aplica .environment(authViewModel) una sola vez en lugar de duplicarlo en cada rama
 
 ### Pending Todos
 
@@ -116,5 +119,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 04-01-PLAN.md — SongEntry + SongMetadata + CacheManager + LibraryStore (commits 10e10d6, 572d5a8, 23ece9e)
+Stopped at: Completed 04-02-PLAN.md — CacheManager extensions + StrataApp LibraryStore wiring (commits 35b4929, 5d4ec3b)
 Resume file: None
