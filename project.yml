@@ -9,6 +9,9 @@ packages:
   JWTDecode:
     url: https://github.com/auth0/JWTDecode.swift
     majorVersion: 4.0.0
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation.git
+    majorVersion: 0.9.0
 
 targets:
   StrataClient:
@@ -43,6 +46,7 @@ targets:
         INFOPLIST_FILE: StrataClient/Info.plist
     dependencies:
       - package: JWTDecode
+      - package: ZIPFoundation
 
   StrataClientTests:
     type: bundle.unit-test

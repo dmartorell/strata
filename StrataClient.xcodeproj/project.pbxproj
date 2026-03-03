@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F13B794E94DCBD3F023D426 /* StrataApp.swift */; };
+		118AED477D345D705246018D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = AD5B524B6B7DBD9AE43D2C5D /* ZIPFoundation */; };
 		12B7C634C7579D11F4B2B0B7 /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F8E323227F1A03905E621D /* SongMetadata.swift */; };
 		15ECA426E1CAF328EB741A85 /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A89A669DAB527AF3320D247 /* SongEntry.swift */; };
 		1A1E336F6ADED5E3877F3DE5 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29639C7551FF7047994958BE /* NetworkTests.swift */; };
@@ -16,6 +17,7 @@
 		232F965EE97D72FA2FF8028E /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */; };
 		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
 		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
+		38142976951642A0B15E3475 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */; };
 		4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */; };
 		67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */; };
 		72FF37944254B7B4C22E5280 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */; };
@@ -23,6 +25,7 @@
 		9CCB95F58F69DBEBEA5031C6 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB21C724D85B39E37F403AA4 /* LibraryStore.swift */; };
 		B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */; };
 		C0EDA4111D162882E5704EFF /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C19B9CC9C8FD067882B75A /* CacheManager.swift */; };
+		CBA61209C9BC5699842CE0A5 /* ImportPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1242F530023BB31A6F621C /* ImportPhase.swift */; };
 		DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = E5C61342FA18E71FE6ACF92F /* JWTDecode */; };
 /* End PBXBuildFile section */
 
@@ -47,8 +50,10 @@
 		475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		50A979499FBEFE429665E032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5B1242F530023BB31A6F621C /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
 		7A89A669DAB527AF3320D247 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
 		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
+		8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		C9C19B9CC9C8FD067882B75A /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
@@ -65,6 +70,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */,
+				118AED477D345D705246018D /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +85,15 @@
 				161045B485CA93066BCC210B /* APIError.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		1D57F2D9239AD607A51571E1 /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				5B1242F530023BB31A6F621C /* ImportPhase.swift */,
+				8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */,
+			);
+			path = Import;
 			sourceTree = "<group>";
 		};
 		1F590A98592212488D896428 /* Library */ = {
@@ -100,6 +115,7 @@
 				50CEC93D212E9EC4ACD0D026 /* App */,
 				F2306A43979BF6A5B5A99180 /* Audio */,
 				4F500C96AF61B39E205EE9EA /* Auth */,
+				1D57F2D9239AD607A51571E1 /* Import */,
 				1F590A98592212488D896428 /* Library */,
 				0AD10DEBE47F4D7A79D93BEC /* Network */,
 			);
@@ -196,6 +212,7 @@
 			name = StrataClient;
 			packageProductDependencies = (
 				E5C61342FA18E71FE6ACF92F /* JWTDecode */,
+				AD5B524B6B7DBD9AE43D2C5D /* ZIPFoundation */,
 			);
 			productName = StrataClient;
 			productReference = 322F9B75C7E611D3C003112C /* StrataClient.app */;
@@ -232,6 +249,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -264,6 +282,8 @@
 				B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */,
 				C0EDA4111D162882E5704EFF /* CacheManager.swift in Sources */,
 				266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */,
+				CBA61209C9BC5699842CE0A5 /* ImportPhase.swift in Sources */,
+				38142976951642A0B15E3475 /* ImportViewModel.swift in Sources */,
 				67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */,
 				9CCB95F58F69DBEBEA5031C6 /* LibraryStore.swift in Sources */,
 				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
@@ -523,6 +543,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
 		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
@@ -534,6 +562,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		AD5B524B6B7DBD9AE43D2C5D /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
 		E5C61342FA18E71FE6ACF92F /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
