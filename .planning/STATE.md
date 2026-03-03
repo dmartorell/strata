@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T21:23:52.045Z"
+last_updated: "2026-03-03T21:37:42.877Z"
 progress:
   total_phases: 4
   completed_phases: 3
@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 3 of 7 (Swift Client + Auth)
-Plan: 2 of 3 in current phase (03-02 COMPLETE — KeychainService + POST /auth/renew)
-Status: Phase 03 en curso — plan 03-02 completo (KeychainService upsert, /auth/renew stateless, 5+8 tests)
-Last activity: 2026-03-03 — Plan 03-02 completo (KeychainService Security.framework + endpoint /auth/renew FastAPI)
+Phase: 3 of 7 (Swift Client + Auth) — COMPLETE
+Plan: 3 of 3 in current phase (03-03 COMPLETE — AuthViewModel + LoginView + StrataApp, flujo end-to-end aprobado)
+Status: Phase 03 completa — todos los planes completados (APIClient, KeychainService, AuthViewModel + UI)
+Last activity: 2026-03-03 — Plan 03-03 completo (flujo auth end-to-end verificado manualmente, sesion persiste 90 dias)
 
 Progress: [████░░░░░░] 25%
 
@@ -58,6 +58,7 @@ Progress: [████░░░░░░] 25%
 | Phase 03-swift-client-auth P01 | 70 | 2 tasks | 15 files |
 | Phase 03-swift-client-auth P02 | 16 | 2 tasks | 6 files |
 | Phase 03-swift-client-auth P03 | 65 | 2 tasks | 5 files |
+| Phase 03-swift-client-auth P03 | 75 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,7 @@ Recent decisions affecting current work:
 - [Phase 03-swift-client-auth]: KeychainServiceProtocol + APIClientProtocol en AuthViewModel: protocolos mínimos para inyección de dependencias en tests sin afectar tipos concretos
 - [Phase 03-swift-client-auth]: @Observable @MainActor AuthViewModel: patrón macOS 14 para ViewModels — sin ObservableObject/StateObject
 - [Phase 03-swift-client-auth]: checkStoredToken síncrono en init: sesión restaurada del Keychain antes del primer render — sin flash de LoginView
+- [Phase 03-swift-client-auth]: Ventana 900x600 por defecto con .windowResizability(.contentMinSize): tamano util para ContentView sin forzar redimension al usuario
 
 ### Pending Todos
 
@@ -111,5 +113,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 03-02-PLAN.md — KeychainService + POST /auth/renew (commits 6918124, dcb49ef, 11315ee, 1a3dde5)
+Stopped at: Completed 03-03-PLAN.md — AuthViewModel + LoginView + StrataApp (commits 3be8f61, 67bf999, 3d271ca, ba86b9d)
 Resume file: None
