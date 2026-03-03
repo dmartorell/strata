@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:44:00Z"
+last_updated: "2026-03-04T00:00:00Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 6 of 7 (Import End-to-End Flow) — IN PROGRESS
-Plan: 1 of 3 in current phase (06-01 COMPLETE — APIClient corregido + ImportViewModel con flujo completo)
-Status: Plan 06-01 COMPLETE — APIEndpoint processFile/processURL, pollJobStatus ZIP detection, ImportViewModel wired (BUILD SUCCEEDED)
-Last activity: 2026-03-03 — Plan 06-01 completo (APIClient.swift, APIEndpoint.swift, ImportPhase.swift, ImportViewModel.swift, commits 2569503, 4378fe2)
+Plan: 2 of 3 in current phase (06-02 COMPLETE — ImportView UI + ContentView layout + StrataApp wiring)
+Status: Plan 06-02 COMPLETE — ImportView drop zone + paste URL + progreso, ContentView layout funcional, StrataApp ImportViewModel en environment (CHECKPOINT APROBADO)
+Last activity: 2026-03-04 — Plan 06-02 completo (ImportView.swift, ContentView.swift, StrataApp.swift, commits f636313, 682767a)
 
-Progress: [█████░░░░░] 28%
+Progress: [█████░░░░░] 30%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [█████░░░░░] 28%
 | Phase 05-multi-stem-playback P02 | 5 | 1 tasks | 1 files |
 | Phase 05-multi-stem-playback P03 | 2 | 2 tasks | 2 files |
 | Phase 06-import-end-to-end-flow P01 | 2 | 2 tasks | 5 files |
+| Phase 06-import-end-to-end-flow P02 | 20 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,9 @@ Recent decisions affecting current work:
 - [Phase 06-import-end-to-end-flow P01]: extractToTemp como función nonisolated libre para Task.detached; materializeSong llamado con await en @MainActor context tras el detached — respeta actor isolation de CacheManager
 - [Phase 06-import-end-to-end-flow P01]: JobResult redefinido como Sendable struct no-Decodable: zipData construido desde raw Data del response; JobStatusResponse.result eliminado por obsoleto
 - [Phase 06-import-end-to-end-flow P01]: ZIPFoundation añadido vía project.yml + xcodegen generate — sin edición manual de project.pbxproj
+- [Phase 06-import-end-to-end-flow P02]: Botón "Pegar URL de YouTube" en toolbar de ContentView (no en ImportView) — mejor jerarquía visual
+- [Phase 06-import-end-to-end-flow P02]: Copia de archivo a temporaryDirectory dentro del closure NSItemProvider — evita que el security-scoped bookmark caduque antes del Task @MainActor
+- [Phase 06-import-end-to-end-flow P02]: isErrorOrReady como computed var en ImportView — progressSection visible en ready y error para que el usuario vea el resultado
 
 ### Pending Todos
 
@@ -132,6 +136,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 06-01-PLAN.md — APIClient endpoints reales + ImportViewModel flujo completo (commits 2569503, 4378fe2)
+Last session: 2026-03-04
+Stopped at: Completed 06-02-PLAN.md — ImportView UI + ContentView layout + StrataApp ImportViewModel wiring (commits f636313, 682767a)
 Resume file: None
