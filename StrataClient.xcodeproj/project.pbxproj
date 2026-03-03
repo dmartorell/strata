@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F13B794E94DCBD3F023D426 /* StrataApp.swift */; };
+		12B7C634C7579D11F4B2B0B7 /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F8E323227F1A03905E621D /* SongMetadata.swift */; };
+		15ECA426E1CAF328EB741A85 /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A89A669DAB527AF3320D247 /* SongEntry.swift */; };
 		1A1E336F6ADED5E3877F3DE5 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29639C7551FF7047994958BE /* NetworkTests.swift */; };
 		209768FE09244625AB4D252C /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161045B485CA93066BCC210B /* APIError.swift */; };
 		20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D2B605E7065CE50FD29B48 /* LoginView.swift */; };
@@ -37,10 +39,12 @@
 		161045B485CA93066BCC210B /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		29639C7551FF7047994958BE /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 		322F9B75C7E611D3C003112C /* StrataClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StrataClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		36F8E323227F1A03905E621D /* SongMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetadata.swift; sourceTree = "<group>"; };
 		3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		50A979499FBEFE429665E032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7A89A669DAB527AF3320D247 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
 		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
 		B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		D8D47FFC982AD8B039546C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -71,6 +75,15 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		1F590A98592212488D896428 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				7A89A669DAB527AF3320D247 /* SongEntry.swift */,
+				36F8E323227F1A03905E621D /* SongMetadata.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		3A3D6144A5F0FD0428BD0D3E /* StrataClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +91,7 @@
 				D8D47FFC982AD8B039546C17 /* Info.plist */,
 				50CEC93D212E9EC4ACD0D026 /* App */,
 				4F500C96AF61B39E205EE9EA /* Auth */,
+				1F590A98592212488D896428 /* Library */,
 				0AD10DEBE47F4D7A79D93BEC /* Network */,
 			);
 			path = StrataClient;
@@ -234,6 +248,8 @@
 				266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */,
 				67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */,
 				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
+				15ECA426E1CAF328EB741A85 /* SongEntry.swift in Sources */,
+				12B7C634C7579D11F4B2B0B7 /* SongMetadata.swift in Sources */,
 				03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -81,11 +81,11 @@ Plans:
   1. Una cancion procesada aparece en ~/Music/Strata/{uuid}/ con 4 stems WAV, lyrics.json, chords.json y metadata.json
   2. Al abrir la app con canciones en cache, la biblioteca carga instantaneamente sin peticion al servidor
   3. Si la misma URL de YouTube o el mismo archivo ya esta en cache, la app detecta el hit y no vuelve a procesar
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Estructura ~/Music/Strata/{uuid}/, library.json index, LibraryStore + CacheManager (@Observable)
-- [ ] 04-02: Cache hit detection (hash de archivo / URL), integracion con pipeline de importacion, carga de stems desde disco
+- [ ] 04-01-PLAN.md — SongEntry + SongMetadata (Codable), CacheManager (actor, I/O atomico), LibraryStore (@Observable)
+- [ ] 04-02-PLAN.md — SHA256 incremental, YouTube video ID extractor, materializeSong, wiring LibraryStore en StrataApp
 
 ### Phase 5: Multi-Stem Playback
 **Goal**: Los 4 stems suenan perfectamente sincronizados; el usuario puede controlar cada stem y cambiar el tono en tiempo real sin interrumpir la reproduccion
