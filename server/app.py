@@ -272,59 +272,63 @@ class AudioPipeline:
         from pipeline.validators import validate_audio
         validate_audio(audio_bytes)
 
-        # Step 1: Separar stems (Demucs htdemucs)
-        progress[job_id] = "separating"
-        from pipeline.separation import separate_stems
-        stems = separate_stems(self.demucs_model, audio_bytes)
-
-        # Calcular duracion a partir del stem vocals (disponible siempre)
-        duration_seconds: float | None = None
         try:
-            vocals_bytes = stems.get("vocals", b"")
-            if vocals_bytes:
-                with sf.SoundFile(_io.BytesIO(vocals_bytes)) as f:
-                    duration_seconds = len(f) / f.samplerate
-        except Exception:
-            pass
+            # Step 1: Separar stems (Demucs htdemucs)
+            progress[job_id] = "separating"
+            from pipeline.separation import separate_stems
+            stems = separate_stems(self.demucs_model, audio_bytes)
 
-        # Step 2: Transcribir vocals (WhisperX)
-        progress[job_id] = "transcribing"
-        from pipeline.transcription import transcribe_vocals
-        lyrics = transcribe_vocals(self.whisper_model, stems.get("vocals", b""))
+            # Calcular duracion a partir del stem vocals (disponible siempre)
+            duration_seconds: float | None = None
+            try:
+                vocals_bytes = stems.get("vocals", b"")
+                if vocals_bytes:
+                    with sf.SoundFile(_io.BytesIO(vocals_bytes)) as f:
+                        duration_seconds = len(f) / f.samplerate
+            except Exception:
+                pass
 
-        # Step 3: Detectar acordes sobre stem 'other'
-        progress[job_id] = "detecting_chords"
-        from pipeline.chords import detect_chords
-        chords = detect_chords(stems.get("other", b""))
+            # Step 2: Transcribir vocals (WhisperX)
+            progress[job_id] = "transcribing"
+            from pipeline.transcription import transcribe_vocals
+            lyrics = transcribe_vocals(self.whisper_model, stems.get("vocals", b""))
 
-        # Step 4: Empaquetar todo en ZIP
-        progress[job_id] = "packaging"
-        from pipeline.packaging import package_results
-        try:
-            from usage.tracker import record_usage
-        except ImportError:
-            record_usage = None
+            # Step 3: Detectar acordes sobre stem 'other'
+            progress[job_id] = "detecting_chords"
+            from pipeline.chords import detect_chords
+            chords = detect_chords(stems.get("other", b""))
 
-        metadata = {
-            "title": source_name,
-            "duration_seconds": duration_seconds,
-            "sample_rate": 44100,
-            "source_type": source_type,
-            "processed_at": datetime.utcnow().isoformat() + "Z",
-            "original_filename": source_name if source_type == "file" else None,
-        }
-        # Merge YouTube metadata (sobreescribe campos base con info de YT)
-        if youtube_metadata:
-            metadata.update(youtube_metadata)
+            # Step 4: Empaquetar todo en ZIP
+            progress[job_id] = "packaging"
+            from pipeline.packaging import package_results
+            try:
+                from usage.tracker import record_usage
+            except ImportError:
+                record_usage = None
 
-        # Registrar uso antes de marcar como completado
-        if record_usage is not None:
-            record_usage(username=username, source_type=source_type, source_name=source_name)
+            metadata = {
+                "title": source_name,
+                "duration_seconds": duration_seconds,
+                "sample_rate": 44100,
+                "source_type": source_type,
+                "processed_at": datetime.utcnow().isoformat() + "Z",
+                "original_filename": source_name if source_type == "file" else None,
+            }
+            # Merge YouTube metadata (sobreescribe campos base con info de YT)
+            if youtube_metadata:
+                metadata.update(youtube_metadata)
 
-        result = package_results(stems, lyrics, chords, metadata)
+            # Registrar uso antes de marcar como completado
+            if record_usage is not None:
+                record_usage(username=username, source_type=source_type, source_name=source_name)
 
-        progress[job_id] = "completed"
-        return result
+            result = package_results(stems, lyrics, chords, metadata)
+
+            progress[job_id] = "completed"
+            return result
+        except Exception as e:
+            progress[job_id] = f"error:{e}"
+            raise
 
     @modal.method()
     def process_youtube(self, url: str, username: str) -> bytes:
@@ -341,15 +345,22 @@ class AudioPipeline:
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
-        from pipeline.downloader import download_youtube_audio
-        audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
-        return self.process.local(
-            audio_bytes,
-            "youtube",
-            url,
-            username,
-            youtube_metadata=yt_metadata,
-        )
+        job_id = modal.current_function_call_id()
+        progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
+
+        try:
+            from pipeline.downloader import download_youtube_audio
+            audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
+            return self.process.local(
+                audio_bytes,
+                "youtube",
+                url,
+                username,
+                youtube_metadata=yt_metadata,
+            )
+        except Exception as e:
+            progress[job_id] = f"error:{e}"
+            raise
 
     @modal.method()
     def separate(self, audio_bytes: bytes) -> dict:
