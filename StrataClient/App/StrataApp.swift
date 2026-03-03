@@ -15,6 +15,7 @@ struct StrataApp: App {
             }
         }
         .windowStyle(.titleBar)
-        .windowResizability(.contentSize)
+        .defaultSize(width: 900, height: 600)
+        .windowResizability(.contentMinSize)
     }
 }
