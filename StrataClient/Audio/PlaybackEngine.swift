@@ -25,8 +25,8 @@ final class PlaybackEngine {
     var duration: TimeInterval = 0
     var isPlaying: Bool = false
     var pitchSemitones: Int = 0
-    var loopStart: TimeInterval? = nil  // Plan 03 implementa la logica
-    var loopEnd: TimeInterval? = nil    // Plan 03 implementa la logica
+    var loopStart: TimeInterval? = nil
+    var loopEnd: TimeInterval? = nil
 
     // MARK: - Private Audio Graph
 
@@ -44,10 +44,13 @@ final class PlaybackEngine {
     private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
     private var stemMuted: [Bool] = [false, false, false, false]
     private var soloedStem: Int? = nil
+    private var isLooping: Bool = false
 
     // MARK: - Public API
 
     func load(stemURLs: [URL]) throws {
+        NotificationCenter.default.removeObserver(self)
+
         if engine.isRunning {
             stop()
         }
@@ -83,13 +86,22 @@ final class PlaybackEngine {
         stemVolumes = [1.0, 1.0, 1.0, 1.0]
         stemMuted = [false, false, false, false]
         soloedStem = nil
+        loopStart = nil
+        loopEnd = nil
+        isLooping = false
+
+        setupNotifications()
     }
 
     func play() {
         guard !stemFiles.isEmpty, !isPlaying else { return }
         if !engine.isRunning { try? engine.start() }
         let sampleRate = stemFiles[0].processingFormat.sampleRate
-        scheduleAndPlay(from: AVAudioFramePosition(seekOffset * sampleRate))
+        if isLooping {
+            scheduleLoopAndPlay(from: seekOffset)
+        } else {
+            scheduleAndPlay(from: AVAudioFramePosition(seekOffset * sampleRate))
+        }
         isPlaying = true
         startTimer()
     }
@@ -116,13 +128,42 @@ final class PlaybackEngine {
 
     func seek(to time: TimeInterval) {
         let clampedTime = max(0, min(time, duration))
+
+        if let start = loopStart, let end = loopEnd {
+            if clampedTime < start || clampedTime >= end {
+                clearLoop()
+            }
+        }
+
         seekOffset = clampedTime
         currentTime = clampedTime
         players.forEach { $0.stop() }
         if isPlaying {
-            let sampleRate = stemFiles[0].processingFormat.sampleRate
-            scheduleAndPlay(from: AVAudioFramePosition(clampedTime * sampleRate))
+            if isLooping {
+                scheduleLoopAndPlay(from: clampedTime)
+            } else {
+                let sampleRate = stemFiles[0].processingFormat.sampleRate
+                scheduleAndPlay(from: AVAudioFramePosition(clampedTime * sampleRate))
+            }
         }
+    }
+
+    // MARK: - A/B Loop
+
+    func setLoopStart(_ time: TimeInterval?) {
+        loopStart = time
+        updateLoopState()
+    }
+
+    func setLoopEnd(_ time: TimeInterval?) {
+        loopEnd = time
+        updateLoopState()
+    }
+
+    func clearLoop() {
+        loopStart = nil
+        loopEnd = nil
+        isLooping = false
     }
 
     // MARK: - Pitch
@@ -163,6 +204,72 @@ final class PlaybackEngine {
     }
 
     // MARK: - Private
+
+    private func updateLoopState() {
+        guard let start = loopStart, let end = loopEnd, end > start else {
+            isLooping = false
+            return
+        }
+        isLooping = true
+        if isPlaying {
+            let clampedTime = max(start, min(currentTime, end))
+            seekOffset = clampedTime
+            players.forEach { $0.stop() }
+            scheduleLoopAndPlay(from: clampedTime)
+        }
+    }
+
+    private func scheduleLoopAndPlay(from time: TimeInterval) {
+        guard let start = loopStart, let end = loopEnd else { return }
+        let sampleRate = stemFiles[0].processingFormat.sampleRate
+        let startFrame = AVAudioFramePosition(time * sampleRate)
+        let endFrame = AVAudioFramePosition(end * sampleRate)
+
+        for i in 0..<players.count {
+            let file = stemFiles[i]
+            let frameCount = AVAudioFrameCount(min(endFrame, file.length) - startFrame)
+            guard frameCount > 0 else { continue }
+            players[i].scheduleSegment(file,
+                startingFrame: startFrame,
+                frameCount: frameCount,
+                at: nil,
+                completionCallbackType: .dataPlayedBack) { [weak self] _ in
+                Task { @MainActor in
+                    guard let self, self.isLooping else { return }
+                    self.scheduleLoopSegment(stem: i)
+                }
+            }
+        }
+
+        guard let lastRender = engine.outputNode.lastRenderTime else { return }
+        let delayFrames = AVAudioFramePosition(0.1 * sampleRate)
+        let startTime = AVAudioTime(sampleTime: lastRender.sampleTime + delayFrames, atRate: sampleRate)
+        players.forEach { $0.play(at: startTime) }
+
+        _ = start
+    }
+
+    private func scheduleLoopSegment(stem: Int) {
+        guard let start = loopStart, let end = loopEnd, isLooping else { return }
+        let sampleRate = stemFiles[stem].processingFormat.sampleRate
+        let startFrame = AVAudioFramePosition(start * sampleRate)
+        let frameCount = AVAudioFrameCount((end - start) * sampleRate)
+        guard frameCount > 0 else { return }
+
+        seekOffset = start
+        currentTime = start
+
+        players[stem].scheduleSegment(stemFiles[stem],
+            startingFrame: startFrame,
+            frameCount: frameCount,
+            at: nil,
+            completionCallbackType: .dataPlayedBack) { [weak self] _ in
+            Task { @MainActor in
+                guard let self, self.isLooping else { return }
+                self.scheduleLoopSegment(stem: stem)
+            }
+        }
+    }
 
     private func applyVolumes() {
         for i in 0..<min(4, stemMixers.count) {
@@ -207,11 +314,52 @@ final class PlaybackEngine {
     }
 
     private func handlePlaybackCompletion() {
-        guard isPlaying else { return }
+        guard isPlaying, !isLooping else { return }
         isPlaying = false
         stopTimer()
         seekOffset = duration
         currentTime = duration
+    }
+
+    private func setupNotifications() {
+        NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange,
+            object: engine,
+            queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                self?.handleConfigurationChange()
+            }
+        }
+    }
+
+    private func handleConfigurationChange() {
+        let wasPlaying = isPlaying
+        let savedTime = currentTime
+
+        players.forEach { $0.stop() }
+        isPlaying = false
+        stopTimer()
+
+        do {
+            try engine.start()
+        } catch {
+            return
+        }
+
+        seekOffset = savedTime
+        currentTime = savedTime
+
+        if wasPlaying {
+            if isLooping {
+                scheduleLoopAndPlay(from: savedTime)
+            } else {
+                let sampleRate = stemFiles[0].processingFormat.sampleRate
+                scheduleAndPlay(from: AVAudioFramePosition(savedTime * sampleRate))
+            }
+            isPlaying = true
+            startTimer()
+        }
     }
 
     private func startTimer() {
