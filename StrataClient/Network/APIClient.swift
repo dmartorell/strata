@@ -78,6 +78,22 @@ struct MultipartRequest {
     }
 }
 
+// MARK: - Import API Protocol (testability)
+
+protocol ImportAPIClientProtocol: Sendable {
+    func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String
+    func uploadURL(urlString: String, token: String) async throws -> String
+    func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int) async throws -> JobResult
+}
+
+extension ImportAPIClientProtocol {
+    func pollJobStatus(jobId: String, token: String) async throws -> JobResult {
+        try await pollJobStatus(jobId: jobId, token: token, intervalSeconds: 3, maxAttempts: 60)
+    }
+}
+
+extension APIClient: ImportAPIClientProtocol {}
+
 // MARK: - APIClient
 
 struct APIClient: Sendable {

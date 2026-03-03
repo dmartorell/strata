@@ -7,13 +7,13 @@ import ZIPFoundation
 final class ImportViewModel {
     private(set) var phase: ImportPhase = .idle
 
-    private let apiClient: APIClient
+    private let apiClient: any ImportAPIClientProtocol
     private let cacheManager: CacheManager
     private let libraryStore: LibraryStore
     private var authViewModel: AuthViewModel
     private var currentTask: Task<Void, Never>?
 
-    init(apiClient: APIClient, cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: AuthViewModel) {
+    init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: AuthViewModel) {
         self.apiClient = apiClient
         self.cacheManager = cacheManager
         self.libraryStore = libraryStore
