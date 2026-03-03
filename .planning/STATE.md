@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:26:39.257Z"
+last_updated: "2026-03-03T22:29:49.456Z"
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 5 of 7 (Multi-Stem Playback) — IN PROGRESS
-Plan: 2 of 3 in current phase (05-02 COMPLETE — pitch shift +-6 semitones + per-stem volume/mute/solo via applyVolumes())
-Status: Phase 05 en progreso — Plan 02 completado (setPitch, setVolume, setMute, setSolo, Stem enum, BUILD SUCCEEDED)
-Last activity: 2026-03-03 — Plan 05-02 completo (StrataClient/Audio/PlaybackEngine.swift extendido, commit 4d0fa75)
+Plan: 3 of 3 in current phase (05-03 COMPLETE — A/B loop + AVAudioEngineConfigurationChange + PlaybackEngine wired en StrataApp)
+Status: Phase 05 COMPLETA — todos los requisitos PLAY-01 a PLAY-06 cubiertos (BUILD SUCCEEDED)
+Last activity: 2026-03-03 — Plan 05-03 completo (PlaybackEngine.swift + StrataApp.swift, commits ace9133, 8f31a83)
 
 Progress: [████░░░░░░] 25%
 
@@ -63,6 +63,7 @@ Progress: [████░░░░░░] 25%
 | Phase 04-library-cache P02 | 1 | 2 tasks | 2 files |
 | Phase 05-multi-stem-playback P01 | 1 | 1 task | 2 files |
 | Phase 05-multi-stem-playback P02 | 5 | 1 tasks | 1 files |
+| Phase 05-multi-stem-playback P03 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,8 @@ Recent decisions affecting current work:
 - [Phase 05-multi-stem-playback P01]: xcodegen generate para incorporar Audio/ al proyecto — sin edicion manual de pbxproj
 - [Phase 05-multi-stem-playback]: outputVolume = 0 para mute/solo en lugar de detach/reattach — evita clicks y pops en el audio
 - [Phase 05-multi-stem-playback]: applyVolumes() como punto centralizado para stemMixers[i].outputVolume — toda mutacion de volumen pasa por un solo punto
+- [Phase 05-multi-stem-playback]: completion handler .dataPlayedBack como re-schedule del loop A/B: sin timers, sin drift
+- [Phase 05-multi-stem-playback]: handleConfigurationChange guarda wasPlaying/savedTime para restaurar reproduccion tras cambio de dispositivo
 
 ### Pending Todos
 
@@ -126,5 +129,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 05-02-PLAN.md — pitch shift + per-stem volume/mute/solo (commit 4d0fa75)
+Stopped at: Completed 05-03-PLAN.md — A/B loop + interrupciones + PlaybackEngine en StrataApp (commits ace9133, 8f31a83)
 Resume file: None
