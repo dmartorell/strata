@@ -1,0 +1,156 @@
+# Roadmap: Strata
+
+## Overview
+
+El proyecto arranca con el backend serverless (Modal GPU), que es la dependencia raiz de todo. Una vez el pipeline de IA esta probado en hardware real, se construye el cliente Swift desde la capa de red hacia arriba: auth, cache, motor de audio, flujo de importacion y, finalmente, la interfaz de reproduccion con letras, acordes y panel de uso.
+
+## Phases
+
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+- [ ] **Phase 1: Backend Foundation** - Modal API deployada con auth JWT, endpoints stub y contratos reales
+- [x] **Phase 2: GPU Pipeline** - Demucs + WhisperX + CREMA corriendo en T4 con cold-start dentro de presupuesto (completed 2026-03-02)
+- [ ] **Phase 3: Swift Client + Auth** - Cliente Swift con URLSession, JWT en Keychain y pantalla de login
+- [ ] **Phase 4: Library + Cache** - Cache local ~/Music/Strata/ con schema fijo antes de persistir canciones
+- [ ] **Phase 5: Multi-Stem Playback** - AVAudioEngine con sync frame-accurate, pitch shift y controles de stem
+- [ ] **Phase 6: Import + End-to-End Flow** - Drag & drop, URL de YouTube y UI de progreso conectados al pipeline
+- [ ] **Phase 7: Player UI + Display + Usage** - Controles de reproduccion, karaoke, acordes y panel de uso
+
+## Phase Details
+
+### Phase 1: Backend Foundation
+**Goal**: La API Modal esta desplegada y accesible via HTTPS; el cliente Swift puede autenticarse y recibir respuestas reales (aunque con datos stub) sin tocar localhost
+**Depends on**: Nothing (first phase)
+**Requirements**: INFR-01, INFR-02, INFR-03, INFR-04
+**Success Criteria** (what must be TRUE):
+  1. Un curl al endpoint `/auth/login` con contrasena correcta devuelve un JWT valido firmado con PyJWT
+  2. Un curl con JWT invalido o ausente a cualquier endpoint protegido devuelve 401
+  3. El endpoint `/process` (stub) acepta un archivo y devuelve un job ID sin procesar nada real
+  4. El endpoint `/result/{id}` devuelve un payload de ejemplo con estructura final (stems, lyrics, chords) aunque sean datos ficticios
+  5. La imagen Modal tiene los pesos de los modelos baked in y el contenedor arranca en <15s en cold start
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: Modal app setup, FastAPI skeleton, `/auth/login` con PyJWT + bcrypt, usuarios hardcoded
+- [ ] 01-02: Endpoints `/process` (stub) y `/result/{id}`, validacion JWT en middleware, limites de concurrencia
+- [ ] 01-03: Modal image con CUDA 12.8, placeholder de pesos, cold-start medido y documentado
+
+### Phase 2: GPU Pipeline
+**Goal**: Un archivo de audio real entra al pipeline y sale un ZIP con 4 stems WAV + lyrics.json + chords.json + metadata.json dentro del presupuesto de tiempo
+**Depends on**: Phase 1
+**Requirements**: PROC-01, PROC-02, PROC-03, PROC-04, PROC-05, PROC-06, PROC-07, PROC-08
+**Success Criteria** (what must be TRUE):
+  1. Un archivo MP3 de 3 minutos procesado devuelve 4 stems WAV separados (vocals, drums, bass, other) correctamente
+  2. El JSON de letras contiene timestamps word-level (WhisperX sobre el stem vocal, no el mix original)
+  3. El JSON de acordes contiene una lista de acordes con timestamps producida por CREMA (o madmom como fallback)
+  4. El pipeline completo para un archivo local termina en <60 segundos desde la llamada al endpoint
+  5. Una URL de YouTube valida se descarga y procesa en <65 segundos en total
+  6. Archivos >50 MB o duracion >10 min son rechazados con error claro antes de arrancar la GPU
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: Modal image con Demucs 4.0.1, pesos baked, `@modal.enter` warm-up, test de separacion real en T4
+- [ ] 02-02: WhisperX 3.8.1 (CUDA 12.8) integrado sobre stem vocal; validacion de timestamps word-level
+- [ ] 02-03: CREMA 0.2.0 (fallback madmom), validacion de Python 3.11, test de compatibilidad antes de integrar
+- [ ] 02-04: yt-dlp + Deno en imagen, cookies via Modal Secret, retry logic (3 intentos), test con URLs reales
+- [ ] 02-05: Empaquetado ZIP final (4 WAV + JSONs), validacion de limites (50 MB / 10 min), medicion de cold-start total
+
+### Phase 3: Swift Client + Auth
+**Goal**: La app Swift puede autenticarse, almacenar el JWT en Keychain y comunicarse con todos los endpoints de la API sin tocar codigo de red en fases posteriores
+**Depends on**: Phase 1
+**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
+**Success Criteria** (what must be TRUE):
+  1. El usuario introduce la contrasena una vez, inicia sesion y la app no vuelve a pedir login durante 90 dias
+  2. Al abrir la app con sesion vigente, el token se lee del Keychain y no se muestra la pantalla de login
+  3. Cuando el token esta proximo a expirar, se renueva silenciosamente sin interrupcion visible para el usuario
+  4. Si el token ha expirado, la app redirige automaticamente a la pantalla de login sin crashear
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: URLSession wrapper con multipart upload, spawn+poll, manejo de errores HTTP
+- [ ] 03-02: Keychain service (Security.framework), JWT storage/retrieval/renewal
+- [ ] 03-03: Login screen (SwiftUI), validacion de token al arranque, redirect automatico en expirado
+
+### Phase 4: Library + Cache
+**Goal**: Las canciones procesadas se persisten en ~/Music/Strata/ con un schema que no necesitara migracion; canciones ya cacheadas cargan sin tocar el servidor
+**Depends on**: Phase 3
+**Requirements**: LIBR-01, LIBR-02
+**Success Criteria** (what must be TRUE):
+  1. Una cancion procesada aparece en ~/Music/Strata/{uuid}/ con 4 stems WAV, lyrics.json, chords.json y metadata.json
+  2. Al abrir la app con canciones en cache, la biblioteca carga instantaneamente sin peticion al servidor
+  3. Si la misma URL de YouTube o el mismo archivo ya esta en cache, la app detecta el hit y no vuelve a procesar
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: Estructura ~/Music/Strata/{uuid}/, library.json index, LibraryStore + CacheManager (@Observable)
+- [ ] 04-02: Cache hit detection (hash de archivo / URL), integracion con pipeline de importacion, carga de stems desde disco
+
+### Phase 5: Multi-Stem Playback
+**Goal**: Los 4 stems suenan perfectamente sincronizados; el usuario puede controlar cada stem y cambiar el tono en tiempo real sin interrumpir la reproduccion
+**Depends on**: Phase 4
+**Requirements**: PLAY-01, PLAY-02, PLAY-03, PLAY-04, PLAY-05, PLAY-06
+**Success Criteria** (what must be TRUE):
+  1. Los 4 stems arrancan en el mismo instante (sin drift audible tras 5 minutos de reproduccion)
+  2. Silenciar o subir el volumen de un stem no afecta a los demas ni produce artefactos de audio
+  3. El usuario puede cambiar el tono en tiempo real (slider) sin que la reproduccion se detenga ni cruja
+  4. El usuario puede saltar a cualquier posicion de la cancion y la reproduccion continua sincronizada desde ese punto
+  5. El usuario puede definir marcadores A/B y la seccion se repite en bucle automaticamente
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: PlaybackEngine (@Observable), AVAudioEngine + 4x AVAudioPlayerNode, shared AVAudioTime para sync frame-accurate
+- [ ] 05-02: AVAudioUnitTimePitch (debounced 50ms), per-stem volume/mute/solo, seek con re-schedule sincronizado
+- [ ] 05-03: A/B loop markers, currentTime publisher para consumo de Display, tests de no-drift a 5 min
+
+### Phase 6: Import + End-to-End Flow
+**Goal**: El usuario arrastra un archivo o pega una URL y ve el progreso paso a paso hasta que la cancion aparece en la biblioteca lista para reproducir
+**Depends on**: Phase 5
+**Requirements**: IMPT-01, IMPT-02, IMPT-03, IMPT-04
+**Success Criteria** (what must be TRUE):
+  1. El usuario arrastra un MP3/WAV/FLAC/M4A a la app y el proceso arranca automaticamente sin pasos extra
+  2. El usuario pega una URL de YouTube y el proceso arranca tras validar que la URL es valida
+  3. La app muestra el estado en tiempo real: validando → subiendo → procesando → listo (o error con mensaje util)
+  4. Una cancion ya procesada importada de nuevo no dispara el pipeline; la app detecta el cache hit y abre la cancion directamente
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: Drag & drop (NSItemProvider) + URL paste import, validacion de formato y URL antes de procesar
+- [ ] 06-02: Estado de procesamiento (ViewModel + polling), UI de progreso con etapas, manejo de errores y reintentos
+- [ ] 06-03: Cache hit detection en flujo de importacion, integracion end-to-end con LibraryStore
+
+### Phase 7: Player UI + Display + Usage
+**Goal**: El usuario puede controlar la reproduccion desde la UI, ver las letras sincronizadas palabra a palabra, los acordes en tiempo real y consultar cuanto GPU ha consumido este mes
+**Depends on**: Phase 6
+**Requirements**: DISP-01, DISP-02, DISP-03, DISP-04, DISP-05, USGR-01, USGR-02, USGR-03, USGR-04
+**Success Criteria** (what must be TRUE):
+  1. Las letras se desplazan automaticamente y la palabra actual se resalta mientras suena; al hacer seek las letras saltan al punto correcto
+  2. El acorde actual se muestra en grande y el siguiente acorde aparece visible antes de que llegue
+  3. La visualizacion de acordes y letras actualiza correctamente al cambiar el tono con el pitch slider
+  4. La forma de onda de cada stem es visible en la UI de reproduccion
+  5. El panel de uso muestra canciones procesadas este mes, coste GPU estimado y barra de progreso hacia el limite de $10
+  6. El servidor devuelve 429 cuando se alcanza el limite mensual y la app lo comunica al usuario con mensaje claro
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: Karaoke view (ScrollView sincronizado con currentTime, word-level highlight con ventana 2-3 palabras)
+- [ ] 07-02: Chord display (timeline scrollable, acorde actual + siguiente, actualiza con pitch offset)
+- [ ] 07-03: Waveform visualization por stem (AVAudioFile + muestras pintadas en Canvas)
+- [ ] 07-04: Controles de transporte (play/pause/seek, progress bar, pitch slider, per-stem volume/mute)
+- [ ] 07-05: Usage panel (server-side tracking, cliente muestra datos, limite 429 con mensaje de usuario)
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Backend Foundation | 2/3 | In Progress|  |
+| 2. GPU Pipeline | 5/5 | Complete   | 2026-03-02 |
+| 3. Swift Client + Auth | 0/3 | Not started | - |
+| 4. Library + Cache | 0/2 | Not started | - |
+| 5. Multi-Stem Playback | 0/3 | Not started | - |
+| 6. Import + End-to-End Flow | 0/3 | Not started | - |
+| 7. Player UI + Display + Usage | 0/5 | Not started | - |
