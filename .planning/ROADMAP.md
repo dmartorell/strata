@@ -113,12 +113,12 @@ Plans:
   2. El usuario pega una URL de YouTube y el proceso arranca tras validar que la URL es valida
   3. La app muestra el estado en tiempo real: validando → subiendo → procesando → listo (o error con mensaje util)
   4. Una cancion ya procesada importada de nuevo no dispara el pipeline; la app detecta el cache hit y abre la cancion directamente
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Drag & drop (NSItemProvider) + URL paste import, validacion de formato y URL antes de procesar
-- [ ] 06-02: Estado de procesamiento (ViewModel + polling), UI de progreso con etapas, manejo de errores y reintentos
-- [ ] 06-03: Cache hit detection en flujo de importacion, integracion end-to-end con LibraryStore
+- [ ] 06-01-PLAN.md — APIClient corregido (/process-file, /process-url, ZIP detection) + ImportPhase enum + ImportViewModel con flujo completo
+- [ ] 06-02-PLAN.md — ImportView (drop zone + paste button + progress UI) + ContentView layout + StrataApp wiring
+- [ ] 06-03-PLAN.md — APIClientProtocol + tests de ImportViewModel (cache hits, errores, flujo end-to-end)
 
 ### Phase 7: Player UI + Display + Usage
 **Goal**: El usuario puede controlar la reproduccion desde la UI, ver las letras sincronizadas palabra a palabra, los acordes en tiempo real y consultar cuanto GPU ha consumido este mes
