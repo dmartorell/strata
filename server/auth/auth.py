@@ -91,3 +91,22 @@ def require_auth(
         raise HTTPException(status_code=401, detail="Token expirado")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Token invalido")
+
+
+@router.post("/renew")
+def renew_token(username: str = Depends(require_auth)):
+    """Renueva el JWT del usuario autenticado.
+
+    El cliente envia el JWT vigente en Authorization: Bearer.
+    require_auth lo valida y devuelve el username.
+    Se emite un nuevo JWT con 90 dias desde ahora — renovacion stateless.
+    """
+    now = datetime.now(timezone.utc)
+    exp = now + timedelta(days=JWT_EXPIRY_DAYS)
+    payload = {
+        "sub": username,
+        "iat": int(now.timestamp()),
+        "exp": int(exp.timestamp()),
+    }
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return {"token": token, "expires_in": JWT_EXPIRY_DAYS * 24 * 3600}
