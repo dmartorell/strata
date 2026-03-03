@@ -16,6 +16,7 @@
 		232F965EE97D72FA2FF8028E /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */; };
 		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
 		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
+		4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */; };
 		67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */; };
 		72FF37944254B7B4C22E5280 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */; };
 		84C9E2F5469C0818EDCCC471 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */; };
@@ -50,6 +51,7 @@
 		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
 		B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		C9C19B9CC9C8FD067882B75A /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
 		D8D47FFC982AD8B039546C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DB21C724D85B39E37F403AA4 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
 		E593073ADB1C99D134D0D20D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				E593073ADB1C99D134D0D20D /* ContentView.swift */,
 				D8D47FFC982AD8B039546C17 /* Info.plist */,
 				50CEC93D212E9EC4ACD0D026 /* App */,
+				F2306A43979BF6A5B5A99180 /* Audio */,
 				4F500C96AF61B39E205EE9EA /* Auth */,
 				1F590A98592212488D896428 /* Library */,
 				0AD10DEBE47F4D7A79D93BEC /* Network */,
@@ -148,6 +151,14 @@
 				56FD53B769C83F162971B249 /* StrataClientTests */,
 				A70C03FF9D8E9B52D4A9B8D9 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F2306A43979BF6A5B5A99180 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */,
+			);
+			path = Audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,6 +267,7 @@
 				67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */,
 				9CCB95F58F69DBEBEA5031C6 /* LibraryStore.swift in Sources */,
 				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
+				4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */,
 				15ECA426E1CAF328EB741A85 /* SongEntry.swift in Sources */,
 				12B7C634C7579D11F4B2B0B7 /* SongMetadata.swift in Sources */,
 				03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */,
