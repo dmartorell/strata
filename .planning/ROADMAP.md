@@ -15,7 +15,7 @@ El proyecto arranca con el backend serverless (Modal GPU), que es la dependencia
 - [x] **Phase 3: Swift Client + Auth** - Cliente Swift con URLSession, JWT en Keychain y pantalla de login (completed 2026-03-03)
 - [x] **Phase 4: Library + Cache** - Cache local ~/Music/Strata/ con schema fijo antes de persistir canciones (completed 2026-03-03)
 - [x] **Phase 5: Multi-Stem Playback** - AVAudioEngine con sync frame-accurate, pitch shift y controles de stem (completed 2026-03-03)
-- [ ] **Phase 6: Import + End-to-End Flow** - Drag & drop, URL de YouTube y UI de progreso conectados al pipeline
+- [x] **Phase 6: Import + End-to-End Flow** - Drag & drop, URL de YouTube y UI de progreso conectados al pipeline (completed 2026-03-03)
 - [ ] **Phase 7: Player UI + Display + Usage** - Controles de reproduccion, karaoke, acordes y panel de uso
 
 ## Phase Details
@@ -152,5 +152,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Swift Client + Auth | 3/3 | Complete   | 2026-03-03 |
 | 4. Library + Cache | 2/2 | Complete   | 2026-03-03 |
 | 5. Multi-Stem Playback | 3/3 | Complete   | 2026-03-03 |
-| 6. Import + End-to-End Flow | 2/3 | In Progress|  |
+| 6. Import + End-to-End Flow | 3/3 | Complete   | 2026-03-03 |
 | 7. Player UI + Display + Usage | 0/5 | Not started | - |

@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 6 of 7 (Import End-to-End Flow) — IN PROGRESS
-Plan: 2 of 3 in current phase (06-02 COMPLETE — ImportView UI + ContentView layout + StrataApp wiring)
-Status: Plan 06-02 COMPLETE — ImportView drop zone + paste URL + progreso, ContentView layout funcional, StrataApp ImportViewModel en environment (CHECKPOINT APROBADO)
-Last activity: 2026-03-04 — Plan 06-02 completo (ImportView.swift, ContentView.swift, StrataApp.swift, commits f636313, 682767a)
+Phase: 6 of 7 (Import End-to-End Flow) — COMPLETE
+Plan: 3 of 3 in current phase (06-03 COMPLETE — ImportViewModel tests)
+Status: Plan 06-03 COMPLETE — ImportAPIClientProtocol, AuthTokenProviderProtocol, MockImportAPIClient, 6 tests pasan sin red real
+Last activity: 2026-03-04 — Plan 06-03 completo (APIClient.swift, ImportViewModel.swift, AuthViewModel.swift, MockAPIClient.swift, ImportViewModelTests.swift, commits 155d7dc, 83e38ea)
 
 Progress: [█████░░░░░] 30%
 
@@ -66,6 +66,7 @@ Progress: [█████░░░░░] 30%
 | Phase 05-multi-stem-playback P03 | 2 | 2 tasks | 2 files |
 | Phase 06-import-end-to-end-flow P01 | 2 | 2 tasks | 5 files |
 | Phase 06-import-end-to-end-flow P02 | 20 | 3 tasks | 4 files |
+| Phase 06-import-end-to-end-flow P03 | 15 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,10 @@ Recent decisions affecting current work:
 - [Phase 06-import-end-to-end-flow P02]: Botón "Pegar URL de YouTube" en toolbar de ContentView (no en ImportView) — mejor jerarquía visual
 - [Phase 06-import-end-to-end-flow P02]: Copia de archivo a temporaryDirectory dentro del closure NSItemProvider — evita que el security-scoped bookmark caduque antes del Task @MainActor
 - [Phase 06-import-end-to-end-flow P02]: isErrorOrReady como computed var en ImportView — progressSection visible en ready y error para que el usuario vea el resultado
+- [Phase 06-import-end-to-end-flow P03]: ImportAPIClientProtocol separado de APIClientProtocol (auth): evita mezclar contratos de auth e import en el mismo protocolo
+- [Phase 06-import-end-to-end-flow P03]: Protocol extension con pollJobStatus defaults: mantiene retrocompatibilidad en call sites existentes
+- [Phase 06-import-end-to-end-flow P03]: AuthTokenProviderProtocol minimal (solo token): ImportViewModel no necesita login/logout
+- [Phase 06-import-end-to-end-flow P03]: MockImportAPIClient como actor Swift: Sendable garantizado sin @unchecked
 
 ### Pending Todos
 
@@ -137,5 +142,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 06-02-PLAN.md — ImportView UI + ContentView layout + StrataApp ImportViewModel wiring (commits f636313, 682767a)
+Stopped at: Completed 06-03-PLAN.md — ImportViewModel tests (commits 155d7dc, 83e38ea)
 Resume file: None
