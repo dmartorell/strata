@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-02T23:27:45.017Z"
+last_updated: "2026-03-03T07:21:11.179Z"
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -18,14 +18,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Importar una cancion (archivo o YouTube) → esperar ~1 minuto → reproduccion interactiva con stems separados, letras y acordes
-**Current focus:** Phase 2 — GPU Pipeline
+**Current focus:** Phase 3 — Swift Client + Auth
 
 ## Current Position
 
-Phase: 2 of 7 (GPU Pipeline)
-Plan: 6 of 6 in current phase (02-06 COMPLETE — error propagation pipeline YouTube cerrado)
-Status: Phase 02 complete — plan 02-06 completo (gap closure UAT Test 5)
-Last activity: 2026-03-03 — Plan 02-06 completo (23 unit tests pass, error propagation en process_youtube/process/get_result)
+Phase: 3 of 7 (Swift Client + Auth)
+Plan: 1 of 3 in current phase (03-01 COMPLETE — Xcode project + APIClient network layer)
+Status: Phase 03 en curso — plan 03-01 completo (proyecto Xcode, APIClient 5 endpoints, 12/12 tests)
+Last activity: 2026-03-03 — Plan 03-01 completo (proyecto Xcode macOS 14.0 + APIClient con HTTPTransport mock)
 
 Progress: [████░░░░░░] 25%
 
@@ -55,6 +55,7 @@ Progress: [████░░░░░░] 25%
 | Phase 02-gpu-pipeline P04 | 5 | 3 tasks | 8 files |
 | Phase 02-gpu-pipeline P05 | 3 | 3 tasks | 4 files |
 | Phase 02-gpu-pipeline P06 | 25 | 3 tasks | 3 files |
+| Phase 03-swift-client-auth P01 | 70 | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 02-gpu-pipeline P06]: validate_audio() queda fuera del try/except en process() — su ValueError va al HTTP handler como 400, no como error de pipeline
 - [Phase 02-gpu-pipeline P06]: process_youtube() añade modal.current_function_call_id() y modal.Dict propios — método Modal separado de process()
 - [Phase 02-gpu-pipeline P06]: status.startswith('error:') como patrón de error en GET /result/{job_id} → HTTP 500 con mensaje del pipeline
+- [Phase 03-swift-client-auth]: HTTPTransport protocol en lugar de URLProtocol mock: evita bugs de concurrencia con Swift Testing
+- [Phase 03-swift-client-auth]: project.yml con xcodegen: proyecto Xcode reproducible y versionable en git
 
 ### Pending Todos
 
@@ -100,5 +103,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 02-06-PLAN.md — Gap closure error propagation YouTube pipeline (commits de6f8c3, b5c0e5c, f0986b0)
+Stopped at: Completed 03-01-PLAN.md — Xcode project + APIClient network layer (commits f27792b, 1232302, 62c95e4)
 Resume file: None
