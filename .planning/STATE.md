@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T21:43:51.535Z"
+last_updated: "2026-03-03T22:00:24.222Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 3
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 14
+  completed_plans: 13
 ---
 
 # Project State
@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 3 of 7 (Swift Client + Auth) — COMPLETE
-Plan: 3 of 3 in current phase (03-03 COMPLETE — AuthViewModel + LoginView + StrataApp, flujo end-to-end aprobado)
-Status: Phase 03 completa — todos los planes completados (APIClient, KeychainService, AuthViewModel + UI)
-Last activity: 2026-03-03 — Plan 03-03 completo (flujo auth end-to-end verificado manualmente, sesion persiste 90 dias)
+Phase: 4 of 7 (Library Cache) — IN PROGRESS
+Plan: 1 of 3 in current phase (04-01 COMPLETE — SongEntry + SongMetadata + CacheManager + LibraryStore)
+Status: Phase 04 en progreso — Plan 01 completado (model + persistencia local)
+Last activity: 2026-03-03 — Plan 04-01 completo (4 ficheros Swift nuevos en StrataClient/Library/, BUILD SUCCEEDED)
 
 Progress: [████░░░░░░] 25%
 
@@ -59,6 +59,7 @@ Progress: [████░░░░░░] 25%
 | Phase 03-swift-client-auth P02 | 16 | 2 tasks | 6 files |
 | Phase 03-swift-client-auth P03 | 65 | 2 tasks | 5 files |
 | Phase 03-swift-client-auth P03 | 75 | 3 tasks | 5 files |
+| Phase 04-library-cache P01 | 10 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 03-swift-client-auth]: @Observable @MainActor AuthViewModel: patrón macOS 14 para ViewModels — sin ObservableObject/StateObject
 - [Phase 03-swift-client-auth]: checkStoredToken síncrono en init: sesión restaurada del Keychain antes del primer render — sin flash de LoginView
 - [Phase 03-swift-client-auth]: Ventana 900x600 por defecto con .windowResizability(.contentMinSize): tamano util para ContentView sin forzar redimension al usuario
+- [Phase 04-library-cache]: CacheManager como actor Swift: aislamiento de concurrencia para todo I/O de filesystem en Library
+- [Phase 04-library-cache]: Schema additive-only en SongEntry: campos nuevos como optional con nil por defecto — sin migraciones disruptivas
 
 ### Pending Todos
 
@@ -113,5 +116,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 03-03-PLAN.md — AuthViewModel + LoginView + StrataApp (commits 3be8f61, 67bf999, 3d271ca, ba86b9d)
+Stopped at: Completed 04-01-PLAN.md — SongEntry + SongMetadata + CacheManager + LibraryStore (commits 10e10d6, 572d5a8, 23ece9e)
 Resume file: None

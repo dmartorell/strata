@@ -49,8 +49,8 @@
 
 ### Library
 
-- [ ] **LIBR-01**: Processed songs are cached locally in ~/Music/Strata/ with stems + JSON files
-- [ ] **LIBR-02**: Previously processed songs load instantly from local cache without server
+- [x] **LIBR-01**: Processed songs are cached locally in ~/Music/Strata/ with stems + JSON files
+- [x] **LIBR-02**: Previously processed songs load instantly from local cache without server
 
 ### Usage Tracking
 
@@ -130,8 +130,8 @@
 | DISP-03 | Phase 7 | Pending |
 | DISP-04 | Phase 7 | Pending |
 | DISP-05 | Phase 7 | Pending |
-| LIBR-01 | Phase 4 | Pending |
-| LIBR-02 | Phase 4 | Pending |
+| LIBR-01 | Phase 4 | Complete |
+| LIBR-02 | Phase 4 | Complete |
 | USGR-01 | Phase 7 | Pending |
 | USGR-02 | Phase 7 | Pending |
 | USGR-03 | Phase 7 | Pending |
