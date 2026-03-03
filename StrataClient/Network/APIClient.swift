@@ -139,7 +139,7 @@ struct APIClient: Sendable {
     func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String {
         let endpoint = APIEndpoint.processFile
         var multipart = MultipartRequest()
-        multipart.addFile(name: "file", fileName: fileName, mimeType: mimeType, data: fileData)
+        multipart.addFile(name: "audio_file", fileName: fileName, mimeType: mimeType, data: fileData)
         let body = multipart.finalize()
 
         var request = makeRequest(endpoint: endpoint, token: token)
