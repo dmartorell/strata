@@ -66,12 +66,12 @@ Plans:
   2. Al abrir la app con sesion vigente, el token se lee del Keychain y no se muestra la pantalla de login
   3. Cuando el token esta proximo a expirar, se renueva silenciosamente sin interrupcion visible para el usuario
   4. Si el token ha expirado, la app redirige automaticamente a la pantalla de login sin crashear
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: URLSession wrapper con multipart upload, spawn+poll, manejo de errores HTTP
-- [ ] 03-02: Keychain service (Security.framework), JWT storage/retrieval/renewal
-- [ ] 03-03: Login screen (SwiftUI), validacion de token al arranque, redirect automatico en expirado
+- [ ] 03-01-PLAN.md — Proyecto Xcode macOS + APIClient completo (URLSession, multipart, polling, error types)
+- [ ] 03-02-PLAN.md — KeychainService (Security.framework) + endpoint POST /auth/renew en servidor
+- [ ] 03-03-PLAN.md — AuthViewModel (@Observable) + LoginView + StrataApp root auth gate
 
 ### Phase 4: Library + Cache
 **Goal**: Las canciones procesadas se persisten en ~/Music/Strata/ con un schema que no necesitara migracion; canciones ya cacheadas cargan sin tocar el servidor
