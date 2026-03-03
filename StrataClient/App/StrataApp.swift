@@ -4,6 +4,7 @@ import SwiftUI
 struct StrataApp: App {
     @State private var authViewModel = AuthViewModel()
     @State private var libraryStore: LibraryStore
+    @State private var playbackEngine = PlaybackEngine()
 
     init() {
         // try! es aceptable: si ~/Music no es accesible la app no puede funcionar
@@ -17,6 +18,7 @@ struct StrataApp: App {
                 if authViewModel.isAuthenticated {
                     ContentView()
                         .environment(libraryStore)
+                        .environment(playbackEngine)
                 } else {
                     LoginView()
                 }
