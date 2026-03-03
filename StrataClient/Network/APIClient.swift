@@ -12,12 +12,11 @@ struct ProcessResponse: Decodable {
 
 struct JobStatusResponse: Decodable {
     let status: String
-    let result: JobResult?
 }
 
-struct JobResult: Decodable {
-    // Placeholder para Phase 6 — estructura completa de stems, lyrics, chords
-    // Se expande cuando el servidor devuelva datos reales de pipeline
+struct JobResult: Sendable {
+    var zipData: Data? = nil
+    var status: String = ""
 }
 
 struct UsageResponse: Decodable {
@@ -88,7 +87,6 @@ struct APIClient: Sendable {
         self.transport = transport
     }
 
-    // Convenience initializer with URLSession (for backwards compatibility)
     init(session: URLSession) {
         self.transport = session
     }
@@ -109,7 +107,7 @@ struct APIClient: Sendable {
         return decoded.token
     }
 
-    /// POST /auth/renew — renovar JWT (endpoint a implementar en servidor en 03-02)
+    /// POST /auth/renew — renovar JWT
     func renewToken(current: String) async throws -> String {
         let endpoint = APIEndpoint.renew
         let request = makeRequest(endpoint: endpoint, token: current)
@@ -121,9 +119,9 @@ struct APIClient: Sendable {
         return decoded.token
     }
 
-    /// POST /process — upload multipart de audio, devuelve job_id
+    /// POST /process-file — upload multipart de audio, devuelve job_id
     func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String {
-        let endpoint = APIEndpoint.process
+        let endpoint = APIEndpoint.processFile
         var multipart = MultipartRequest()
         multipart.addFile(name: "file", fileName: fileName, mimeType: mimeType, data: fileData)
         let body = multipart.finalize()
@@ -131,6 +129,20 @@ struct APIClient: Sendable {
         var request = makeRequest(endpoint: endpoint, token: token)
         request.setValue(multipart.contentTypeHeader, forHTTPHeaderField: "Content-Type")
         request.httpBody = body
+
+        let (data, response) = try await transport.data(for: request)
+        try checkResponse(response, isAuthenticated: true)
+
+        let decoded = try decode(ProcessResponse.self, from: data)
+        return decoded.job_id
+    }
+
+    /// POST /process-url — envía URL de YouTube, devuelve job_id
+    func uploadURL(urlString: String, token: String) async throws -> String {
+        let endpoint = APIEndpoint.processURL
+        var request = makeRequest(endpoint: endpoint, token: token)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["url": urlString])
 
         let (data, response) = try await transport.data(for: request)
         try checkResponse(response, isAuthenticated: true)
@@ -158,11 +170,17 @@ struct APIClient: Sendable {
             let (data, response) = try await transport.data(for: request)
             try checkResponse(response, isAuthenticated: true)
 
+            let httpResponse = response as! HTTPURLResponse
+            let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type") ?? ""
+            if contentType.hasPrefix("application/zip") {
+                return JobResult(zipData: data, status: "completed")
+            }
+
             let statusResponse = try decode(JobStatusResponse.self, from: data)
             let status = statusResponse.status
 
             if status == "completed" {
-                return statusResponse.result ?? JobResult()
+                return JobResult(zipData: nil, status: "completed")
             } else if status.hasPrefix("error:") {
                 let message = String(status.dropFirst("error:".count))
                 throw APIError.processingFailed(message)
@@ -190,7 +208,6 @@ struct APIClient: Sendable {
 
     // MARK: - Private Helpers
 
-    /// Construye URLRequest inyectando Authorization: Bearer si token != nil
     private func makeRequest(endpoint: APIEndpoint, token: String?) -> URLRequest {
         var request = URLRequest(url: endpoint.url)
         request.httpMethod = endpoint.method
@@ -200,15 +217,12 @@ struct APIClient: Sendable {
         return request
     }
 
-    /// Extrae HTTPURLResponse, lanza .unauthorized en 401, .httpError(code) en otros no-2xx
     private func checkResponse(_ response: URLResponse, isAuthenticated: Bool) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
         let code = httpResponse.statusCode
         if code == 401 {
-            // En requests autenticadas: lanza .unauthorized
-            // En login (no autenticada): lanza .httpError(401) para señalar credenciales inválidas
             throw isAuthenticated ? APIError.unauthorized : APIError.httpError(401)
         }
         guard (200..<300).contains(code) else {
