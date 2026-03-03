@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:05:47.034Z"
+last_updated: "2026-03-03T22:26:39.257Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 14
-  completed_plans: 14
+  total_plans: 20
+  completed_plans: 16
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 5 of 7 (Multi-Stem Playback) — IN PROGRESS
-Plan: 1 of 3 in current phase (05-01 COMPLETE — PlaybackEngine con AVAudioEngine 4 stems sincronizados)
-Status: Phase 05 en progreso — Plan 01 completado (PlaybackEngine.swift, grafo audio, play/pause/seek, currentTime 60fps)
-Last activity: 2026-03-03 — Plan 05-01 completo (StrataClient/Audio/PlaybackEngine.swift creado, BUILD SUCCEEDED)
+Plan: 2 of 3 in current phase (05-02 COMPLETE — pitch shift +-6 semitones + per-stem volume/mute/solo via applyVolumes())
+Status: Phase 05 en progreso — Plan 02 completado (setPitch, setVolume, setMute, setSolo, Stem enum, BUILD SUCCEEDED)
+Last activity: 2026-03-03 — Plan 05-02 completo (StrataClient/Audio/PlaybackEngine.swift extendido, commit 4d0fa75)
 
 Progress: [████░░░░░░] 25%
 
@@ -62,6 +62,7 @@ Progress: [████░░░░░░] 25%
 | Phase 04-library-cache P01 | 10 | 3 tasks | 4 files |
 | Phase 04-library-cache P02 | 1 | 2 tasks | 2 files |
 | Phase 05-multi-stem-playback P01 | 1 | 1 task | 2 files |
+| Phase 05-multi-stem-playback P02 | 5 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,8 @@ Recent decisions affecting current work:
 - [Phase 05-multi-stem-playback P01]: Foundation.Timer sobre CADisplayLink para currentTime a 60fps: mas simple en macOS, evita dependencia de CoreVideo
 - [Phase 05-multi-stem-playback P01]: deinit incompatible con @MainActor Swift 5.9 — documentado; cleanup via stop() explicito por el caller
 - [Phase 05-multi-stem-playback P01]: xcodegen generate para incorporar Audio/ al proyecto — sin edicion manual de pbxproj
+- [Phase 05-multi-stem-playback]: outputVolume = 0 para mute/solo en lugar de detach/reattach — evita clicks y pops en el audio
+- [Phase 05-multi-stem-playback]: applyVolumes() como punto centralizado para stemMixers[i].outputVolume — toda mutacion de volumen pasa por un solo punto
 
 ### Pending Todos
 
@@ -123,5 +126,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 05-01-PLAN.md — PlaybackEngine AVAudioEngine 4-stem sync (commit 0356c9c)
+Stopped at: Completed 05-02-PLAN.md — pitch shift + per-stem volume/mute/solo (commit 4d0fa75)
 Resume file: None
