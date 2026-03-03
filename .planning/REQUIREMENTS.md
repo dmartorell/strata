@@ -14,10 +14,10 @@
 
 ### Audio Import
 
-- [ ] **IMPT-01**: User can import audio by dragging MP3/WAV/FLAC/M4A files onto the app
-- [ ] **IMPT-02**: User can import audio by pasting a YouTube URL
-- [ ] **IMPT-03**: App validates input (supported format, valid YouTube URL) before processing
-- [ ] **IMPT-04**: App shows processing state feedback: validating → uploading → processing → ready / error
+- [x] **IMPT-01**: User can import audio by dragging MP3/WAV/FLAC/M4A files onto the app
+- [x] **IMPT-02**: User can import audio by pasting a YouTube URL
+- [x] **IMPT-03**: App validates input (supported format, valid YouTube URL) before processing
+- [x] **IMPT-04**: App shows processing state feedback: validating → uploading → processing → ready / error
 
 ### Audio Processing (Server)
 
@@ -37,7 +37,7 @@
 - [x] **PLAY-03**: User can mute/solo individual stems
 - [x] **PLAY-04**: User can play, pause, and seek to any position in the song
 - [x] **PLAY-05**: User can shift pitch in real time without stopping playback (AVAudioUnitTimePitch)
-- [ ] **PLAY-06**: User can set A/B loop markers to repeat a section continuously
+- [x] **PLAY-06**: User can set A/B loop markers to repeat a section continuously
 
 ### Display
 
@@ -107,10 +107,10 @@
 | AUTH-02 | Phase 3 | Complete |
 | AUTH-03 | Phase 3 | Complete |
 | AUTH-04 | Phase 3 | Complete |
-| IMPT-01 | Phase 6 | Pending |
-| IMPT-02 | Phase 6 | Pending |
-| IMPT-03 | Phase 6 | Pending |
-| IMPT-04 | Phase 6 | Pending |
+| IMPT-01 | Phase 6 | Complete |
+| IMPT-02 | Phase 6 | Complete |
+| IMPT-03 | Phase 6 | Complete |
+| IMPT-04 | Phase 6 | Complete |
 | PROC-01 | Phase 2 | Complete |
 | PROC-02 | Phase 2 | Complete |
 | PROC-03 | Phase 2 | Complete |
@@ -124,7 +124,7 @@
 | PLAY-03 | Phase 5 | Complete |
 | PLAY-04 | Phase 5 | Complete |
 | PLAY-05 | Phase 5 | Complete |
-| PLAY-06 | Phase 5 | Pending |
+| PLAY-06 | Phase 5 | Complete |
 | DISP-01 | Phase 7 | Pending |
 | DISP-02 | Phase 7 | Pending |
 | DISP-03 | Phase 7 | Pending |

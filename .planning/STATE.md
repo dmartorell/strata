@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:29:49.456Z"
+last_updated: "2026-03-03T22:44:00Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 20
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 5 of 7 (Multi-Stem Playback) — IN PROGRESS
-Plan: 3 of 3 in current phase (05-03 COMPLETE — A/B loop + AVAudioEngineConfigurationChange + PlaybackEngine wired en StrataApp)
-Status: Phase 05 COMPLETA — todos los requisitos PLAY-01 a PLAY-06 cubiertos (BUILD SUCCEEDED)
-Last activity: 2026-03-03 — Plan 05-03 completo (PlaybackEngine.swift + StrataApp.swift, commits ace9133, 8f31a83)
+Phase: 6 of 7 (Import End-to-End Flow) — IN PROGRESS
+Plan: 1 of 3 in current phase (06-01 COMPLETE — APIClient corregido + ImportViewModel con flujo completo)
+Status: Plan 06-01 COMPLETE — APIEndpoint processFile/processURL, pollJobStatus ZIP detection, ImportViewModel wired (BUILD SUCCEEDED)
+Last activity: 2026-03-03 — Plan 06-01 completo (APIClient.swift, APIEndpoint.swift, ImportPhase.swift, ImportViewModel.swift, commits 2569503, 4378fe2)
 
-Progress: [████░░░░░░] 25%
+Progress: [█████░░░░░] 28%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [████░░░░░░] 25%
 | Phase 05-multi-stem-playback P01 | 1 | 1 task | 2 files |
 | Phase 05-multi-stem-playback P02 | 5 | 1 tasks | 1 files |
 | Phase 05-multi-stem-playback P03 | 2 | 2 tasks | 2 files |
+| Phase 06-import-end-to-end-flow P01 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase 05-multi-stem-playback]: applyVolumes() como punto centralizado para stemMixers[i].outputVolume — toda mutacion de volumen pasa por un solo punto
 - [Phase 05-multi-stem-playback]: completion handler .dataPlayedBack como re-schedule del loop A/B: sin timers, sin drift
 - [Phase 05-multi-stem-playback]: handleConfigurationChange guarda wasPlaying/savedTime para restaurar reproduccion tras cambio de dispositivo
+- [Phase 06-import-end-to-end-flow P01]: extractToTemp como función nonisolated libre para Task.detached; materializeSong llamado con await en @MainActor context tras el detached — respeta actor isolation de CacheManager
+- [Phase 06-import-end-to-end-flow P01]: JobResult redefinido como Sendable struct no-Decodable: zipData construido desde raw Data del response; JobStatusResponse.result eliminado por obsoleto
+- [Phase 06-import-end-to-end-flow P01]: ZIPFoundation añadido vía project.yml + xcodegen generate — sin edición manual de project.pbxproj
 
 ### Pending Todos
 
@@ -129,5 +133,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 05-03-PLAN.md — A/B loop + interrupciones + PlaybackEngine en StrataApp (commits ace9133, 8f31a83)
+Stopped at: Completed 06-01-PLAN.md — APIClient endpoints reales + ImportViewModel flujo completo (commits 2569503, 4378fe2)
 Resume file: None
