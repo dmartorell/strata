@@ -149,7 +149,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 2/3 | In Progress|  |
 | 2. GPU Pipeline | 5/5 | Complete   | 2026-03-02 |
-| 3. Swift Client + Auth | 1/3 | In Progress|  |
+| 3. Swift Client + Auth | 2/3 | In Progress|  |
 | 4. Library + Cache | 0/2 | Not started | - |
 | 5. Multi-Stem Playback | 0/3 | Not started | - |
 | 6. Import + End-to-End Flow | 0/3 | Not started | - |

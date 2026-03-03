@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T07:21:11.179Z"
+last_updated: "2026-03-03T07:40:32.608Z"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 3 of 7 (Swift Client + Auth)
-Plan: 1 of 3 in current phase (03-01 COMPLETE — Xcode project + APIClient network layer)
-Status: Phase 03 en curso — plan 03-01 completo (proyecto Xcode, APIClient 5 endpoints, 12/12 tests)
-Last activity: 2026-03-03 — Plan 03-01 completo (proyecto Xcode macOS 14.0 + APIClient con HTTPTransport mock)
+Plan: 2 of 3 in current phase (03-02 COMPLETE — KeychainService + POST /auth/renew)
+Status: Phase 03 en curso — plan 03-02 completo (KeychainService upsert, /auth/renew stateless, 5+8 tests)
+Last activity: 2026-03-03 — Plan 03-02 completo (KeychainService Security.framework + endpoint /auth/renew FastAPI)
 
 Progress: [████░░░░░░] 25%
 
@@ -56,6 +56,7 @@ Progress: [████░░░░░░] 25%
 | Phase 02-gpu-pipeline P05 | 3 | 3 tasks | 4 files |
 | Phase 02-gpu-pipeline P06 | 25 | 3 tasks | 3 files |
 | Phase 03-swift-client-auth P01 | 70 | 2 tasks | 15 files |
+| Phase 03-swift-client-auth P02 | 16 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - [Phase 02-gpu-pipeline P06]: status.startswith('error:') como patrón de error en GET /result/{job_id} → HTTP 500 con mensaje del pipeline
 - [Phase 03-swift-client-auth]: HTTPTransport protocol en lugar de URLProtocol mock: evita bugs de concurrencia con Swift Testing
 - [Phase 03-swift-client-auth]: project.yml con xcodegen: proyecto Xcode reproducible y versionable en git
+- [Phase 03-swift-client-auth]: kSecAttrAccessible configurable via init: produccion usa AfterFirstUnlockThisDeviceOnly, tests usan Always para compat con firma ad-hoc
+- [Phase 03-swift-client-auth]: Upsert Keychain: Add-first + Update-if-duplicate (vs Update-first del plan) — mas robusto con firma ad-hoc
+- [Phase 03-swift-client-auth]: require_auth reutilizado en /auth/renew sin cambios — sin duplicacion de logica de validacion JWT
 
 ### Pending Todos
 
@@ -103,5 +107,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 03-01-PLAN.md — Xcode project + APIClient network layer (commits f27792b, 1232302, 62c95e4)
+Stopped at: Completed 03-02-PLAN.md — KeychainService + POST /auth/renew (commits 6918124, dcb49ef, 11315ee, 1a3dde5)
 Resume file: None
