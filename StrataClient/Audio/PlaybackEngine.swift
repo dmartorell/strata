@@ -2,6 +2,15 @@ import AVFAudio
 import Foundation
 import Observation
 
+// MARK: - Stem
+
+enum Stem: Int, CaseIterable {
+    case vocals = 0
+    case drums = 1
+    case bass = 2
+    case other = 3
+}
+
 // MARK: - PlaybackEngine
 // Nota: deinit no es compatible con @MainActor en Swift 5.9.
 // Llama stop() explicitamente antes de soltar la referencia para liberar el engine.
@@ -15,7 +24,7 @@ final class PlaybackEngine {
     var currentTime: TimeInterval = 0
     var duration: TimeInterval = 0
     var isPlaying: Bool = false
-    var pitchSemitones: Int = 0         // Plan 02 implementa el setter
+    var pitchSemitones: Int = 0
     var loopStart: TimeInterval? = nil  // Plan 03 implementa la logica
     var loopEnd: TimeInterval? = nil    // Plan 03 implementa la logica
 
@@ -32,6 +41,9 @@ final class PlaybackEngine {
 
     private var seekOffset: TimeInterval = 0
     private var updateTimer: Timer?
+    private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
+    private var stemMuted: [Bool] = [false, false, false, false]
+    private var soloedStem: Int? = nil
 
     // MARK: - Public API
 
@@ -68,6 +80,9 @@ final class PlaybackEngine {
         currentTime = 0
         isPlaying = false
         pitchSemitones = 0
+        stemVolumes = [1.0, 1.0, 1.0, 1.0]
+        stemMuted = [false, false, false, false]
+        soloedStem = nil
     }
 
     func play() {
@@ -110,7 +125,56 @@ final class PlaybackEngine {
         }
     }
 
+    // MARK: - Pitch
+
+    func setPitch(semitones: Int) {
+        let clamped = max(-6, min(6, semitones))
+        pitchSemitones = clamped
+        timePitchNode.pitch = Float(clamped * 100)
+    }
+
+    // MARK: - Per-Stem Volume / Mute / Solo
+
+    func setVolume(_ volume: Float, for stem: Int) {
+        guard stem >= 0 && stem < 4 else { return }
+        stemVolumes[stem] = max(0.0, min(1.0, volume))
+        applyVolumes()
+    }
+
+    func getVolume(for stem: Int) -> Float {
+        guard stem >= 0 && stem < 4 else { return 0 }
+        return stemVolumes[stem]
+    }
+
+    func setMute(_ muted: Bool, for stem: Int) {
+        guard stem >= 0 && stem < 4 else { return }
+        stemMuted[stem] = muted
+        applyVolumes()
+    }
+
+    func isMuted(_ stem: Int) -> Bool {
+        guard stem >= 0 && stem < 4 else { return false }
+        return stemMuted[stem]
+    }
+
+    func setSolo(_ stem: Int?) {
+        soloedStem = stem
+        applyVolumes()
+    }
+
     // MARK: - Private
+
+    private func applyVolumes() {
+        for i in 0..<min(4, stemMixers.count) {
+            let volume: Float
+            if let soloed = soloedStem {
+                volume = (i == soloed && !stemMuted[i]) ? stemVolumes[i] : 0.0
+            } else {
+                volume = stemMuted[i] ? 0.0 : stemVolumes[i]
+            }
+            stemMixers[i].outputVolume = volume
+        }
+    }
 
     private func scheduleAndPlay(from framePosition: AVAudioFramePosition) {
         players.forEach { $0.stop() }
