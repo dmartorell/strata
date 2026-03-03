@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:00:24.222Z"
+last_updated: "2026-03-03T22:05:47.034Z"
 progress:
-  total_phases: 5
-  completed_phases: 3
+  total_phases: 6
+  completed_phases: 4
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 4 of 7 (Library Cache) — IN PROGRESS
-Plan: 2 of 3 in current phase (04-02 COMPLETE — CacheManager extensions + LibraryStore wiring en StrataApp)
-Status: Phase 04 en progreso — Plan 02 completado (SHA256 + YouTube ID + materializeSong + StrataApp wiring)
-Last activity: 2026-03-03 — Plan 04-02 completo (CacheManager.swift extendido, StrataApp.swift actualizado, BUILD SUCCEEDED)
+Phase: 5 of 7 (Multi-Stem Playback) — IN PROGRESS
+Plan: 1 of 3 in current phase (05-01 COMPLETE — PlaybackEngine con AVAudioEngine 4 stems sincronizados)
+Status: Phase 05 en progreso — Plan 01 completado (PlaybackEngine.swift, grafo audio, play/pause/seek, currentTime 60fps)
+Last activity: 2026-03-03 — Plan 05-01 completo (StrataClient/Audio/PlaybackEngine.swift creado, BUILD SUCCEEDED)
 
 Progress: [████░░░░░░] 25%
 
@@ -61,6 +61,7 @@ Progress: [████░░░░░░] 25%
 | Phase 03-swift-client-auth P03 | 75 | 3 tasks | 5 files |
 | Phase 04-library-cache P01 | 10 | 3 tasks | 4 files |
 | Phase 04-library-cache P02 | 1 | 2 tasks | 2 files |
+| Phase 05-multi-stem-playback P01 | 1 | 1 task | 2 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,9 @@ Recent decisions affecting current work:
 - [Phase 04-library-cache]: Schema additive-only en SongEntry: campos nuevos como optional con nil por defecto — sin migraciones disruptivas
 - [Phase 04-library-cache P02]: try! en CacheManager init() en StrataApp: si ~/Music no es accesible la app no puede funcionar — error fatal aceptable
 - [Phase 04-library-cache P02]: Group {} en WindowGroup body: aplica .environment(authViewModel) una sola vez en lugar de duplicarlo en cada rama
+- [Phase 05-multi-stem-playback P01]: Foundation.Timer sobre CADisplayLink para currentTime a 60fps: mas simple en macOS, evita dependencia de CoreVideo
+- [Phase 05-multi-stem-playback P01]: deinit incompatible con @MainActor Swift 5.9 — documentado; cleanup via stop() explicito por el caller
+- [Phase 05-multi-stem-playback P01]: xcodegen generate para incorporar Audio/ al proyecto — sin edicion manual de pbxproj
 
 ### Pending Todos
 
@@ -119,5 +123,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 04-02-PLAN.md — CacheManager extensions + StrataApp LibraryStore wiring (commits 35b4929, 5d4ec3b)
+Stopped at: Completed 05-01-PLAN.md — PlaybackEngine AVAudioEngine 4-stem sync (commit 0356c9c)
 Resume file: None

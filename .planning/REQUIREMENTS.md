@@ -32,10 +32,10 @@
 
 ### Playback
 
-- [ ] **PLAY-01**: User can play 4 stems in perfect sync (no drift over time) via AVAudioEngine
+- [x] **PLAY-01**: User can play 4 stems in perfect sync (no drift over time) via AVAudioEngine
 - [ ] **PLAY-02**: User can control volume independently per stem
 - [ ] **PLAY-03**: User can mute/solo individual stems
-- [ ] **PLAY-04**: User can play, pause, and seek to any position in the song
+- [x] **PLAY-04**: User can play, pause, and seek to any position in the song
 - [ ] **PLAY-05**: User can shift pitch in real time without stopping playback (AVAudioUnitTimePitch)
 - [ ] **PLAY-06**: User can set A/B loop markers to repeat a section continuously
 
@@ -119,10 +119,10 @@
 | PROC-06 | Phase 2 | Complete |
 | PROC-07 | Phase 2 | Complete |
 | PROC-08 | Phase 2 | Complete |
-| PLAY-01 | Phase 5 | Pending |
+| PLAY-01 | Phase 5 | Complete |
 | PLAY-02 | Phase 5 | Pending |
 | PLAY-03 | Phase 5 | Pending |
-| PLAY-04 | Phase 5 | Pending |
+| PLAY-04 | Phase 5 | Complete |
 | PLAY-05 | Phase 5 | Pending |
 | PLAY-06 | Phase 5 | Pending |
 | DISP-01 | Phase 7 | Pending |

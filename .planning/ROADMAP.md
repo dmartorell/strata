@@ -151,6 +151,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. GPU Pipeline | 5/5 | Complete   | 2026-03-02 |
 | 3. Swift Client + Auth | 3/3 | Complete   | 2026-03-03 |
 | 4. Library + Cache | 2/2 | Complete   | 2026-03-03 |
-| 5. Multi-Stem Playback | 0/3 | Not started | - |
+| 5. Multi-Stem Playback | 1/3 | In Progress|  |
 | 6. Import + End-to-End Flow | 0/3 | Not started | - |
 | 7. Player UI + Display + Usage | 0/5 | Not started | - |
