@@ -1,27 +1,39 @@
 import Testing
 import Foundation
+import Security
 @testable import StrataClient
 
 // NOTA: Estos tests usan el Keychain real del entorno de test (no mockeado).
 // Security.framework no tiene mock oficial y el comportamiento real es lo que importa.
 //
-// AVISO IMPORTANTE: Si el test runner ejecuta con firma ad-hoc (sin signing identity
-// "Apple Development"), los tests pueden fallar con errSecAuthFailed (-25293).
-// Para evitarlo, asegurar que el target StrataClientTests tiene CODE_SIGN_IDENTITY
-// = "Apple Development" y el mismo DEVELOPMENT_TEAM que StrataClient.
+// ENTORNO DE TEST: Se usa kSecAttrAccessibleAlways (deprecated pero funcional en macOS tests)
+// para que los tests funcionen con firma ad-hoc sin necesidad de DEVELOPMENT_TEAM configurado.
+// La app en produccion usa kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly via el initializer
+// sin argumentos de KeychainService.
 //
-// Para ejecutar: xcodebuild test -project StrataClient.xcodeproj -scheme StrataClient
-//   -destination 'platform=macOS' -only-testing:StrataClientTests/KeychainServiceTests
+// AVISO: Si los tests fallan con errSecAuthFailed (-25293) o errSecNoSuchKeychain (-25300),
+// verificar que el proceso de test tiene acceso al login.keychain-db del usuario.
 
 // MARK: - KeychainService Tests
 
-@Suite("KeychainService")
+// .serialized: los tests de Keychain no son seguros para ejecucion paralela
+// porque comparten el mismo slot service/account en el Keychain del sistema.
+@Suite("KeychainService", .serialized)
 struct KeychainServiceTests {
-    // Usamos una key de test distinta para no interferir con datos reales
-    // KeychainService usa service="com.strata.client", account="jwt-token"
+
+    // Service/account unicos para tests — no interfieren con datos reales de la app
+    let testService = "com.strata.client.tests"
+    let testAccount = "jwt-token-test"
 
     func makeService() -> KeychainService {
-        return KeychainService()
+        // kSecAttrAccessibleAlways: permite acceso sin restriccion de desbloqueo.
+        // Usamos esto en tests para evitar el requisito de firma Apple Development
+        // que kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly impone en macOS.
+        return KeychainService(
+            service: testService,
+            account: testAccount,
+            accessible: kSecAttrAccessibleAlways
+        )
     }
 
     @Test("saveToken guarda el JWT y loadToken devuelve el mismo String")

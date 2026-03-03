@@ -15,6 +15,7 @@
 		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
 		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
 		67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */; };
+		84C9E2F5469C0818EDCCC471 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */; };
 		B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */; };
 		DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = E5C61342FA18E71FE6ACF92F /* JWTDecode */; };
 /* End PBXBuildFile section */
@@ -39,6 +40,7 @@
 		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		50A979499FBEFE429665E032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
+		B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		D8D47FFC982AD8B039546C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E593073ADB1C99D134D0D20D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				50A979499FBEFE429665E032 /* Info.plist */,
+				B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */,
 				29639C7551FF7047994958BE /* NetworkTests.swift */,
 			);
 			path = StrataClientTests;
@@ -211,6 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C9E2F5469C0818EDCCC471 /* KeychainServiceTests.swift in Sources */,
 				1A1E336F6ADED5E3877F3DE5 /* NetworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
