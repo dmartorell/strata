@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T07:40:32.608Z"
+last_updated: "2026-03-03T21:23:52.045Z"
 progress:
-  total_phases: 3
-  completed_phases: 2
+  total_phases: 4
+  completed_phases: 3
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Progress: [████░░░░░░] 25%
 | Phase 02-gpu-pipeline P06 | 25 | 3 tasks | 3 files |
 | Phase 03-swift-client-auth P01 | 70 | 2 tasks | 15 files |
 | Phase 03-swift-client-auth P02 | 16 | 2 tasks | 6 files |
+| Phase 03-swift-client-auth P03 | 65 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 03-swift-client-auth]: kSecAttrAccessible configurable via init: produccion usa AfterFirstUnlockThisDeviceOnly, tests usan Always para compat con firma ad-hoc
 - [Phase 03-swift-client-auth]: Upsert Keychain: Add-first + Update-if-duplicate (vs Update-first del plan) — mas robusto con firma ad-hoc
 - [Phase 03-swift-client-auth]: require_auth reutilizado en /auth/renew sin cambios — sin duplicacion de logica de validacion JWT
+- [Phase 03-swift-client-auth]: KeychainServiceProtocol + APIClientProtocol en AuthViewModel: protocolos mínimos para inyección de dependencias en tests sin afectar tipos concretos
+- [Phase 03-swift-client-auth]: @Observable @MainActor AuthViewModel: patrón macOS 14 para ViewModels — sin ObservableObject/StateObject
+- [Phase 03-swift-client-auth]: checkStoredToken síncrono en init: sesión restaurada del Keychain antes del primer render — sin flash de LoginView
 
 ### Pending Todos
 
