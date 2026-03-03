@@ -7,7 +7,7 @@ enum APIEndpoint {
            let url = URL(string: envURL) {
             return url
         }
-        return URL(string: "https://danielmartorell--strata-web.modal.run")!
+        return URL(string: "https://dani-martorell--strata-web.modal.run")!
     }()
 
     case login
