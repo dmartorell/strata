@@ -3,15 +3,27 @@ import SwiftUI
 @main
 struct StrataApp: App {
     @State private var authViewModel = AuthViewModel()
+    @State private var libraryStore: LibraryStore
+
+    init() {
+        // try! es aceptable: si ~/Music no es accesible la app no puede funcionar
+        let cacheManager = try! CacheManager()
+        _libraryStore = State(initialValue: LibraryStore(cacheManager: cacheManager))
+    }
 
     var body: some Scene {
         WindowGroup {
-            if authViewModel.isAuthenticated {
-                ContentView()
-                    .environment(authViewModel)
-            } else {
-                LoginView()
-                    .environment(authViewModel)
+            Group {
+                if authViewModel.isAuthenticated {
+                    ContentView()
+                        .environment(libraryStore)
+                } else {
+                    LoginView()
+                }
+            }
+            .environment(authViewModel)
+            .task {
+                await libraryStore.loadFromDisk()
             }
         }
         .windowStyle(.titleBar)
