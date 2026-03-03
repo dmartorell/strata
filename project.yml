@@ -1,0 +1,70 @@
+name: StrataClient
+options:
+  bundleIdPrefix: com.strata
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16"
+
+packages:
+  JWTDecode:
+    url: https://github.com/auth0/JWTDecode.swift
+    majorVersion: 4.0.0
+
+targets:
+  StrataClient:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: StrataClient
+        excludes:
+          - "**/*.md"
+    info:
+      path: StrataClient/Info.plist
+      properties:
+        CFBundleName: StrataClient
+        CFBundleIdentifier: com.strata.client
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+        NSPrincipalClass: NSApplication
+        NSHighResolutionCapable: true
+        LSMinimumSystemVersion: "14.0"
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundlePackageType: APPL
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.strata.client
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: ""
+        ENABLE_HARDENED_RUNTIME: YES
+        INFOPLIST_FILE: StrataClient/Info.plist
+    dependencies:
+      - package: JWTDecode
+
+  StrataClientTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - StrataClientTests
+    info:
+      path: StrataClientTests/Info.plist
+      properties:
+        CFBundleName: StrataClientTests
+        CFBundleIdentifier: com.strata.client.tests
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.strata.client.tests
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: ""
+        INFOPLIST_FILE: StrataClientTests/Info.plist
+    dependencies:
+      - target: StrataClient

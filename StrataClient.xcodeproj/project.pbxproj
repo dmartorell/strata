@@ -1,0 +1,501 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F13B794E94DCBD3F023D426 /* StrataApp.swift */; };
+		1A1E336F6ADED5E3877F3DE5 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29639C7551FF7047994958BE /* NetworkTests.swift */; };
+		209768FE09244625AB4D252C /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161045B485CA93066BCC210B /* APIError.swift */; };
+		20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D2B605E7065CE50FD29B48 /* LoginView.swift */; };
+		232F965EE97D72FA2FF8028E /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */; };
+		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
+		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
+		67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */; };
+		B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */; };
+		DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = E5C61342FA18E71FE6ACF92F /* JWTDecode */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CCCA78E983B59C724D6F45B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05E2717DA092058B619B4E5D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ACB7E59DC77CE468F6CDB6C3;
+			remoteInfo = StrataClient;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0320ACF4048E914AD15DD06E /* StrataClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StrataClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05C65E449EC40A3F44AEF789 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		161045B485CA93066BCC210B /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		29639C7551FF7047994958BE /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
+		322F9B75C7E611D3C003112C /* StrataClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StrataClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
+		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		50A979499FBEFE429665E032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
+		D8D47FFC982AD8B039546C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E593073ADB1C99D134D0D20D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		F2D2B605E7065CE50FD29B48 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2DAE35F7F473956FCDBEF9E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0AD10DEBE47F4D7A79D93BEC /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				05C65E449EC40A3F44AEF789 /* APIClient.swift */,
+				3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */,
+				161045B485CA93066BCC210B /* APIError.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		3A3D6144A5F0FD0428BD0D3E /* StrataClient */ = {
+			isa = PBXGroup;
+			children = (
+				E593073ADB1C99D134D0D20D /* ContentView.swift */,
+				D8D47FFC982AD8B039546C17 /* Info.plist */,
+				50CEC93D212E9EC4ACD0D026 /* App */,
+				4F500C96AF61B39E205EE9EA /* Auth */,
+				0AD10DEBE47F4D7A79D93BEC /* Network */,
+			);
+			path = StrataClient;
+			sourceTree = "<group>";
+		};
+		4F500C96AF61B39E205EE9EA /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */,
+				EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */,
+				F2D2B605E7065CE50FD29B48 /* LoginView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		50CEC93D212E9EC4ACD0D026 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				7F13B794E94DCBD3F023D426 /* StrataApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		56FD53B769C83F162971B249 /* StrataClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				50A979499FBEFE429665E032 /* Info.plist */,
+				29639C7551FF7047994958BE /* NetworkTests.swift */,
+			);
+			path = StrataClientTests;
+			sourceTree = "<group>";
+		};
+		A70C03FF9D8E9B52D4A9B8D9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				322F9B75C7E611D3C003112C /* StrataClient.app */,
+				0320ACF4048E914AD15DD06E /* StrataClientTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D01D1CF0681741087EAC755B = {
+			isa = PBXGroup;
+			children = (
+				3A3D6144A5F0FD0428BD0D3E /* StrataClient */,
+				56FD53B769C83F162971B249 /* StrataClientTests */,
+				A70C03FF9D8E9B52D4A9B8D9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A404E0D561C4050BB3DE09FB /* StrataClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5A51E380E45001FB1EE70D4 /* Build configuration list for PBXNativeTarget "StrataClientTests" */;
+			buildPhases = (
+				A7E6D53A20E598643C2CD81F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EC365E2EB68ADA4DC5028E9 /* PBXTargetDependency */,
+			);
+			name = StrataClientTests;
+			packageProductDependencies = (
+			);
+			productName = StrataClientTests;
+			productReference = 0320ACF4048E914AD15DD06E /* StrataClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		ACB7E59DC77CE468F6CDB6C3 /* StrataClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D203F6FCE9DC58812BCC509F /* Build configuration list for PBXNativeTarget "StrataClient" */;
+			buildPhases = (
+				C20194555363FD4EEAB1751E /* Sources */,
+				D2DAE35F7F473956FCDBEF9E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StrataClient;
+			packageProductDependencies = (
+				E5C61342FA18E71FE6ACF92F /* JWTDecode */,
+			);
+			productName = StrataClient;
+			productReference = 322F9B75C7E611D3C003112C /* StrataClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		05E2717DA092058B619B4E5D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A404E0D561C4050BB3DE09FB = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					ACB7E59DC77CE468F6CDB6C3 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0098C6B5A9E6BDA7E61F56E2 /* Build configuration list for PBXProject "StrataClient" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D01D1CF0681741087EAC755B;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ACB7E59DC77CE468F6CDB6C3 /* StrataClient */,
+				A404E0D561C4050BB3DE09FB /* StrataClientTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A7E6D53A20E598643C2CD81F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A1E336F6ADED5E3877F3DE5 /* NetworkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C20194555363FD4EEAB1751E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */,
+				232F965EE97D72FA2FF8028E /* APIEndpoint.swift in Sources */,
+				209768FE09244625AB4D252C /* APIError.swift in Sources */,
+				B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */,
+				266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */,
+				67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */,
+				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
+				03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1EC365E2EB68ADA4DC5028E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ACB7E59DC77CE468F6CDB6C3 /* StrataClient */;
+			targetProxy = CCCA78E983B59C724D6F45B6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		41FD0EDB87F0B7CF861484A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		89A1DD41A317D090A84E47A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = StrataClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strata.client;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		A2E3E47D2ACF663C186549F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = StrataClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strata.client.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StrataClient.app/Contents/MacOS/StrataClient";
+			};
+			name = Debug;
+		};
+		B56A896378181379DFCEBF8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		BAC5A25BC6FFCA79EBBAB1EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = StrataClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strata.client;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		FD49C1B3BB9C1CAE6BA218CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = StrataClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strata.client.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StrataClient.app/Contents/MacOS/StrataClient";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0098C6B5A9E6BDA7E61F56E2 /* Build configuration list for PBXProject "StrataClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B56A896378181379DFCEBF8A /* Debug */,
+				41FD0EDB87F0B7CF861484A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B5A51E380E45001FB1EE70D4 /* Build configuration list for PBXNativeTarget "StrataClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2E3E47D2ACF663C186549F0 /* Debug */,
+				FD49C1B3BB9C1CAE6BA218CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D203F6FCE9DC58812BCC509F /* Build configuration list for PBXNativeTarget "StrataClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAC5A25BC6FFCA79EBBAB1EB /* Debug */,
+				89A1DD41A317D090A84E47A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E5C61342FA18E71FE6ACF92F /* JWTDecode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			productName = JWTDecode;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 05E2717DA092058B619B4E5D /* Project object */;
+}
