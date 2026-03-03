@@ -138,7 +138,9 @@ final class ImportViewModel {
         phase = .processing(stage: "queued")
         try Task.checkCancellation()
 
-        let jobResult = try await apiClient.pollJobStatus(jobId: jobId, token: authViewModel.token ?? "")
+        let jobResult = try await apiClient.pollJobStatus(jobId: jobId, token: authViewModel.token ?? "") { [weak self] stage in
+            Task { @MainActor in self?.phase = .processing(stage: stage) }
+        }
 
         guard let zipData = jobResult.zipData else {
             throw ImportError.missingZipData

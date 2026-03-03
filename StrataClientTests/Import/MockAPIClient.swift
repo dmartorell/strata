@@ -42,7 +42,7 @@ actor MockImportAPIClient: ImportAPIClientProtocol {
         return try uploadURLResult.get()
     }
 
-    func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int) async throws -> JobResult {
+    func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int, onStageChange: (@Sendable (String) -> Void)?) async throws -> JobResult {
         pollCallCount += 1
         return try pollResult.get()
     }

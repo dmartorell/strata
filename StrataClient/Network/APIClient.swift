@@ -83,12 +83,12 @@ struct MultipartRequest {
 protocol ImportAPIClientProtocol: Sendable {
     func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String
     func uploadURL(urlString: String, token: String) async throws -> String
-    func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int) async throws -> JobResult
+    func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int, onStageChange: (@Sendable (String) -> Void)?) async throws -> JobResult
 }
 
 extension ImportAPIClientProtocol {
-    func pollJobStatus(jobId: String, token: String) async throws -> JobResult {
-        try await pollJobStatus(jobId: jobId, token: token, intervalSeconds: 3, maxAttempts: 60)
+    func pollJobStatus(jobId: String, token: String, onStageChange: (@Sendable (String) -> Void)? = nil) async throws -> JobResult {
+        try await pollJobStatus(jobId: jobId, token: token, intervalSeconds: 4, maxAttempts: 150, onStageChange: onStageChange)
     }
 }
 
@@ -174,8 +174,9 @@ struct APIClient: Sendable {
     func pollJobStatus(
         jobId: String,
         token: String,
-        intervalSeconds: Double = 3,
-        maxAttempts: Int = 60
+        intervalSeconds: Double = 4,
+        maxAttempts: Int = 150,
+        onStageChange: (@Sendable (String) -> Void)? = nil
     ) async throws -> JobResult {
         let endpoint = APIEndpoint.result(jobId: jobId)
         let request = makeRequest(endpoint: endpoint, token: token)
@@ -202,7 +203,8 @@ struct APIClient: Sendable {
                 throw APIError.processingFailed(message)
             }
 
-            // Estado intermedio: queued, separating, transcribing, etc.
+            onStageChange?(status)
+
             if intervalSeconds > 0 {
                 try await Task.sleep(nanoseconds: UInt64(intervalSeconds * 1_000_000_000))
             }
