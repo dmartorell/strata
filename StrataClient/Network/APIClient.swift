@@ -26,6 +26,24 @@ struct UsageResponse: Decodable {
     let estimated_cost_usd: Double
 }
 
+struct UsageData: Decodable, Sendable {
+    let month: String
+    let songsProcessed: Int
+    let gpuSeconds: Double
+    let estimatedCostUsd: Double
+    let spendingLimitUsd: Double
+
+    var estimatedCostEur: Double { estimatedCostUsd * 0.92 }
+
+    private enum CodingKeys: String, CodingKey {
+        case month
+        case songsProcessed = "songs_processed"
+        case gpuSeconds = "gpu_seconds"
+        case estimatedCostUsd = "estimated_cost_usd"
+        case spendingLimitUsd = "spending_limit_usd"
+    }
+}
+
 // MARK: - HTTP Transport Protocol (testable)
 
 /// Abstracción sobre URLSession para permitir mocks en tests
@@ -211,6 +229,17 @@ struct APIClient: Sendable {
         }
 
         throw APIError.timeout
+    }
+
+    /// GET /usage — consulta de uso mensual (UsageData con camelCase y EUR)
+    func fetchUsage(token: String) async throws -> UsageData {
+        let endpoint = APIEndpoint.usage
+        let request = makeRequest(endpoint: endpoint, token: token)
+
+        let (data, response) = try await transport.data(for: request)
+        try checkResponse(response, isAuthenticated: true)
+
+        return try decode(UsageData.self, from: data)
     }
 
     /// GET /usage — consulta de uso mensual

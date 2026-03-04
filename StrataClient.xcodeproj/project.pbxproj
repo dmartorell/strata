@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,7 @@
 		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
 		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
 		38142976951642A0B15E3475 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */; };
+		4559B11F07AF6E76CDE4DC5F /* DSWaveformImageViews in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4C22B941ECAB55574652F0 /* DSWaveformImageViews */; };
 		4865E35BB00D02DCC83B0261 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88AB3F67227A626069FAF3D /* ImportView.swift */; };
 		4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */; };
 		509141665B7A62EF59E491C6 /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D9A188B4976EAF0B1CA31 /* MockAPIClient.swift */; };
@@ -83,6 +84,7 @@
 			files = (
 				DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */,
 				118AED477D345D705246018D /* ZIPFoundation in Frameworks */,
+				4559B11F07AF6E76CDE4DC5F /* DSWaveformImageViews in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +265,7 @@
 			packageProductDependencies = (
 				E5C61342FA18E71FE6ACF92F /* JWTDecode */,
 				AD5B524B6B7DBD9AE43D2C5D /* ZIPFoundation */,
+				9F4C22B941ECAB55574652F0 /* DSWaveformImageViews */,
 			);
 			productName = StrataClient;
 			productReference = 322F9B75C7E611D3C003112C /* StrataClient.app */;
@@ -282,7 +285,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					ACB7E59DC77CE468F6CDB6C3 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -298,10 +300,10 @@
 			mainGroup = D01D1CF0681741087EAC755B;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				D1BB9CC3EDF4B5A008068EB0 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
+				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */,
 				77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -424,7 +426,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = StrataClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -530,7 +532,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = StrataClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -607,7 +609,7 @@
 				minimumVersion = 0.9.0;
 			};
 		};
-		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -615,9 +617,22 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		D1BB9CC3EDF4B5A008068EB0 /* XCRemoteSwiftPackageReference "DSWaveformImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmrschmidt/DSWaveformImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9F4C22B941ECAB55574652F0 /* DSWaveformImageViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D1BB9CC3EDF4B5A008068EB0 /* XCRemoteSwiftPackageReference "DSWaveformImage" */;
+			productName = DSWaveformImageViews;
+		};
 		AD5B524B6B7DBD9AE43D2C5D /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
@@ -625,7 +640,7 @@
 		};
 		E5C61342FA18E71FE6ACF92F /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */;
 			productName = JWTDecode;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -7,6 +7,7 @@ enum APIError: Error, LocalizedError, Equatable {
     case processingFailed(String)
     case timeout               // 60 intentos agotados en polling
     case decodingError(String)
+    case rateLimited
 
     var errorDescription: String? {
         switch self {
@@ -22,6 +23,8 @@ enum APIError: Error, LocalizedError, Equatable {
             return "Tiempo de espera agotado"
         case .decodingError(let msg):
             return "Error decodificando respuesta: \(msg)"
+        case .rateLimited:
+            return "Limite mensual de procesamiento alcanzado"
         }
     }
 
@@ -33,6 +36,7 @@ enum APIError: Error, LocalizedError, Equatable {
         case (.processingFailed(let a), .processingFailed(let b)): return a == b
         case (.timeout, .timeout): return true
         case (.decodingError(let a), .decodingError(let b)): return a == b
+        case (.rateLimited, .rateLimited): return true
         default: return false
         }
     }

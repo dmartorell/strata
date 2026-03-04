@@ -40,4 +40,14 @@ final class LibraryStore {
     func isCached(sourceHash: String) -> Bool {
         songs.contains { $0.sourceHash == sourceHash }
     }
+
+    func deleteSongs(ids: Set<UUID>) async {
+        let remaining = songs.filter { !ids.contains($0.id) }
+        for id in ids {
+            let dir = await cacheManager.songDirectory(for: id)
+            try? FileManager.default.removeItem(at: dir)
+        }
+        try? await cacheManager.writeLibraryIndex(remaining)
+        songs = remaining
+    }
 }

@@ -12,6 +12,9 @@ packages:
   ZIPFoundation:
     url: https://github.com/weichsel/ZIPFoundation.git
     majorVersion: 0.9.0
+  DSWaveformImage:
+    url: https://github.com/dmrschmidt/DSWaveformImage
+    from: 14.0.0
 
 targets:
   StrataClient:
@@ -47,6 +50,8 @@ targets:
     dependencies:
       - package: JWTDecode
       - package: ZIPFoundation
+      - package: DSWaveformImage
+        product: DSWaveformImageViews
 
   StrataClientTests:
     type: bundle.unit-test
