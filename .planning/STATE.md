@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T23:24:28.325Z"
+last_updated: "2026-03-04T23:30:25.494Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 25
-  completed_plans: 22
+  completed_plans: 23
 ---
 
 # Project State
@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 7 of 7 (Player UI Display Usage) — IN PROGRESS
-Plan: 1 of 5 in current phase (07-01 COMPLETE — modelos de datos)
-Status: Plan 07-01 COMPLETE — LyricsModels, ChordModels, ChordTransposer, SongEntry+pitchOffset/key, LibraryStore.deleteSongs, APIClient.fetchUsage+UsageData, DSWaveformImage SPM
-Last activity: 2026-03-05 - Completed 07-01: Modelos de datos para Player UI
+Plan: 3 of 5 in current phase (07-03 COMPLETE — PlayerViewModel + LibraryView + UsageView)
+Status: Plan 07-03 COMPLETE — PlayerViewModel @Observable, LibraryView Table 4 columnas, UsageView fetch /usage, ContentView navegacion state-driven, PlayerView placeholder
+Last activity: 2026-03-05 - Completed 07-03: PlayerViewModel + Library Table + Usage Panel
 
 Progress: [██████░░░░] 60%
 
@@ -69,6 +69,7 @@ Progress: [██████░░░░] 60%
 | Phase 06-import-end-to-end-flow P03 | 15 | 2 tasks | 5 files |
 | Phase 07-player-ui-display-usage P01 | 15 | 2 tasks | 8 files |
 | Phase 07-player-ui-display-usage P02 | 15 | 2 tasks | 3 files |
+| Phase 07-player-ui-display-usage P03 | 3 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -133,6 +134,8 @@ Recent decisions affecting current work:
 - [Phase 07-player-ui-display-usage]: check_limit lee usage.json directamente via _read_usage() — sin dependencia de estado en memoria
 - [Phase 07-player-ui-display-usage]: 429 devuelto con JSONResponse (no HTTPException) para mantener content-type JSON correcto
 - [Phase 07-player-ui-display-usage]: catch APIError.httpError(429) en wave 1 paralelo — sin asumir que plan 01 añadió APIError.rateLimited
+- [Phase 07-player-ui-display-usage]: ChordEntry.end cambiado a var para mutacion directa en PlayerViewModel.load()
+- [Phase 07-player-ui-display-usage]: CacheManagerKey EnvironmentKey para pasar actor CacheManager via SwiftUI environment sin hacks de Sendable
 
 ### Pending Todos
 
