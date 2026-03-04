@@ -78,10 +78,12 @@ final class ImportViewModel {
             try await pollAndFinalize(
                 jobId: jobId,
                 sourceHash: hash,
-                displayName: fileURL.deletingPathExtension().lastPathComponent,
+                displayName: fileURL.lastPathComponent,
                 sourceURL: nil,
                 fileName: fileURL.lastPathComponent
             )
+        } catch let error as APIError where error == .httpError(429) {
+            phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {
             phase = .idle
         } catch {
@@ -94,7 +96,12 @@ final class ImportViewModel {
             phase = .validating
             try Task.checkCancellation()
 
-            guard let videoID = await cacheManager.youtubeVideoID(from: urlString) else {
+            var url = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
+                url = "https://\(url)"
+            }
+
+            guard let videoID = await cacheManager.youtubeVideoID(from: url) else {
                 phase = .error("URL de YouTube no válida")
                 return
             }
@@ -112,15 +119,17 @@ final class ImportViewModel {
             phase = .uploading
             try Task.checkCancellation()
 
-            let jobId = try await apiClient.uploadURL(urlString: urlString, token: token)
+            let jobId = try await apiClient.uploadURL(urlString: url, token: token)
 
             try await pollAndFinalize(
                 jobId: jobId,
                 sourceHash: videoID,
-                displayName: urlString,
-                sourceURL: urlString,
+                displayName: url,
+                sourceURL: url,
                 fileName: nil
             )
+        } catch let error as APIError where error == .httpError(429) {
+            phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {
             phase = .idle
         } catch {
@@ -203,9 +212,9 @@ private func extractToTemp(
     let songID = UUID()
     let entry = SongEntry(
         id: songID,
-        title: metadata.title,
+        title: fileName ?? metadata.title,
         artist: metadata.artist,
-        duration: metadata.duration,
+        duration: metadata.durationSeconds ?? 0,
         sourceURL: sourceURL,
         fileName: fileName,
         sourceHash: sourceHash,
