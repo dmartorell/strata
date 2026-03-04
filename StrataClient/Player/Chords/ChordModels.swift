@@ -7,8 +7,15 @@ struct ChordsFile: Decodable, Sendable {
 struct ChordEntry: Decodable, Identifiable, Equatable, Sendable {
     let id: UUID
     let start: Double
-    let end: Double?
+    var end: Double?
     let chord: String
+
+    init(id: UUID = UUID(), start: Double, end: Double? = nil, chord: String) {
+        self.id = id
+        self.start = start
+        self.end = end
+        self.chord = chord
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
