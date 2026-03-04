@@ -38,6 +38,7 @@
 		C0EDA4111D162882E5704EFF /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C19B9CC9C8FD067882B75A /* CacheManager.swift */; };
 		CBA61209C9BC5699842CE0A5 /* ImportPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1242F530023BB31A6F621C /* ImportPhase.swift */; };
 		DE829D9D38EEA9C1135EEEC9 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = E5C61342FA18E71FE6ACF92F /* JWTDecode */; };
+		F2C36AB0621288D2FD3FFA9F /* LyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66704F8D213CD8D56E17C27E /* LyricsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		50A979499FBEFE429665E032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5B1242F530023BB31A6F621C /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
+		66704F8D213CD8D56E17C27E /* LyricsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsView.swift; sourceTree = "<group>"; };
 		6A43BFA88D023817D146CC84 /* ImportViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModelTests.swift; sourceTree = "<group>"; };
 		6E2D9A188B4976EAF0B1CA31 /* MockAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
 		7A89A669DAB527AF3320D247 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				C84FDFC104B3D65C69559389 /* LyricsModels.swift */,
+				66704F8D213CD8D56E17C27E /* LyricsView.swift */,
 			);
 			path = Lyrics;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				A2902924D6D15270900AD16F /* LibraryView.swift in Sources */,
 				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
 				9B8670DDF15031E7A558C34F /* LyricsModels.swift in Sources */,
+				F2C36AB0621288D2FD3FFA9F /* LyricsView.swift in Sources */,
 				4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */,
 				8C05C0595921AF9DA961EA4D /* PlayerView.swift in Sources */,
 				B49832727006BCDF2E3139F9 /* PlayerViewModel.swift in Sources */,
