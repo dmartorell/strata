@@ -104,18 +104,17 @@ struct PlayerView: View {
         if !showLyrics && !showChords {
             WaveformsView(songID: song.id)
         } else if showLyrics && !showChords {
-            Text("LyricsView")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            LyricsView()
         } else if showLyrics && showChords {
-            VStack {
-                Text("Lyrics")
+            VStack(spacing: 0) {
+                LyricsView()
                 Divider()
-                Text("Chords")
+                ChordView()
+                    .frame(maxHeight: 220)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            Text("ChordView")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ChordView()
         }
     }
 
