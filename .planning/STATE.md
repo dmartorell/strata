@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T23:12:50.555Z"
+last_updated: "2026-03-04T23:24:28.325Z"
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 6
-  total_plans: 20
-  completed_plans: 20
+  total_plans: 25
+  completed_plans: 22
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 6 of 7 (Import End-to-End Flow) — COMPLETE
-Plan: 3 of 3 in current phase (06-03 COMPLETE — ImportViewModel tests)
-Status: Plan 06-03 COMPLETE — ImportAPIClientProtocol, AuthTokenProviderProtocol, MockImportAPIClient, 6 tests pasan sin red real
-Last activity: 2026-03-04 — Plan 06-03 completo (APIClient.swift, ImportViewModel.swift, AuthViewModel.swift, MockAPIClient.swift, ImportViewModelTests.swift, commits 155d7dc, 83e38ea)
+Phase: 7 of 7 (Player UI Display Usage) — IN PROGRESS
+Plan: 1 of 5 in current phase (07-01 COMPLETE — modelos de datos)
+Status: Plan 07-01 COMPLETE — LyricsModels, ChordModels, ChordTransposer, SongEntry+pitchOffset/key, LibraryStore.deleteSongs, APIClient.fetchUsage+UsageData, DSWaveformImage SPM
+Last activity: 2026-03-05 - Completed 07-01: Modelos de datos para Player UI
 
-Progress: [█████░░░░░] 30%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
@@ -67,6 +67,8 @@ Progress: [█████░░░░░] 30%
 | Phase 06-import-end-to-end-flow P01 | 2 | 2 tasks | 5 files |
 | Phase 06-import-end-to-end-flow P02 | 20 | 3 tasks | 4 files |
 | Phase 06-import-end-to-end-flow P03 | 15 | 2 tasks | 5 files |
+| Phase 07-player-ui-display-usage P01 | 15 | 2 tasks | 8 files |
+| Phase 07-player-ui-display-usage P02 | 15 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -128,6 +130,9 @@ Recent decisions affecting current work:
 - [Phase 06-import-end-to-end-flow P03]: Protocol extension con pollJobStatus defaults: mantiene retrocompatibilidad en call sites existentes
 - [Phase 06-import-end-to-end-flow P03]: AuthTokenProviderProtocol minimal (solo token): ImportViewModel no necesita login/logout
 - [Phase 06-import-end-to-end-flow P03]: MockImportAPIClient como actor Swift: Sendable garantizado sin @unchecked
+- [Phase 07-player-ui-display-usage]: check_limit lee usage.json directamente via _read_usage() — sin dependencia de estado en memoria
+- [Phase 07-player-ui-display-usage]: 429 devuelto con JSONResponse (no HTTPException) para mantener content-type JSON correcto
+- [Phase 07-player-ui-display-usage]: catch APIError.httpError(429) en wave 1 paralelo — sin asumir que plan 01 añadió APIError.rateLimited
 
 ### Pending Todos
 
@@ -139,8 +144,14 @@ None yet.
 - **Plan 01-03 checkpoint:** Cold start medido empiricamente tras deploy — gate bloqueante: debe ser <15s
 - **Fase 6:** yt-dlp en IPs de datacenter de Modal tiene tasa de exito 20-40% — probar empiricamente con URLs reales; cookies via Modal Secret son obligatorias
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Usar nombre original de canción en vez de hash para archivos mp3 guardados | 2026-03-04 | 2ed8683 | [1-usar-nombre-original-de-canci-n-en-vez-d](./quick/1-usar-nombre-original-de-canci-n-en-vez-d/) |
+
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Completed 06-03-PLAN.md — ImportViewModel tests (commits 155d7dc, 83e38ea)
+Last session: 2026-03-05
+Stopped at: Completed 07-01-PLAN.md — Modelos de datos (commits 91d0722, 2d4a73b)
 Resume file: None

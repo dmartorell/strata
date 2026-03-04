@@ -41,11 +41,11 @@
 
 ### Display
 
-- [ ] **DISP-01**: App shows synchronized lyrics with current line highlighted and surrounding context
-- [ ] **DISP-02**: App highlights current word in lyrics (karaoke-style word-by-word)
-- [ ] **DISP-03**: App shows current chord prominently with next chord visible
-- [ ] **DISP-04**: Lyrics and chords update correctly when user seeks or changes pitch
-- [ ] **DISP-05**: App shows waveform visualization per stem
+- [x] **DISP-01**: App shows synchronized lyrics with current line highlighted and surrounding context
+- [x] **DISP-02**: App highlights current word in lyrics (karaoke-style word-by-word)
+- [x] **DISP-03**: App shows current chord prominently with next chord visible
+- [x] **DISP-04**: Lyrics and chords update correctly when user seeks or changes pitch
+- [x] **DISP-05**: App shows waveform visualization per stem
 
 ### Library
 
@@ -54,10 +54,10 @@
 
 ### Usage Tracking
 
-- [ ] **USGR-01**: User can view monthly usage panel (songs processed + estimated GPU cost)
-- [ ] **USGR-02**: Usage panel shows spending limit progress bar ($10/month cap)
-- [ ] **USGR-03**: Server tracks usage per user per month (songs, GPU seconds, estimated cost)
-- [ ] **USGR-04**: Server returns 429 when monthly spending limit is reached
+- [x] **USGR-01**: User can view monthly usage panel (songs processed + estimated GPU cost)
+- [x] **USGR-02**: Usage panel shows spending limit progress bar ($10/month cap)
+- [x] **USGR-03**: Server tracks usage per user per month (songs, GPU seconds, estimated cost)
+- [x] **USGR-04**: Server returns 429 when monthly spending limit is reached
 
 ### Infrastructure
 
@@ -125,17 +125,17 @@
 | PLAY-04 | Phase 5 | Complete |
 | PLAY-05 | Phase 5 | Complete |
 | PLAY-06 | Phase 5 | Complete |
-| DISP-01 | Phase 7 | Pending |
-| DISP-02 | Phase 7 | Pending |
-| DISP-03 | Phase 7 | Pending |
-| DISP-04 | Phase 7 | Pending |
-| DISP-05 | Phase 7 | Pending |
+| DISP-01 | Phase 7 | Complete |
+| DISP-02 | Phase 7 | Complete |
+| DISP-03 | Phase 7 | Complete |
+| DISP-04 | Phase 7 | Complete |
+| DISP-05 | Phase 7 | Complete |
 | LIBR-01 | Phase 4 | Complete |
 | LIBR-02 | Phase 4 | Complete |
-| USGR-01 | Phase 7 | Pending |
-| USGR-02 | Phase 7 | Pending |
-| USGR-03 | Phase 7 | Pending |
-| USGR-04 | Phase 7 | Pending |
+| USGR-01 | Phase 7 | Complete |
+| USGR-02 | Phase 7 | Complete |
+| USGR-03 | Phase 7 | Complete |
+| USGR-04 | Phase 7 | Complete |
 | INFR-01 | Phase 1 | Complete |
 | INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 1 | Pending |
