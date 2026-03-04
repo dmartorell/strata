@@ -17,8 +17,11 @@ struct LibraryView: View {
                 .padding(.top, 8)
 
             librarySection
+                .frame(maxHeight: .infinity)
 
+            Divider()
             UsageView()
+                .frame(minHeight: 44)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

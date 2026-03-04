@@ -25,29 +25,36 @@ final class PlayerViewModel {
     }
 
     func load() async throws {
-        let lyricsURL = await cacheManager.lyricsURL(songID: song.id)
-        if FileManager.default.fileExists(atPath: lyricsURL.path) {
-            let data = try Data(contentsOf: lyricsURL)
-            let lyricsFile = try JSONDecoder().decode(LyricsFile.self, from: data)
-            lyrics = lyricsFile.segments
-        }
-
-        let chordsURL = await cacheManager.chordsURL(songID: song.id)
-        if FileManager.default.fileExists(atPath: chordsURL.path) {
-            let data = try Data(contentsOf: chordsURL)
-            let chordsFile = try JSONDecoder().decode(ChordsFile.self, from: data)
-            chords = chordsFile.chords
-            if chords.last?.end == nil {
-                chords[chords.count - 1].end = engine.duration
-            }
-        }
-
         let stemNames = ["vocals", "drums", "bass", "other"]
         var stemURLs: [URL] = []
         for name in stemNames {
             stemURLs.append(await cacheManager.stemURL(songID: song.id, stem: name))
         }
         try engine.load(stemURLs: stemURLs)
+
+        let lyricsURL = await cacheManager.lyricsURL(songID: song.id)
+        if FileManager.default.fileExists(atPath: lyricsURL.path) {
+            do {
+                let data = try Data(contentsOf: lyricsURL)
+                let lyricsFile = try JSONDecoder().decode(LyricsFile.self, from: data)
+                lyrics = lyricsFile.segments
+            } catch {}
+        }
+
+        let chordsURL = await cacheManager.chordsURL(songID: song.id)
+        if FileManager.default.fileExists(atPath: chordsURL.path) {
+            do {
+                let data = try Data(contentsOf: chordsURL)
+                if let chordsFile = try? JSONDecoder().decode(ChordsFile.self, from: data) {
+                    chords = chordsFile.chords
+                } else {
+                    chords = try JSONDecoder().decode([ChordEntry].self, from: data)
+                }
+                if !chords.isEmpty, chords.last?.end == nil {
+                    chords[chords.count - 1].end = engine.duration
+                }
+            } catch {}
+        }
 
         if song.key == nil {
             if let inferredKey = ChordTransposer.inferKey(from: chords) {
