@@ -106,6 +106,18 @@ def record_usage(username: str, source_type: str, source_name: str) -> None:
     _write_usage(data)
 
 
+def check_limit(username: str) -> bool:
+    """Devuelve True si el gasto estimado del mes actual supera SPENDING_LIMIT_USD."""
+    now = datetime.now(timezone.utc)
+    month_key = now.strftime("%Y-%m")
+
+    data = _read_usage()
+    month = data.get(month_key, {})
+    estimated_cost = month.get("estimated_cost_usd", 0.0)
+
+    return estimated_cost >= SPENDING_LIMIT_USD
+
+
 def get_usage(username: str) -> dict:
     """Devuelve el resumen de uso del mes actual.
 

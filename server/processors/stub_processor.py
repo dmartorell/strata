@@ -11,7 +11,7 @@ Los endpoints son solo el HTTP handler (ASGI web container, CPU).
 """
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
 from auth.auth import require_auth
 
 router = APIRouter(tags=["processor"])
@@ -44,6 +44,13 @@ async def process_file(
     El procesamiento real ocurre en AudioPipeline.process via Modal spawn.
     """
     import modal
+    from usage.tracker import check_limit
+
+    if check_limit(username):
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Monthly spending limit reached"},
+        )
 
     # Leer bytes del archivo
     audio_bytes = await audio_file.read()
@@ -81,6 +88,13 @@ async def process_url(
     Secret) y ejecuta el pipeline completo: Demucs + WhisperX + chord-extractor.
     """
     import modal
+    from usage.tracker import check_limit
+
+    if check_limit(username):
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Monthly spending limit reached"},
+        )
 
     url = body.get("url", "")
     if not url:
@@ -110,7 +124,7 @@ async def get_result(
     job_dict = _get_job_dict()
 
     try:
-        status = job_dict.get(job_id, "unknown")
+        status = await job_dict.get.aio(job_id, "unknown")
     except Exception:
         status = "unknown"
 
@@ -129,15 +143,15 @@ async def get_result(
     # Job completado — obtener resultado ZIP
     try:
         call = modal.FunctionCall.from_id(job_id)
-        result = await call.get.aio(timeout=0)
+        result = await call.get.aio(timeout=5)
         return Response(
             content=result,
             media_type="application/zip",
             headers={"Content-Disposition": "attachment; filename=result.zip"},
         )
-    except modal.exception.FunctionCallError as e:
-        raise HTTPException(status_code=500, detail=f"Pipeline error: {e}")
     except TimeoutError:
         return {"status": "processing", "job_id": job_id}
-    except modal.exception.OutputExpiredError:
-        raise HTTPException(status_code=404, detail="Resultado expirado")
+    except Exception as e:
+        if "expired" in str(e).lower():
+            raise HTTPException(status_code=404, detail="Resultado expirado")
+        raise HTTPException(status_code=500, detail=f"Pipeline error: {e}")
