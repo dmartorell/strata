@@ -18,6 +18,7 @@
 		266E15CB4AD68AA124C6C6A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E593073ADB1C99D134D0D20D /* ContentView.swift */; };
 		2BD55A58DE0CF9BA1B3ADD21 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C65E449EC40A3F44AEF789 /* APIClient.swift */; };
 		38142976951642A0B15E3475 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */; };
+		3963374077A32ED5F0F8E5FA /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1702953D65185D0FA14663C /* UsageView.swift */; };
 		4559B11F07AF6E76CDE4DC5F /* DSWaveformImageViews in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4C22B941ECAB55574652F0 /* DSWaveformImageViews */; };
 		4865E35BB00D02DCC83B0261 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88AB3F67227A626069FAF3D /* ImportView.swift */; };
 		4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA341B28D90D3CEF71FE79BC /* PlaybackEngine.swift */; };
@@ -27,8 +28,11 @@
 		67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9F02CC61DFC1D08CE58E3 /* KeychainService.swift */; };
 		72FF37944254B7B4C22E5280 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */; };
 		84C9E2F5469C0818EDCCC471 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */; };
+		8C05C0595921AF9DA961EA4D /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E226B31D04FBAF6C90AAD19 /* PlayerView.swift */; };
 		9B8670DDF15031E7A558C34F /* LyricsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C84FDFC104B3D65C69559389 /* LyricsModels.swift */; };
 		9CCB95F58F69DBEBEA5031C6 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB21C724D85B39E37F403AA4 /* LibraryStore.swift */; };
+		A2902924D6D15270900AD16F /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C4F40A354DF9153E11D52F /* LibraryView.swift */; };
+		B49832727006BCDF2E3139F9 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D50F96464CDEE1DB7CFD18 /* PlayerViewModel.swift */; };
 		B90BEED7EA90C2DF732B8EA4 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */; };
 		BC726B7242CE41900F7F6F79 /* ImportViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A43BFA88D023817D146CC84 /* ImportViewModelTests.swift */; };
 		C0EDA4111D162882E5704EFF /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C19B9CC9C8FD067882B75A /* CacheManager.swift */; };
@@ -49,11 +53,13 @@
 /* Begin PBXFileReference section */
 		0320ACF4048E914AD15DD06E /* StrataClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StrataClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05C65E449EC40A3F44AEF789 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		0E226B31D04FBAF6C90AAD19 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		161045B485CA93066BCC210B /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		1C653D42AA809912B255E59B /* ChordModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordModels.swift; sourceTree = "<group>"; };
 		29639C7551FF7047994958BE /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 		322F9B75C7E611D3C003112C /* StrataClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StrataClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36F8E323227F1A03905E621D /* SongMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetadata.swift; sourceTree = "<group>"; };
+		37D50F96464CDEE1DB7CFD18 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		3FF39DCF38B2D2E838FCE5CE /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		475AB69142BDE6FD823C0D0E /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		4DFA5A804F9CC52892BAD396 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -63,7 +69,9 @@
 		6E2D9A188B4976EAF0B1CA31 /* MockAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
 		7A89A669DAB527AF3320D247 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
 		7F13B794E94DCBD3F023D426 /* StrataApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrataApp.swift; sourceTree = "<group>"; };
+		82C4F40A354DF9153E11D52F /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		8FA211722729F9F3FF6FC827 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
+		A1702953D65185D0FA14663C /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		AC76E2F44B7710ABEA440F40 /* ChordTransposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordTransposer.swift; sourceTree = "<group>"; };
 		B17E02DA927BD37FEF447669 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		C84FDFC104B3D65C69559389 /* LyricsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsModels.swift; sourceTree = "<group>"; };
@@ -116,8 +124,10 @@
 			children = (
 				C9C19B9CC9C8FD067882B75A /* CacheManager.swift */,
 				DB21C724D85B39E37F403AA4 /* LibraryStore.swift */,
+				82C4F40A354DF9153E11D52F /* LibraryView.swift */,
 				7A89A669DAB527AF3320D247 /* SongEntry.swift */,
 				36F8E323227F1A03905E621D /* SongMetadata.swift */,
+				A1702953D65185D0FA14663C /* UsageView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -197,6 +207,8 @@
 		AB41C780D1D0E1838582B7F0 /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				0E226B31D04FBAF6C90AAD19 /* PlayerView.swift */,
+				37D50F96464CDEE1DB7CFD18 /* PlayerViewModel.swift */,
 				FCE857B424ECB39A3278864F /* Chords */,
 				474286DEFDB5ED5EFB3CE3AF /* Lyrics */,
 			);
@@ -345,12 +357,16 @@
 				38142976951642A0B15E3475 /* ImportViewModel.swift in Sources */,
 				67B6D23A3543514B467FED4C /* KeychainService.swift in Sources */,
 				9CCB95F58F69DBEBEA5031C6 /* LibraryStore.swift in Sources */,
+				A2902924D6D15270900AD16F /* LibraryView.swift in Sources */,
 				20EFBE33E6E53075854A9468 /* LoginView.swift in Sources */,
 				9B8670DDF15031E7A558C34F /* LyricsModels.swift in Sources */,
 				4C62E607228C34FB836E7132 /* PlaybackEngine.swift in Sources */,
+				8C05C0595921AF9DA961EA4D /* PlayerView.swift in Sources */,
+				B49832727006BCDF2E3139F9 /* PlayerViewModel.swift in Sources */,
 				15ECA426E1CAF328EB741A85 /* SongEntry.swift in Sources */,
 				12B7C634C7579D11F4B2B0B7 /* SongMetadata.swift in Sources */,
 				03BB06F7317B497B4456CD62 /* StrataApp.swift in Sources */,
+				3963374077A32ED5F0F8E5FA /* UsageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
