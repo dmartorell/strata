@@ -1,5 +1,6 @@
 import modal
 from datetime import datetime
+from pathlib import Path
 
 # Modal App definition
 app = modal.App("strata")
@@ -307,7 +308,7 @@ class AudioPipeline:
                 record_usage = None
 
             metadata = {
-                "title": source_name,
+                "title": Path(source_name).stem if source_type == "file" else source_name,
                 "duration_seconds": duration_seconds,
                 "sample_rate": 44100,
                 "source_type": source_type,
