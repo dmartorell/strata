@@ -131,14 +131,14 @@ Plans:
   4. La forma de onda de cada stem es visible en la UI de reproduccion
   5. El panel de uso muestra canciones procesadas este mes, coste GPU estimado y barra de progreso hacia el limite de $10
   6. El servidor devuelve 429 cuando se alcanza el limite mensual y la app lo comunica al usuario con mensaje claro
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 07-01: Karaoke view (ScrollView sincronizado con currentTime, word-level highlight con ventana 2-3 palabras)
-- [ ] 07-02: Chord display (timeline scrollable, acorde actual + siguiente, actualiza con pitch offset)
-- [ ] 07-03: Waveform visualization por stem (AVAudioFile + muestras pintadas en Canvas)
-- [ ] 07-04: Controles de transporte (play/pause/seek, progress bar, pitch slider, per-stem volume/mute)
-- [ ] 07-05: Usage panel (server-side tracking, cliente muestra datos, limite 429 con mensaje de usuario)
+- [ ] 07-01-PLAN.md — Modelos de datos (Lyrics, Chords, ChordTransposer), SongEntry extension, DSWaveformImage, APIClient.fetchUsage
+- [ ] 07-02-PLAN.md — Server 429 limit check + cliente captura 429 en ImportViewModel
+- [ ] 07-03-PLAN.md — PlayerViewModel, ContentView navegacion, LibraryView tabla, UsageView panel
+- [ ] 07-04-PLAN.md — PlayerView layout (sidebar stems, transport bar, pitch popover, waveforms)
+- [ ] 07-05-PLAN.md — LyricsView karaoke + ChordView + integracion zona principal modal
 
 ## Progress
 
