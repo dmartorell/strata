@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T23:30:25.494Z"
+last_updated: "2026-03-04T23:36:02.899Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 25
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 7 of 7 (Player UI Display Usage) — IN PROGRESS
-Plan: 3 of 5 in current phase (07-03 COMPLETE — PlayerViewModel + LibraryView + UsageView)
-Status: Plan 07-03 COMPLETE — PlayerViewModel @Observable, LibraryView Table 4 columnas, UsageView fetch /usage, ContentView navegacion state-driven, PlayerView placeholder
-Last activity: 2026-03-05 - Completed 07-03: PlayerViewModel + Library Table + Usage Panel
+Plan: 4 of 5 in current phase (07-04 COMPLETE — PlayerView layout + StemControlsView + TransportBarView + WaveformsView)
+Status: Plan 07-04 COMPLETE — PlayerView layout completo con sidebar stems M/S/vol, barra transporte play/pause/seek/toggles, PitchPopover -/+/restablecer, 4 WaveformsView con playhead sincronizado
+Last activity: 2026-03-05 - Completed 07-04: Player Layout Completo (PlayerView + StemControlsView + TransportBarView + PitchPopover + WaveformsView)
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [██████░░░░] 60%
 | Phase 07-player-ui-display-usage P01 | 15 | 2 tasks | 8 files |
 | Phase 07-player-ui-display-usage P02 | 15 | 2 tasks | 3 files |
 | Phase 07-player-ui-display-usage P03 | 3 | 2 tasks | 7 files |
+| Phase 07-player-ui-display-usage P04 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -136,6 +137,8 @@ Recent decisions affecting current work:
 - [Phase 07-player-ui-display-usage]: catch APIError.httpError(429) en wave 1 paralelo — sin asumir que plan 01 añadió APIError.rateLimited
 - [Phase 07-player-ui-display-usage]: ChordEntry.end cambiado a var para mutacion directa en PlayerViewModel.load()
 - [Phase 07-player-ui-display-usage]: CacheManagerKey EnvironmentKey para pasar actor CacheManager via SwiftUI environment sin hacks de Sendable
+- [Phase 07-player-ui-display-usage]: ABLoopButton como struct privado con LoopPhase enum en PlayerView — encapsula lógica de 3 fases A/B sin contaminar PlayerView
+- [Phase 07-player-ui-display-usage]: isSoloed inferido heurísticamente en StemControlsView — evita añadir API pública a PlaybackEngine para exponer soloedStem
 
 ### Pending Todos
 
