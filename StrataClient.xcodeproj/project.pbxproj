@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -285,6 +285,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					ACB7E59DC77CE468F6CDB6C3 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -301,9 +302,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D1BB9CC3EDF4B5A008068EB0 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */,
+				8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
 				77C1F6912E7EC7862D3C8269 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -426,7 +428,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = StrataClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -532,7 +534,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = StrataClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -609,7 +611,7 @@
 				minimumVersion = 0.9.0;
 			};
 		};
-		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
+		8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -640,7 +642,7 @@
 		};
 		E5C61342FA18E71FE6ACF92F /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode" */;
+			package = 8C9270FB299EC43A7FCD6F27 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
 			productName = JWTDecode;
 		};
 /* End XCSwiftPackageProductDependency section */
