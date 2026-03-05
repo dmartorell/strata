@@ -9,7 +9,6 @@ import io
 import json
 import wave
 import zipfile
-from pathlib import Path
 
 
 def build_stub_zip(source_type: str, source_name: str) -> bytes:
@@ -38,7 +37,7 @@ def build_stub_zip(source_type: str, source_name: str) -> bytes:
 
     metadata = {
         "id": "stub-test-001",
-        "title": Path(source_name).stem if source_type == "file" else source_name,
+        "title": source_name,
         "artist": "Strata Test",
         "duration": 30.0,
         "source": {

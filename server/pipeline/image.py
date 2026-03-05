@@ -22,7 +22,10 @@ _DOWNLOAD_WEIGHTS_CMD = (
 
 gpu_image = (
     modal.Image.debian_slim(python_version="3.11")
-    .apt_install("ffmpeg", "libsndfile1")
+    .apt_install("ffmpeg", "libsndfile1", "curl", "unzip")
+    .run_commands(
+        "curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh",
+    )
     .pip_install("numpy")  # vamp (chord-extractor dep) needs numpy at setup time
     .pip_install(
         "torch<2.9",
