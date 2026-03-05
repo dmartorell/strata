@@ -21,7 +21,7 @@ struct LibraryView: View {
 
             Divider()
             UsageView()
-                .frame(minHeight: 44)
+                .layoutPriority(1)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
