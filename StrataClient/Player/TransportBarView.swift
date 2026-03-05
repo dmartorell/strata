@@ -7,68 +7,76 @@ struct TransportBarView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Divider()
+            HStack {
+                Spacer(minLength: 0)
+                HStack(spacing: 8) {
+                    Text(formatTime(engine.currentTime))
+                        .font(.caption)
+                        .monospacedDigit()
+                        .frame(minWidth: 40, alignment: .trailing)
 
-            HStack(spacing: 8) {
-                Text(formatTime(engine.currentTime))
-                    .font(.caption)
-                    .monospacedDigit()
-                    .frame(minWidth: 40, alignment: .trailing)
+                    Slider(
+                        value: Binding(
+                            get: { engine.currentTime },
+                            set: { engine.seek(to: $0) }
+                        ),
+                        in: 0...max(engine.duration, 1)
+                    )
 
-                Slider(
-                    value: Binding(
-                        get: { engine.currentTime },
-                        set: { engine.seek(to: $0) }
-                    ),
-                    in: 0...max(engine.duration, 1)
-                )
-
-                Text(formatTime(engine.duration))
-                    .font(.caption)
-                    .monospacedDigit()
-                    .frame(minWidth: 40, alignment: .leading)
+                    Text(formatTime(engine.duration))
+                        .font(.caption)
+                        .monospacedDigit()
+                        .frame(minWidth: 40, alignment: .leading)
+                }
+                .frame(width: 450)
+                Spacer(minLength: 0)
             }
             .padding(.horizontal, 16)
 
-            HStack(spacing: 20) {
-                Button {
-                    engine.seek(to: max(0, engine.currentTime - 10))
-                } label: {
-                    Image(systemName: "gobackward.10")
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    if engine.isPlaying {
-                        engine.pause()
-                    } else {
-                        engine.play()
+            ZStack {
+                HStack(spacing: 24) {
+                    Button {
+                        engine.seek(to: max(0, engine.currentTime - 10))
+                    } label: {
+                        Image(systemName: "gobackward.10")
                     }
-                } label: {
-                    Image(systemName: engine.isPlaying ? "pause.fill" : "play.fill")
-                        .font(.title)
+                    .buttonStyle(.plain)
+
+                    Button {
+                        if engine.isPlaying {
+                            engine.pause()
+                        } else {
+                            engine.play()
+                        }
+                    } label: {
+                        Image(systemName: engine.isPlaying ? "pause.fill" : "play.fill")
+                            .font(.title)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        engine.seek(to: min(engine.duration, engine.currentTime + 10))
+                    } label: {
+                        Image(systemName: "goforward.10")
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                    } label: {
+                        Image(systemName: "repeat")
+                    }
+                    .buttonStyle(.plain)
+                    .tint(engine.loopStart != nil && engine.loopEnd != nil ? .accentColor : nil)
+                    .foregroundStyle(engine.loopStart != nil && engine.loopEnd != nil ? Color.accentColor : Color.primary)
                 }
-                .buttonStyle(.plain)
 
-                Button {
-                    engine.seek(to: min(engine.duration, engine.currentTime + 10))
-                } label: {
-                    Image(systemName: "goforward.10")
+                HStack {
+                    Spacer()
+                    HStack(spacing: 8) {
+                        toggleButton(label: "Letras", isActive: $showLyrics)
+                        toggleButton(label: "Acordes", isActive: $showChords)
+                    }
                 }
-                .buttonStyle(.plain)
-
-                Button {
-                } label: {
-                    Image(systemName: "repeat")
-                }
-                .buttonStyle(.plain)
-                .tint(engine.loopStart != nil && engine.loopEnd != nil ? .accentColor : nil)
-                .foregroundStyle(engine.loopStart != nil && engine.loopEnd != nil ? Color.accentColor : Color.primary)
-
-                Spacer()
-
-                toggleButton(label: "Letras", isActive: $showLyrics)
-                toggleButton(label: "Acordes", isActive: $showChords)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 10)
