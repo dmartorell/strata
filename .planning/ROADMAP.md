@@ -134,11 +134,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Modelos de datos (Lyrics, Chords, ChordTransposer), SongEntry extension, DSWaveformImage, APIClient.fetchUsage
-- [ ] 07-02-PLAN.md — Server 429 limit check + cliente captura 429 en ImportViewModel
-- [ ] 07-03-PLAN.md — PlayerViewModel, ContentView navegacion, LibraryView tabla, UsageView panel
-- [ ] 07-04-PLAN.md — PlayerView layout (sidebar stems, transport bar, pitch popover, waveforms)
-- [ ] 07-05-PLAN.md — LyricsView karaoke + ChordView + integracion zona principal modal
+- [x] 07-01-PLAN.md — Modelos de datos (Lyrics, Chords, ChordTransposer), SongEntry extension, DSWaveformImage, APIClient.fetchUsage
+- [x] 07-02-PLAN.md — Server 429 limit check + cliente captura 429 en ImportViewModel
+- [x] 07-03-PLAN.md — PlayerViewModel, ContentView navegacion, LibraryView tabla, UsageView panel
+- [x] 07-04-PLAN.md — PlayerView layout (sidebar stems, transport bar, pitch popover, waveforms)
+- [x] 07-05-PLAN.md — LyricsView karaoke + ChordView + integracion zona principal modal
 
 ## Progress
 
@@ -153,4 +153,18 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Library + Cache | 2/2 | Complete   | 2026-03-03 |
 | 5. Multi-Stem Playback | 3/3 | Complete   | 2026-03-03 |
 | 6. Import + End-to-End Flow | 3/3 | Complete   | 2026-03-03 |
-| 7. Player UI + Display + Usage | 4/5 | In Progress|  |
+| 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
+| 8. YouTube Download Client-Side | 0/? | Not Started|  |
+
+### Phase 8: YouTube Download Client-Side
+**Goal**: La descarga de audio de YouTube ocurre en el Mac del usuario usando yt-dlp local con `--cookies-from-browser`, eliminando la dependencia de cookies en Modal Secret. El audio descargado se sube al servidor por `/process-file` para procesamiento GPU.
+**Depends on**: Phase 6
+**Success Criteria** (what must be TRUE):
+  1. El usuario pega una URL de YouTube y la app descarga el audio localmente sin pedir cookies ni configuracion extra
+  2. El audio descargado se sube automaticamente por `/process-file` y se procesa igual que un archivo arrastrado
+  3. No se usa el endpoint `/process-url` ni el Modal Secret `youtube-cookies` para nuevas descargas
+  4. El flujo muestra progreso: validando → descargando → subiendo → procesando → listo
+  5. Si yt-dlp no esta instalado, la app muestra un mensaje claro con instrucciones de instalacion
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 8 to break down)
