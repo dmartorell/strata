@@ -21,7 +21,6 @@ final class PlayerViewModel {
         self.engine = engine
         self.cacheManager = cacheManager
         self.libraryStore = libraryStore
-        engine.setPitch(semitones: song.pitchOffset ?? 0)
     }
 
     func load() async throws {
@@ -31,6 +30,7 @@ final class PlayerViewModel {
             stemURLs.append(await cacheManager.stemURL(songID: song.id, stem: name))
         }
         try engine.load(stemURLs: stemURLs)
+        engine.setPitch(semitones: song.pitchOffset ?? 0)
 
         let lyricsURL = await cacheManager.lyricsURL(songID: song.id)
         if FileManager.default.fileExists(atPath: lyricsURL.path) {

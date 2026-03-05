@@ -8,6 +8,7 @@ struct PlayerView: View {
     @State private var showLyrics = false
     @State private var showChords = false
     @State private var showPitchPopover = false
+    @FocusState private var isContentFocused: Bool
 
     @Environment(PlaybackEngine.self) private var engine
     @Environment(\.cacheManager) private var cacheManager
@@ -55,6 +56,8 @@ struct PlayerView: View {
             TransportBarView(showLyrics: $showLyrics, showChords: $showChords)
         }
         .focusable()
+        .focused($isContentFocused)
+        .onAppear { isContentFocused = true }
         .onKeyPress(.space) {
             if engine.isPlaying {
                 engine.pause()
