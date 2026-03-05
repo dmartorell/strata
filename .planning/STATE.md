@@ -163,11 +163,12 @@ None yet.
 | 3 | Seek-on-tap en waveforms del player | 2026-03-05 | 86381f1 | [3-en-reproducci-n-cuando-clico-encima-de-a](./quick/3-en-reproducci-n-cuando-clico-encima-de-a/) |
 | 4 | Mejora UI: progress bar centrado y controles centrados | 2026-03-05 | 422c650 | [4-mejora-de-ui-progress-bar-centrado-y-com](./quick/4-mejora-de-ui-progress-bar-centrado-y-com/) |
 | 5 | Retoques UI: flechas seek ±10s, go-to-start, controles centrados, toggle visual M/S | 2026-03-05 | b90a36e | [5-retoques-ui-flechas-seek-controles-centr](./quick/5-retoques-ui-flechas-seek-controles-centr/) |
+| 6 | A/B loop visual en waveform con Option+drag y bordes arrastrables | 2026-03-05 | 9b84ad1 | [6-implementar-a-b-loop-visual-en-waveform](./quick/6-implementar-a-b-loop-visual-en-waveform/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed quick task 5 — retoques UI flechas seek, go-to-start, controles centrados, toggle visual mute/solo
+Stopped at: Completed quick task 6 — A/B loop visual en waveform con Option+drag, bordes arrastrables, ABLoopButton simplificado
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
