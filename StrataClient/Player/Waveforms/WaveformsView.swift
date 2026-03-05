@@ -7,7 +7,15 @@ struct WaveformsView: View {
     @Environment(PlaybackEngine.self) private var engine
     @Environment(\.cacheManager) private var cacheManager
 
+    @State private var isDraggingLoop = false
+    @State private var loopDragStartX: CGFloat = 0
+    @State private var loopDragCurrentX: CGFloat = 0
+
+    @State private var draggingEdge: LoopEdge? = nil
+
     private let stemNames = ["vocals", "drums", "bass", "other"]
+
+    private enum LoopEdge { case start, end }
 
     var body: some View {
         GeometryReader { geo in
@@ -33,6 +41,12 @@ struct WaveformsView: View {
                     }
                 }
 
+                loopOverlay(geo: geo)
+
+                if isDraggingLoop {
+                    dragPreviewOverlay(geo: geo)
+                }
+
                 Rectangle()
                     .fill(Color.primary)
                     .frame(width: 2)
@@ -42,18 +56,138 @@ struct WaveformsView: View {
                     .animation(.easeOut(duration: 0.15), value: engine.currentTime)
             }
             .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onEnded { value in
-                        guard engine.duration > 0 else { return }
-                        let fraction = value.location.x / geo.size.width
-                        let clamped = max(0, min(1, fraction))
-                        engine.seek(to: engine.duration * Double(clamped))
-                    }
-            )
+            .gesture(mainDragGesture(geo: geo))
         }
     }
 
+    @ViewBuilder
+    private func loopOverlay(geo: GeometryProxy) -> some View {
+        if let start = engine.loopStart, let end = engine.loopEnd,
+           engine.duration > 0, draggingEdge == nil {
+            let x = CGFloat(start / engine.duration) * geo.size.width
+            let w = CGFloat((end - start) / engine.duration) * geo.size.width
+
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Color.accentColor.opacity(0.2))
+                    .frame(width: w, height: geo.size.height)
+                    .offset(x: x)
+
+                loopEdgeHandle(geo: geo, edge: .start, positionX: x)
+                loopEdgeHandle(geo: geo, edge: .end, positionX: x + w)
+            }
+        } else if let start = engine.loopStart, let end = engine.loopEnd,
+                  engine.duration > 0, draggingEdge != nil {
+            let x = CGFloat(start / engine.duration) * geo.size.width
+            let w = CGFloat((end - start) / engine.duration) * geo.size.width
+
+            Rectangle()
+                .fill(Color.accentColor.opacity(0.2))
+                .frame(width: w, height: geo.size.height)
+                .offset(x: x)
+
+            loopEdgeHandle(geo: geo, edge: .start,
+                           positionX: CGFloat(start / engine.duration) * geo.size.width)
+            loopEdgeHandle(geo: geo, edge: .end,
+                           positionX: CGFloat(end / engine.duration) * geo.size.width)
+        }
+    }
+
+    @ViewBuilder
+    private func loopEdgeHandle(geo: GeometryProxy, edge: LoopEdge, positionX: CGFloat) -> some View {
+        Rectangle()
+            .fill(Color.accentColor.opacity(0.7))
+            .frame(width: 4, height: geo.size.height)
+            .offset(x: positionX - 2)
+            .contentShape(Rectangle().inset(by: -8))
+            .gesture(edgeDragGesture(geo: geo, edge: edge))
+            .onHover { hovering in
+                if hovering {
+                    NSCursor.resizeLeftRight.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+    }
+
+    @ViewBuilder
+    private func dragPreviewOverlay(geo: GeometryProxy) -> some View {
+        let minX = min(loopDragStartX, loopDragCurrentX)
+        let maxX = max(loopDragStartX, loopDragCurrentX)
+        let w = maxX - minX
+
+        Rectangle()
+            .fill(Color.accentColor.opacity(0.15))
+            .frame(width: w, height: geo.size.height)
+            .offset(x: minX)
+    }
+
+    private func mainDragGesture(geo: GeometryProxy) -> some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                let optionPressed = NSEvent.modifierFlags.contains(.option)
+
+                if optionPressed && !isDraggingLoop {
+                    isDraggingLoop = true
+                    loopDragStartX = max(0, min(value.startLocation.x, geo.size.width))
+                }
+
+                if isDraggingLoop {
+                    loopDragCurrentX = max(0, min(value.location.x, geo.size.width))
+                }
+            }
+            .onEnded { value in
+                if isDraggingLoop {
+                    let minX = min(loopDragStartX, loopDragCurrentX)
+                    let maxX = max(loopDragStartX, loopDragCurrentX)
+                    let width = geo.size.width
+
+                    guard width > 0, engine.duration > 0 else {
+                        isDraggingLoop = false
+                        return
+                    }
+
+                    let startFraction = Double(minX / width)
+                    let endFraction = Double(maxX / width)
+                    let startTime = startFraction * engine.duration
+                    let endTime = endFraction * engine.duration
+
+                    if endTime - startTime >= 0.1 {
+                        engine.setLoopStart(startTime)
+                        engine.setLoopEnd(endTime)
+                    }
+
+                    isDraggingLoop = false
+                } else {
+                    guard engine.duration > 0 else { return }
+                    let fraction = value.location.x / geo.size.width
+                    let clamped = max(0, min(1, fraction))
+                    engine.seek(to: engine.duration * Double(clamped))
+                }
+            }
+    }
+
+    private func edgeDragGesture(geo: GeometryProxy, edge: LoopEdge) -> some Gesture {
+        DragGesture(minimumDistance: 2)
+            .onChanged { value in
+                draggingEdge = edge
+                guard geo.size.width > 0, engine.duration > 0 else { return }
+                let fraction = Double(max(0, min(value.location.x, geo.size.width)) / geo.size.width)
+                let time = fraction * engine.duration
+
+                switch edge {
+                case .start:
+                    let maxTime = (engine.loopEnd ?? engine.duration) - 0.1
+                    engine.setLoopStart(max(0, min(time, maxTime)))
+                case .end:
+                    let minTime = (engine.loopStart ?? 0) + 0.1
+                    engine.setLoopEnd(max(minTime, min(time, engine.duration)))
+                }
+            }
+            .onEnded { _ in
+                draggingEdge = nil
+            }
+    }
 }
 
 // MARK: - StemWaveformRow
