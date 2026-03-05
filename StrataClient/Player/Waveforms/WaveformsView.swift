@@ -47,15 +47,10 @@ struct WaveformsView: View {
                     dragPreviewOverlay(geo: geo)
                 }
 
-                Rectangle()
-                    .fill(Color.primary)
-                    .frame(width: 2)
-                    .offset(x: engine.duration > 0
-                        ? geo.size.width * CGFloat(engine.currentTime / engine.duration)
-                        : 0)
-                    .animation(.easeOut(duration: 0.15), value: engine.currentTime)
+                PlayheadView(width: geo.size.width)
             }
             .contentShape(Rectangle())
+            .coordinateSpace(name: "waveform")
             .gesture(mainDragGesture(geo: geo))
         }
     }
@@ -63,21 +58,7 @@ struct WaveformsView: View {
     @ViewBuilder
     private func loopOverlay(geo: GeometryProxy) -> some View {
         if let start = engine.loopStart, let end = engine.loopEnd,
-           engine.duration > 0, draggingEdge == nil {
-            let x = CGFloat(start / engine.duration) * geo.size.width
-            let w = CGFloat((end - start) / engine.duration) * geo.size.width
-
-            ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(Color.accentColor.opacity(0.2))
-                    .frame(width: w, height: geo.size.height)
-                    .offset(x: x)
-
-                loopEdgeHandle(geo: geo, edge: .start, positionX: x)
-                loopEdgeHandle(geo: geo, edge: .end, positionX: x + w)
-            }
-        } else if let start = engine.loopStart, let end = engine.loopEnd,
-                  engine.duration > 0, draggingEdge != nil {
+           engine.duration > 0 {
             let x = CGFloat(start / engine.duration) * geo.size.width
             let w = CGFloat((end - start) / engine.duration) * geo.size.width
 
@@ -86,28 +67,30 @@ struct WaveformsView: View {
                 .frame(width: w, height: geo.size.height)
                 .offset(x: x)
 
-            loopEdgeHandle(geo: geo, edge: .start,
-                           positionX: CGFloat(start / engine.duration) * geo.size.width)
-            loopEdgeHandle(geo: geo, edge: .end,
-                           positionX: CGFloat(end / engine.duration) * geo.size.width)
+            loopEdgeHandle(geo: geo, edge: .start, positionX: x)
+            loopEdgeHandle(geo: geo, edge: .end, positionX: x + w)
         }
     }
 
     @ViewBuilder
     private func loopEdgeHandle(geo: GeometryProxy, edge: LoopEdge, positionX: CGFloat) -> some View {
-        Rectangle()
-            .fill(Color.accentColor.opacity(0.7))
-            .frame(width: 4, height: geo.size.height)
-            .offset(x: positionX - 2)
-            .contentShape(Rectangle().inset(by: -8))
-            .gesture(edgeDragGesture(geo: geo, edge: edge))
-            .onHover { hovering in
-                if hovering {
-                    NSCursor.resizeLeftRight.push()
-                } else {
-                    NSCursor.pop()
-                }
+        ZStack {
+            Rectangle()
+                .fill(Color.clear)
+                .frame(width: 20, height: geo.size.height)
+            Rectangle()
+                .fill(Color.accentColor.opacity(0.7))
+                .frame(width: 4, height: geo.size.height)
+        }
+        .offset(x: positionX - 10)
+        .gesture(edgeDragGesture(geo: geo, edge: edge))
+        .onHover { hovering in
+            if hovering {
+                NSCursor.resizeLeftRight.push()
+            } else {
+                NSCursor.pop()
             }
+        }
     }
 
     @ViewBuilder
@@ -153,13 +136,12 @@ struct WaveformsView: View {
                     let endTime = endFraction * engine.duration
 
                     if endTime - startTime >= 0.1 {
-                        engine.setLoopStart(startTime)
-                        engine.setLoopEnd(endTime)
+                        engine.setLoop(start: startTime, end: endTime)
                     }
 
                     isDraggingLoop = false
                 } else {
-                    guard engine.duration > 0 else { return }
+                    guard draggingEdge == nil, engine.duration > 0 else { return }
                     let fraction = value.location.x / geo.size.width
                     let clamped = max(0, min(1, fraction))
                     engine.seek(to: engine.duration * Double(clamped))
@@ -168,7 +150,7 @@ struct WaveformsView: View {
     }
 
     private func edgeDragGesture(geo: GeometryProxy, edge: LoopEdge) -> some Gesture {
-        DragGesture(minimumDistance: 2)
+        DragGesture(minimumDistance: 2, coordinateSpace: .named("waveform"))
             .onChanged { value in
                 draggingEdge = edge
                 guard geo.size.width > 0, engine.duration > 0 else { return }
@@ -187,6 +169,23 @@ struct WaveformsView: View {
             .onEnded { _ in
                 draggingEdge = nil
             }
+    }
+}
+
+// MARK: - PlayheadView
+
+private struct PlayheadView: View {
+    let width: CGFloat
+    @Environment(PlaybackEngine.self) private var engine
+
+    var body: some View {
+        Rectangle()
+            .fill(Color.primary)
+            .frame(width: 2)
+            .offset(x: engine.duration > 0
+                ? width * CGFloat(engine.currentTime / engine.duration)
+                : 0)
+            .animation(.easeOut(duration: 0.15), value: engine.currentTime)
     }
 }
 

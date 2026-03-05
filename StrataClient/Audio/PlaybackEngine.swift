@@ -101,8 +101,13 @@ final class PlaybackEngine {
     func play() {
         guard !stemFiles.isEmpty, !isPlaying else { return }
         if !engine.isRunning { try? engine.start() }
+        players.forEach { $0.stop() }
         let sampleRate = stemFiles[0].processingFormat.sampleRate
-        if isLooping {
+        if isLooping, let start = loopStart, let end = loopEnd {
+            if seekOffset < start || seekOffset >= end {
+                seekOffset = start
+                currentTime = start
+            }
             scheduleLoopAndPlay(from: seekOffset)
         } else {
             scheduleAndPlay(from: AVAudioFramePosition(seekOffset * sampleRate))
@@ -167,10 +172,25 @@ final class PlaybackEngine {
         updateLoopState()
     }
 
+    func setLoop(start: TimeInterval, end: TimeInterval) {
+        loopStart = start
+        loopEnd = end
+        updateLoopState()
+    }
+
     func clearLoop() {
+        let wasLooping = isLooping
         loopStart = nil
         loopEnd = nil
         isLooping = false
+        if wasLooping, isPlaying {
+            updateCurrentTime()
+            let time = currentTime
+            seekOffset = time
+            players.forEach { $0.stop() }
+            let sampleRate = stemFiles[0].processingFormat.sampleRate
+            scheduleAndPlay(from: AVAudioFramePosition(time * sampleRate))
+        }
     }
 
     // MARK: - Pitch
@@ -266,13 +286,17 @@ final class PlaybackEngine {
             seekOffset = clampedTime
             players.forEach { $0.stop() }
             scheduleLoopAndPlay(from: clampedTime)
+        } else {
+            seekOffset = start
+            currentTime = start
         }
     }
 
     private func scheduleLoopAndPlay(from time: TimeInterval) {
         guard let start = loopStart, let end = loopEnd else { return }
+        let clampedTime = max(start, min(time, end - 0.001))
         let sampleRate = stemFiles[0].processingFormat.sampleRate
-        let startFrame = AVAudioFramePosition(time * sampleRate)
+        let startFrame = AVAudioFramePosition(clampedTime * sampleRate)
         let endFrame = AVAudioFramePosition(end * sampleRate)
 
         for i in 0..<players.count {
@@ -431,6 +455,12 @@ final class PlaybackEngine {
               nodeTime.isSampleTimeValid,
               let playerTime = players[0].playerTime(forNodeTime: nodeTime),
               playerTime.sampleTime >= 0 else { return }
-        currentTime = seekOffset + Double(playerTime.sampleTime) / playerTime.sampleRate
+        let raw = seekOffset + Double(playerTime.sampleTime) / playerTime.sampleRate
+        if isLooping, let start = loopStart, let end = loopEnd, end > start {
+            let loopLen = end - start
+            currentTime = start + (raw - start).truncatingRemainder(dividingBy: loopLen)
+        } else {
+            currentTime = raw
+        }
     }
 }

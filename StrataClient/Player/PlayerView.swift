@@ -98,8 +98,6 @@ struct PlayerView: View {
                 .lineLimit(1)
 
             Spacer()
-
-            ABLoopButton()
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -126,27 +124,3 @@ struct PlayerView: View {
 
 }
 
-// MARK: - A/B Loop Button
-
-private struct ABLoopButton: View {
-    @Environment(PlaybackEngine.self) private var engine
-
-    private var hasLoop: Bool {
-        engine.loopStart != nil && engine.loopEnd != nil
-    }
-
-    var body: some View {
-        Button {
-            if hasLoop { engine.clearLoop() }
-        } label: {
-            HStack(spacing: 4) {
-                Image(systemName: hasLoop ? "xmark.circle" : "repeat")
-                Text(hasLoop ? "Clear" : "A/B")
-                    .font(.caption)
-            }
-        }
-        .buttonStyle(.bordered)
-        .tint(hasLoop ? .accentColor : nil)
-        .disabled(!hasLoop)
-    }
-}

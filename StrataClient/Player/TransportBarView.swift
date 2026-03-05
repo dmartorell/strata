@@ -62,10 +62,12 @@ private struct SeekSlider: NSViewRepresentable {
 
 struct TransportBarView: View {
     @Environment(PlaybackEngine.self) private var engine
+    @Environment(PlayerViewModel.self) private var vm
     @Binding var showLyrics: Bool
     @Binding var showChords: Bool
 
     @State private var wasPlayingBeforeDrag = false
+    @State private var showPitchPopover = false
 
     var body: some View {
         VStack(spacing: 10) {
@@ -137,13 +139,43 @@ struct TransportBarView: View {
                         Image(systemName: "backward.end.fill")
                     }
                     .buttonStyle(.plain)
+
+                    Button {
+                        engine.clearLoop()
+                    } label: {
+                        Image(systemName: "repeat")
+                            .fontWeight(.bold)
+                            .foregroundStyle(hasLoop ? Color.accentColor : .primary)
+                    }
+                    .buttonStyle(.plain)
+                    .opacity(hasLoop ? 1 : 0.4)
                 }
 
                 HStack {
                     Spacer()
-                    HStack(spacing: 8) {
-                        toggleButton(label: "Letras", isActive: $showLyrics)
-                        toggleButton(label: "Acordes", isActive: $showChords)
+                    HStack(spacing: 16) {
+                        panelToggle("Letras", icon: "text.quote", isActive: showLyrics) {
+                            showLyrics.toggle()
+                        }
+                        panelToggle("Acordes", icon: "music.quarternote.3", isActive: showChords) {
+                            showChords.toggle()
+                        }
+
+                        Button {
+                            showPitchPopover.toggle()
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "music.note")
+                                Text(pitchLabel)
+                                    .monospacedDigit()
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.bordered)
+                        .popover(isPresented: $showPitchPopover) {
+                            PitchPopover()
+                        }
                     }
                 }
             }
@@ -154,23 +186,36 @@ struct TransportBarView: View {
     }
 
     @ViewBuilder
-    private func toggleButton(label: String, isActive: Binding<Bool>) -> some View {
-        Button {
-            isActive.wrappedValue.toggle()
-        } label: {
-            Text(label)
-                .font(.subheadline)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(isActive.wrappedValue ? Color.accentColor.opacity(0.2) : Color.clear)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(isActive.wrappedValue ? Color.accentColor : Color.secondary.opacity(0.4), lineWidth: 1)
-                )
+    private func panelToggle(_ label: String, icon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        if isActive {
+            Button(action: action) {
+                Label(label, systemImage: icon)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+            }
+            .buttonStyle(.borderedProminent)
+        } else {
+            Button(action: action) {
+                Label(label, systemImage: icon)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+            }
+            .buttonStyle(.bordered)
+            .tint(.gray)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(isActive.wrappedValue ? Color.accentColor : Color.primary)
+    }
+
+    private var hasLoop: Bool {
+        engine.loopStart != nil && engine.loopEnd != nil
+    }
+
+    private var pitchLabel: String {
+        let semitones = engine.pitchSemitones
+        if let key = vm.song.key {
+            return ChordTransposer.transpose(key, semitones: semitones)
+        }
+        if semitones == 0 { return "0" }
+        return semitones > 0 ? "+\(semitones)" : "\(semitones)"
     }
 
     private func formatTime(_ seconds: TimeInterval) -> String {
