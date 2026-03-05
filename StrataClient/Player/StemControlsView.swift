@@ -14,12 +14,12 @@ struct StemControlsView: View {
         VStack(spacing: 0) {
             ForEach(stems, id: \.index) { stem in
                 StemRowView(label: stem.label, stemIndex: stem.index)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 if stem.index < stems.count - 1 {
                     Divider()
                 }
             }
         }
-        .padding(.vertical, 8)
     }
 }
 
@@ -33,11 +33,10 @@ private struct StemRowView: View {
     @State private var volume: Float = 1.0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(spacing: 4) {
             Text(label)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 6) {
                 Button("M") {
@@ -67,21 +66,14 @@ private struct StemRowView: View {
             )
             .controlSize(.mini)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 8)
-        .padding(.vertical, 6)
         .onAppear {
             volume = engine.getVolume(for: stemIndex)
         }
     }
 
     private var isSoloed: Bool {
-        // PlaybackEngine no expone soloedStem publicamente; comparamos inferido
-        // Si todos excepto este estan silenciados efectivamente por solo, asumimos que este esta en solo.
-        // Como PlaybackEngine no expone soloedStem, usamos una heuristica:
-        // verificamos si este stem tiene volumen efectivo y los demas no
-        let others = (0..<4).filter { $0 != stemIndex }
-        let thisHasVolume = engine.getVolume(for: stemIndex) > 0 && !engine.isMuted(stemIndex)
-        let othersAllSilent = others.allSatisfy { engine.isMuted($0) || engine.getVolume(for: $0) == 0 }
-        return thisHasVolume && othersAllSilent && others.contains { !engine.isMuted($0) }
+        engine.soloedStem == stemIndex
     }
 }

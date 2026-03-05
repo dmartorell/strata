@@ -43,7 +43,7 @@ final class PlaybackEngine {
     private var updateTimer: Timer?
     private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
     private var stemMuted: [Bool] = [false, false, false, false]
-    private var soloedStem: Int? = nil
+    private(set) var soloedStem: Int? = nil
     private var isLooping: Bool = false
     private var playbackGeneration: Int = 0
 
