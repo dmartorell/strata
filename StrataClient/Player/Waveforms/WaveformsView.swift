@@ -56,6 +56,7 @@ private struct StemWaveformRow: View {
                     .foregroundStyle(.secondary)
                     .padding(4)
             }
+            .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onEnded { value in
