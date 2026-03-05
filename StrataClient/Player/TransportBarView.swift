@@ -127,12 +127,11 @@ struct TransportBarView: View {
                     .buttonStyle(.plain)
 
                     Button {
+                        engine.seek(to: 0)
                     } label: {
-                        Image(systemName: "repeat")
+                        Image(systemName: "backward.end.fill")
                     }
                     .buttonStyle(.plain)
-                    .tint(engine.loopStart != nil && engine.loopEnd != nil ? .accentColor : nil)
-                    .foregroundStyle(engine.loopStart != nil && engine.loopEnd != nil ? Color.accentColor : Color.primary)
                 }
 
                 HStack {

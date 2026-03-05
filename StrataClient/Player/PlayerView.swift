@@ -66,6 +66,14 @@ struct PlayerView: View {
             }
             return .handled
         }
+        .onKeyPress(.leftArrow) {
+            engine.seek(to: max(0, engine.currentTime - 10))
+            return .handled
+        }
+        .onKeyPress(.rightArrow) {
+            engine.seek(to: min(engine.duration, engine.currentTime + 10))
+            return .handled
+        }
     }
 
     @ViewBuilder
