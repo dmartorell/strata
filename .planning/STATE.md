@@ -160,6 +160,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 1 | Usar nombre original de canción en vez de hash para archivos mp3 guardados | 2026-03-04 | 2ed8683 | [1-usar-nombre-original-de-canci-n-en-vez-d](./quick/1-usar-nombre-original-de-canci-n-en-vez-d/) |
 | 2 | Implementa el pause/play pulsando barra espaciadora | 2026-03-05 | 5783189 | [2-implementa-el-pause-play-pulsando-barra-](./quick/2-implementa-el-pause-play-pulsando-barra-/) |
+| 3 | Seek-on-tap en waveforms del player | 2026-03-05 | 86381f1 | [3-en-reproducci-n-cuando-clico-encima-de-a](./quick/3-en-reproducci-n-cuando-clico-encima-de-a/) |
 
 ## Session Continuity
 
