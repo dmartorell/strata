@@ -15,8 +15,12 @@ struct StemControlsView: View {
             ForEach(stems, id: \.index) { stem in
                 StemRowView(label: stem.label, stemIndex: stem.index)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.white.opacity(0.03))
                 if stem.index < stems.count - 1 {
-                    Divider()
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 1)
+                        .padding(.trailing, 1)
                 }
             }
         }
@@ -39,22 +43,13 @@ private struct StemRowView: View {
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 6) {
-                Button("M") {
+                stemToggleButton("M", isActive: engine.isMuted(stemIndex), activeColor: .orange) {
                     engine.setMute(!engine.isMuted(stemIndex), for: stemIndex)
                 }
-                .buttonStyle(.bordered)
-                .tint(engine.isMuted(stemIndex) ? .orange : nil)
-                .font(.caption2)
-                .controlSize(.mini)
 
-                Button("S") {
-                    let currentSolo = isSoloed
-                    engine.setSolo(currentSolo ? nil : stemIndex)
+                stemToggleButton("S", isActive: isSoloed, activeColor: .yellow) {
+                    engine.toggleSolo(for: stemIndex)
                 }
-                .buttonStyle(.bordered)
-                .tint(isSoloed ? .yellow : nil)
-                .font(.caption2)
-                .controlSize(.mini)
             }
 
             Slider(
@@ -74,6 +69,19 @@ private struct StemRowView: View {
     }
 
     private var isSoloed: Bool {
-        engine.soloedStem == stemIndex
+        engine.soloedStems.contains(stemIndex)
+    }
+
+    @ViewBuilder
+    private func stemToggleButton(_ label: String, isActive: Bool, activeColor: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.caption2.bold())
+                .frame(width: 22, height: 18)
+                .foregroundStyle(isActive ? .black : .secondary)
+                .background(isActive ? activeColor : Color.white.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+        }
+        .buttonStyle(.plain)
     }
 }

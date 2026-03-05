@@ -36,7 +36,11 @@ private struct SeekSlider: NSViewRepresentable {
         nsView.minValue = range.lowerBound
         nsView.maxValue = range.upperBound
         if !context.coordinator.isDragging {
-            nsView.doubleValue = value
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.15
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                nsView.animator().doubleValue = value
+            }
         }
     }
 
@@ -64,7 +68,7 @@ struct TransportBarView: View {
     @State private var wasPlayingBeforeDrag = false
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             HStack {
                 Spacer(minLength: 0)
                 HStack(spacing: 8) {
@@ -97,13 +101,14 @@ struct TransportBarView: View {
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 16)
+            .padding(.top, 16)
 
             ZStack {
                 HStack(spacing: 24) {
                     Button {
-                        engine.seek(to: max(0, engine.currentTime - 10))
+                        engine.seek(to: max(0, engine.currentTime - 5))
                     } label: {
-                        Image(systemName: "gobackward.10")
+                        Image(systemName: "gobackward.5")
                     }
                     .buttonStyle(.plain)
 
@@ -120,9 +125,9 @@ struct TransportBarView: View {
                     .buttonStyle(.plain)
 
                     Button {
-                        engine.seek(to: min(engine.duration, engine.currentTime + 10))
+                        engine.seek(to: min(engine.duration, engine.currentTime + 5))
                     } label: {
-                        Image(systemName: "goforward.10")
+                        Image(systemName: "goforward.5")
                     }
                     .buttonStyle(.plain)
 
@@ -143,7 +148,7 @@ struct TransportBarView: View {
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 10)
+            .padding(.bottom, 28)
         }
     }
 

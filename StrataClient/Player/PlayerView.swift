@@ -53,10 +53,12 @@ struct PlayerView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Divider()
             TransportBarView(showLyrics: $showLyrics, showChords: $showChords)
         }
         .focusable()
         .focused($isContentFocused)
+        .focusEffectDisabled()
         .onAppear { isContentFocused = true }
         .onKeyPress(.space) {
             if engine.isPlaying {
@@ -67,11 +69,11 @@ struct PlayerView: View {
             return .handled
         }
         .onKeyPress(.leftArrow) {
-            engine.seek(to: max(0, engine.currentTime - 10))
+            engine.seek(to: max(0, engine.currentTime - 5))
             return .handled
         }
         .onKeyPress(.rightArrow) {
-            engine.seek(to: min(engine.duration, engine.currentTime + 10))
+            engine.seek(to: min(engine.duration, engine.currentTime + 5))
             return .handled
         }
     }
@@ -86,7 +88,7 @@ struct PlayerView: View {
                     onBack()
                 }
             } label: {
-                Label("Volver", systemImage: "chevron.left")
+                Label("Biblioteca", systemImage: "chevron.left")
             }
             .buttonStyle(.plain)
 

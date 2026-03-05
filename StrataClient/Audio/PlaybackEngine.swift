@@ -42,8 +42,9 @@ final class PlaybackEngine {
     private var seekOffset: TimeInterval = 0
     private var updateTimer: Timer?
     private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
-    private var stemMuted: [Bool] = [false, false, false, false]
-    private(set) var soloedStem: Int? = nil
+    private var manualMute: [Bool] = [false, false, false, false]
+    private(set) var soloedStems: Set<Int> = []
+    private var soloExempt: Set<Int> = []
     private var isLooping: Bool = false
     private var playbackGeneration: Int = 0
 
@@ -85,8 +86,9 @@ final class PlaybackEngine {
         isPlaying = false
         pitchSemitones = 0
         stemVolumes = [1.0, 1.0, 1.0, 1.0]
-        stemMuted = [false, false, false, false]
-        soloedStem = nil
+        manualMute = [false, false, false, false]
+        soloedStems = []
+        soloExempt = []
         loopStart = nil
         loopEnd = nil
         isLooping = false
@@ -192,17 +194,47 @@ final class PlaybackEngine {
 
     func setMute(_ muted: Bool, for stem: Int) {
         guard stem >= 0 && stem < 4 else { return }
-        stemMuted[stem] = muted
+        if muted {
+            manualMute[stem] = true
+            soloedStems.remove(stem)
+            soloExempt.remove(stem)
+            if soloedStems.isEmpty { soloExempt.removeAll() }
+        } else {
+            manualMute[stem] = false
+            if !soloedStems.isEmpty {
+                soloExempt.insert(stem)
+            }
+        }
         applyVolumes()
     }
 
     func isMuted(_ stem: Int) -> Bool {
         guard stem >= 0 && stem < 4 else { return false }
-        return stemMuted[stem]
+        return manualMute[stem]
     }
 
-    func setSolo(_ stem: Int?) {
-        soloedStem = stem
+    func effectivelyMuted(_ stem: Int) -> Bool {
+        guard stem >= 0 && stem < 4 else { return false }
+        if manualMute[stem] { return true }
+        if !soloedStems.isEmpty
+            && !soloedStems.contains(stem)
+            && !soloExempt.contains(stem) { return true }
+        return false
+    }
+
+    func toggleSolo(for stem: Int) {
+        if soloedStems.contains(stem) {
+            soloedStems.remove(stem)
+            if soloedStems.isEmpty {
+                soloExempt.removeAll()
+            } else {
+                soloExempt.insert(stem)
+            }
+        } else {
+            manualMute[stem] = false
+            soloedStems.insert(stem)
+            soloExempt.remove(stem)
+        }
         applyVolumes()
     }
 
@@ -275,13 +307,7 @@ final class PlaybackEngine {
 
     private func applyVolumes() {
         for i in 0..<min(4, stemMixers.count) {
-            let volume: Float
-            if let soloed = soloedStem {
-                volume = (i == soloed && !stemMuted[i]) ? stemVolumes[i] : 0.0
-            } else {
-                volume = stemMuted[i] ? 0.0 : stemVolumes[i]
-            }
-            stemMixers[i].outputVolume = volume
+            stemMixers[i].outputVolume = effectivelyMuted(i) ? 0.0 : stemVolumes[i]
         }
     }
 
