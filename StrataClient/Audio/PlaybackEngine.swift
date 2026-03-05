@@ -45,6 +45,7 @@ final class PlaybackEngine {
     private var stemMuted: [Bool] = [false, false, false, false]
     private var soloedStem: Int? = nil
     private var isLooping: Bool = false
+    private var playbackGeneration: Int = 0
 
     // MARK: - Public API
 
@@ -139,12 +140,14 @@ final class PlaybackEngine {
         currentTime = clampedTime
         players.forEach { $0.stop() }
         if isPlaying {
+            stopTimer()
             if isLooping {
                 scheduleLoopAndPlay(from: clampedTime)
             } else {
                 let sampleRate = stemFiles[0].processingFormat.sampleRate
                 scheduleAndPlay(from: AVAudioFramePosition(clampedTime * sampleRate))
             }
+            startTimer()
         }
     }
 
@@ -241,9 +244,8 @@ final class PlaybackEngine {
             }
         }
 
-        guard let lastRender = engine.outputNode.lastRenderTime else { return }
-        let delayFrames = AVAudioFramePosition(0.1 * sampleRate)
-        let startTime = AVAudioTime(sampleTime: lastRender.sampleTime + delayFrames, atRate: sampleRate)
+        let delayTicks = secondsToHostTicks(0.1)
+        let startTime = AVAudioTime(hostTime: mach_absolute_time() + delayTicks)
         players.forEach { $0.play(at: startTime) }
 
         _ = start
@@ -284,6 +286,9 @@ final class PlaybackEngine {
     }
 
     private func scheduleAndPlay(from framePosition: AVAudioFramePosition) {
+        playbackGeneration += 1
+        let generation = playbackGeneration
+
         players.forEach { $0.stop() }
 
         for i in 0..<players.count {
@@ -298,19 +303,22 @@ final class PlaybackEngine {
                 completionCallbackType: .dataPlayedBack
             ) { [weak self] _ in
                 Task { @MainActor in
-                    self?.handlePlaybackCompletion()
+                    guard let self, self.playbackGeneration == generation else { return }
+                    self.handlePlaybackCompletion()
                 }
             }
         }
 
-        guard let lastRender = engine.outputNode.lastRenderTime else { return }
-        let sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
-        let delayFrames = AVAudioFramePosition(0.1 * sampleRate)
-        let startTime = AVAudioTime(
-            sampleTime: lastRender.sampleTime + delayFrames,
-            atRate: sampleRate
-        )
+        let delayTicks = secondsToHostTicks(0.1)
+        let startTime = AVAudioTime(hostTime: mach_absolute_time() + delayTicks)
         players.forEach { $0.play(at: startTime) }
+    }
+
+    private func secondsToHostTicks(_ seconds: Double) -> UInt64 {
+        var info = mach_timebase_info_data_t()
+        mach_timebase_info(&info)
+        let nanos = UInt64(seconds * Double(NSEC_PER_SEC))
+        return nanos * UInt64(info.denom) / UInt64(info.numer)
     }
 
     private func handlePlaybackCompletion() {
@@ -380,7 +388,8 @@ final class PlaybackEngine {
         guard isPlaying,
               let nodeTime = players[0].lastRenderTime,
               nodeTime.isSampleTimeValid,
-              let playerTime = players[0].playerTime(forNodeTime: nodeTime) else { return }
+              let playerTime = players[0].playerTime(forNodeTime: nodeTime),
+              playerTime.sampleTime >= 0 else { return }
         currentTime = seekOffset + Double(playerTime.sampleTime) / playerTime.sampleRate
     }
 }

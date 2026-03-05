@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 7 of 7 (Player UI Display Usage) — IN PROGRESS
-Plan: 4 of 5 in current phase (07-04 COMPLETE — PlayerView layout + StemControlsView + TransportBarView + WaveformsView)
-Status: Plan 07-04 COMPLETE — PlayerView layout completo con sidebar stems M/S/vol, barra transporte play/pause/seek/toggles, PitchPopover -/+/restablecer, 4 WaveformsView con playhead sincronizado
-Last activity: 2026-03-05 - Completed 07-04: Player Layout Completo (PlayerView + StemControlsView + TransportBarView + PitchPopover + WaveformsView)
+Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
+Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
+Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
+Last activity: 2026-03-05 - Completed 07-05: LyricsView + ChordView + UsageView fixes
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100% (v1.0 milestone complete)
 
 ## Performance Metrics
 
@@ -144,20 +144,25 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Roadmap Evolution
+
+- Phase 8 added: YouTube Download Client-Side — descarga local con yt-dlp y upload por /process-file (elimina dependencia de cookies en Modal)
+
 ### Blockers/Concerns
 
 - **Plan 01-03 checkpoint:** CREMA 0.2.0 + Python 3.11 compatibilidad se verifica durante el deploy — si falla la build, escalar (no eliminar CREMA silenciosamente)
 - **Plan 01-03 checkpoint:** Cold start medido empiricamente tras deploy — gate bloqueante: debe ser <15s
-- **Fase 6:** yt-dlp en IPs de datacenter de Modal tiene tasa de exito 20-40% — probar empiricamente con URLs reales; cookies via Modal Secret son obligatorias
+- **Fase 6:** yt-dlp en IPs de datacenter de Modal tiene tasa de exito 20-40% — cookies caducan frecuentemente; Phase 8 resuelve esto moviendo la descarga al cliente
 
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | Usar nombre original de canción en vez de hash para archivos mp3 guardados | 2026-03-04 | 2ed8683 | [1-usar-nombre-original-de-canci-n-en-vez-d](./quick/1-usar-nombre-original-de-canci-n-en-vez-d/) |
+| 2 | Implementa el pause/play pulsando barra espaciadora | 2026-03-05 | 5783189 | [2-implementa-el-pause-play-pulsando-barra-](./quick/2-implementa-el-pause-play-pulsando-barra-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 07-01-PLAN.md — Modelos de datos (commits 91d0722, 2d4a73b)
+Stopped at: Quick task 2 completada — space bar toggle play/pause en PlayerView
 Resume file: None
