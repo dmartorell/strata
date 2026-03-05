@@ -54,6 +54,15 @@ struct PlayerView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             TransportBarView(showLyrics: $showLyrics, showChords: $showChords)
         }
+        .focusable()
+        .onKeyPress(.space) {
+            if engine.isPlaying {
+                engine.pause()
+            } else {
+                engine.play()
+            }
+            return .handled
+        }
     }
 
     @ViewBuilder
