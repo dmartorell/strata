@@ -162,11 +162,12 @@ None yet.
 | 2 | Implementa el pause/play pulsando barra espaciadora | 2026-03-05 | 5783189 | [2-implementa-el-pause-play-pulsando-barra-](./quick/2-implementa-el-pause-play-pulsando-barra-/) |
 | 3 | Seek-on-tap en waveforms del player | 2026-03-05 | 86381f1 | [3-en-reproducci-n-cuando-clico-encima-de-a](./quick/3-en-reproducci-n-cuando-clico-encima-de-a/) |
 | 4 | Mejora UI: progress bar centrado y controles centrados | 2026-03-05 | 422c650 | [4-mejora-de-ui-progress-bar-centrado-y-com](./quick/4-mejora-de-ui-progress-bar-centrado-y-com/) |
+| 5 | Retoques UI: flechas seek ±10s, go-to-start, controles centrados, toggle visual M/S | 2026-03-05 | b90a36e | [5-retoques-ui-flechas-seek-controles-centr](./quick/5-retoques-ui-flechas-seek-controles-centr/) |
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Debug session cerrada — dos bugs de PlaybackEngine resueltos y verificados
+Stopped at: Completed quick task 5 — retoques UI flechas seek, go-to-start, controles centrados, toggle visual mute/solo
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
