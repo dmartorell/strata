@@ -150,6 +150,7 @@ struct TransportBarView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 28)
         }
+        .background(SidebarVisualEffect())
     }
 
     @ViewBuilder

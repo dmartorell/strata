@@ -47,7 +47,7 @@ struct PlayerView: View {
             Divider()
             HStack(spacing: 0) {
                 StemControlsView()
-                    .frame(width: 140)
+                    .frame(width: 260)
                 Divider()
                 mainZone(vm: vm)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

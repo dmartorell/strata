@@ -42,6 +42,7 @@ final class PlaybackEngine {
     private var seekOffset: TimeInterval = 0
     private var updateTimer: Timer?
     private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
+    private var preMuteVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
     private var manualMute: [Bool] = [false, false, false, false]
     private(set) var soloedStems: Set<Int> = []
     private var soloExempt: Set<Int> = []
@@ -86,6 +87,7 @@ final class PlaybackEngine {
         isPlaying = false
         pitchSemitones = 0
         stemVolumes = [1.0, 1.0, 1.0, 1.0]
+        preMuteVolumes = [1.0, 1.0, 1.0, 1.0]
         manualMute = [false, false, false, false]
         soloedStems = []
         soloExempt = []
@@ -183,7 +185,17 @@ final class PlaybackEngine {
 
     func setVolume(_ volume: Float, for stem: Int) {
         guard stem >= 0 && stem < 4 else { return }
-        stemVolumes[stem] = max(0.0, min(1.0, volume))
+        let clamped = max(0.0, min(1.0, volume))
+        stemVolumes[stem] = clamped
+        if clamped == 0 && !manualMute[stem] {
+            manualMute[stem] = true
+        } else if clamped > 0 && manualMute[stem] {
+            manualMute[stem] = false
+            preMuteVolumes[stem] = clamped
+        }
+        if clamped > 0 {
+            preMuteVolumes[stem] = clamped
+        }
         applyVolumes()
     }
 
@@ -195,12 +207,15 @@ final class PlaybackEngine {
     func setMute(_ muted: Bool, for stem: Int) {
         guard stem >= 0 && stem < 4 else { return }
         if muted {
+            preMuteVolumes[stem] = stemVolumes[stem] > 0 ? stemVolumes[stem] : preMuteVolumes[stem]
             manualMute[stem] = true
+            stemVolumes[stem] = 0
             soloedStems.remove(stem)
             soloExempt.remove(stem)
             if soloedStems.isEmpty { soloExempt.removeAll() }
         } else {
             manualMute[stem] = false
+            stemVolumes[stem] = preMuteVolumes[stem]
             if !soloedStems.isEmpty {
                 soloExempt.insert(stem)
             }
