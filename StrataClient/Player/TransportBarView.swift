@@ -1,11 +1,66 @@
+import AppKit
 import SwiftUI
+
+// MARK: - SeekSlider (NSViewRepresentable)
+
+private class SeekNSSlider: NSSlider {
+    var onDragStart: (() -> Void)?
+    var onDragEnd: (() -> Void)?
+
+    override func mouseDown(with event: NSEvent) {
+        onDragStart?()
+        super.mouseDown(with: event) // bloqueante: devuelve al soltar
+        onDragEnd?()
+    }
+}
+
+private struct SeekSlider: NSViewRepresentable {
+    @Binding var value: Double
+    var range: ClosedRange<Double>
+    var onDragStart: () -> Void
+    var onDragEnd: () -> Void
+
+    func makeNSView(context: Context) -> SeekNSSlider {
+        let slider = SeekNSSlider()
+        slider.target = context.coordinator
+        slider.action = #selector(Coordinator.valueChanged(_:))
+        slider.minValue = range.lowerBound
+        slider.maxValue = range.upperBound
+        slider.doubleValue = value
+        slider.onDragStart = onDragStart
+        slider.onDragEnd = onDragEnd
+        return slider
+    }
+
+    func updateNSView(_ nsView: SeekNSSlider, context: Context) {
+        nsView.minValue = range.lowerBound
+        nsView.maxValue = range.upperBound
+        if !context.coordinator.isDragging {
+            nsView.doubleValue = value
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    class Coordinator: NSObject {
+        var parent: SeekSlider
+        var isDragging = false
+
+        init(_ parent: SeekSlider) { self.parent = parent }
+
+        @objc func valueChanged(_ sender: SeekNSSlider) {
+            parent.value = sender.doubleValue
+        }
+    }
+}
+
+// MARK: - TransportBarView
 
 struct TransportBarView: View {
     @Environment(PlaybackEngine.self) private var engine
     @Binding var showLyrics: Bool
     @Binding var showChords: Bool
 
-    @State private var isDragging = false
     @State private var wasPlayingBeforeDrag = false
 
     var body: some View {
@@ -18,26 +73,19 @@ struct TransportBarView: View {
                         .monospacedDigit()
                         .frame(minWidth: 40, alignment: .trailing)
 
-                    Slider(
+                    SeekSlider(
                         value: Binding(
                             get: { engine.currentTime },
                             set: { engine.seek(to: $0) }
                         ),
-                        in: 0...max(engine.duration, 1)
-                    )
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { _ in
-                                if !isDragging {
-                                    isDragging = true
-                                    wasPlayingBeforeDrag = engine.isPlaying
-                                    if engine.isPlaying { engine.pause() }
-                                }
-                            }
-                            .onEnded { _ in
-                                isDragging = false
-                                if wasPlayingBeforeDrag { engine.play() }
-                            }
+                        range: 0...max(engine.duration, 1),
+                        onDragStart: {
+                            wasPlayingBeforeDrag = engine.isPlaying
+                            if engine.isPlaying { engine.pause() }
+                        },
+                        onDragEnd: {
+                            if wasPlayingBeforeDrag { engine.play() }
+                        }
                     )
 
                     Text(formatTime(engine.duration))
