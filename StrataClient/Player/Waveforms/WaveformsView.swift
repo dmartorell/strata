@@ -21,7 +21,7 @@ struct WaveformsView: View {
                                 isMuted: muted
                             )
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(muted ? Color.white.opacity(0.01) : Color.white.opacity(0.03))
+                            .background(Color.black.opacity(muted ? 0.45 : 0.35))
                             .clipped()
                             if i < stemNames.count - 1 {
                                 Rectangle()
@@ -65,7 +65,7 @@ private struct StemWaveformRow: View {
     var body: some View {
         GeometryReader { geo in
             WaveformView(audioURL: stemURL) { shape in
-                shape.fill(Color.teal.opacity(isMuted ? 0.2 : 0.7))
+                shape.fill(Color.cyan.opacity(isMuted ? 0.2 : 0.9))
             }
             .padding(.vertical, geo.size.height * 0.2)
         }
