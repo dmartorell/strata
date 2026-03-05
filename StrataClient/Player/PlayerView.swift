@@ -7,7 +7,6 @@ struct PlayerView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var showLyrics = false
     @State private var showChords = false
-    @State private var showPitchPopover = false
     @FocusState private var isContentFocused: Bool
 
     @Environment(PlaybackEngine.self) private var engine
@@ -100,21 +99,6 @@ struct PlayerView: View {
 
             Spacer()
 
-            Button {
-                showPitchPopover.toggle()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "music.note")
-                    Text(pitchLabel(song: song))
-                        .monospacedDigit()
-                }
-            }
-            .buttonStyle(.bordered)
-            .popover(isPresented: $showPitchPopover) {
-                PitchPopover()
-                    .environment(vm)
-            }
-
             ABLoopButton()
         }
         .padding(.horizontal, 16)
@@ -140,64 +124,29 @@ struct PlayerView: View {
         }
     }
 
-    private func pitchLabel(song: SongEntry) -> String {
-        let semitones = engine.pitchSemitones
-        if let key = song.key {
-            let transposed = ChordTransposer.transpose(key, semitones: semitones)
-            return transposed
-        }
-        if semitones == 0 { return "0" }
-        return semitones > 0 ? "+\(semitones)" : "\(semitones)"
-    }
 }
 
 // MARK: - A/B Loop Button
 
 private struct ABLoopButton: View {
     @Environment(PlaybackEngine.self) private var engine
-    @State private var loopPhase: LoopPhase = .idle
 
-    private enum LoopPhase { case idle, startSet, active }
+    private var hasLoop: Bool {
+        engine.loopStart != nil && engine.loopEnd != nil
+    }
 
     var body: some View {
         Button {
-            handleTap()
+            if hasLoop { engine.clearLoop() }
         } label: {
             HStack(spacing: 4) {
-                Image(systemName: "repeat")
-                Text(loopLabel)
+                Image(systemName: hasLoop ? "xmark.circle" : "repeat")
+                Text(hasLoop ? "Clear" : "A/B")
                     .font(.caption)
             }
         }
         .buttonStyle(.bordered)
-        .tint(loopPhase == .active ? .accentColor : nil)
-    }
-
-    private var loopLabel: String {
-        switch loopPhase {
-        case .idle: return "A/B"
-        case .startSet: return "A…"
-        case .active: return "Loop"
-        }
-    }
-
-    private func handleTap() {
-        switch loopPhase {
-        case .idle:
-            engine.setLoopStart(engine.currentTime)
-            loopPhase = .startSet
-        case .startSet:
-            let end = engine.currentTime
-            if let start = engine.loopStart, end > start {
-                engine.setLoopEnd(end)
-                loopPhase = .active
-            } else {
-                engine.clearLoop()
-                loopPhase = .idle
-            }
-        case .active:
-            engine.clearLoop()
-            loopPhase = .idle
-        }
+        .tint(hasLoop ? .accentColor : nil)
+        .disabled(!hasLoop)
     }
 }
