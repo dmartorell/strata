@@ -5,6 +5,8 @@ struct TransportBarView: View {
     @Binding var showLyrics: Bool
     @Binding var showChords: Bool
 
+    @State private var wasPlayingBeforeDrag = false
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
@@ -20,7 +22,15 @@ struct TransportBarView: View {
                             get: { engine.currentTime },
                             set: { engine.seek(to: $0) }
                         ),
-                        in: 0...max(engine.duration, 1)
+                        in: 0...max(engine.duration, 1),
+                        onEditingChanged: { editing in
+                            if editing {
+                                wasPlayingBeforeDrag = engine.isPlaying
+                                if engine.isPlaying { engine.pause() }
+                            } else {
+                                if wasPlayingBeforeDrag { engine.play() }
+                            }
+                        }
                     )
 
                     Text(formatTime(engine.duration))
