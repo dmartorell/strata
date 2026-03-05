@@ -44,8 +44,10 @@ struct ImportView: View {
             guard let provider = providers.first else { return false }
             _ = provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
                 guard let url else { return }
-                let tempCopy = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString + "." + url.pathExtension)
+                let uniqueDir = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString, isDirectory: true)
+                try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
+                let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
                 try? FileManager.default.copyItem(at: url, to: tempCopy)
                 Task { @MainActor in
                     importViewModel.startFileImport(from: tempCopy)
