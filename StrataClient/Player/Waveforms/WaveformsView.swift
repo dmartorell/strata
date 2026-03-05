@@ -56,6 +56,15 @@ private struct StemWaveformRow: View {
                     .foregroundStyle(.secondary)
                     .padding(4)
             }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onEnded { value in
+                        guard engine.duration > 0 else { return }
+                        let fraction = value.location.x / geo.size.width
+                        let clamped = max(0, min(1, fraction))
+                        engine.seek(to: engine.duration * Double(clamped))
+                    }
+            )
         }
     }
 }

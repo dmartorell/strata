@@ -164,5 +164,13 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Quick task 2 completada — space bar toggle play/pause en PlayerView
+Stopped at: Debug session cerrada — dos bugs de PlaybackEngine resueltos y verificados
 Resume file: None
+
+### Bugs Resueltos (2026-03-05)
+
+| Bug | Root Cause | Fix | Debug File |
+|-----|-----------|-----|------------|
+| Espacio sin foco al abrir PlayerView | `.focusable()` no toma foco activo en macOS — el foco va al botón "Volver" | `@FocusState` + `.focused()` binding activado en `.onAppear` | resolved/player-focus-and-position.md |
+| Pitch reset al reabrir canción | `engine.setPitch()` llamado antes de `engine.load()` + `scheduleAndPlay` usaba `outputNode.lastRenderTime` stale como base de tiempo | Mover `setPitch` post-`load`; usar `mach_absolute_time()` + ticks Mach en `AVAudioTime(hostTime:)` | resolved/player-focus-and-position.md |
+| Seek ±10s errático durante playback | `completionCallbackType:.dataPlayedBack` dispara el callback del segmento anterior tras `players.stop()`, llamando `handlePlaybackCompletion()` que sobreescribe `currentTime` con `duration` | `playbackGeneration` counter: el completion handler solo actúa si la generación capturada coincide con la actual | resolved/seek-erratic-during-playback.md |
