@@ -10,7 +10,7 @@ struct ChordView: View {
                     .font(.title3)
                     .foregroundStyle(.secondary)
             } else {
-                Text(vm.displayChord.isEmpty ? "-" : vm.displayChord)
+                Text(vm.displayChord.isEmpty ? " " : vm.displayChord)
                     .font(.system(size: 72, weight: .bold, design: .rounded))
                     .contentTransition(.numericText())
                     .animation(.easeInOut(duration: 0.15), value: vm.displayChord)

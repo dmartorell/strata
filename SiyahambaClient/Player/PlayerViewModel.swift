@@ -101,6 +101,7 @@ final class PlayerViewModel {
     }
 
     var currentChord: ChordEntry? {
+        guard engine.isPlaying else { return nil }
         let t = engine.currentTime
         var bestIdx: Int? = nil
 
@@ -140,23 +141,44 @@ final class PlayerViewModel {
         return chords[idx + 1]
     }
 
+    private static let placeholderChords: Set<String> = ["N", "-", ""]
+
     var displayChord: String {
+        guard let raw = currentChord?.chord, !Self.placeholderChords.contains(raw) else { return "" }
         if showTransposed && engine.pitchSemitones != 0 {
-            return ChordTransposer.transpose(currentChord?.chord ?? "", semitones: engine.pitchSemitones)
+            return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
         }
-        return currentChord?.chord ?? ""
+        return raw
     }
 
     var displayNextChord: String {
+        guard let raw = nextChord?.chord, !Self.placeholderChords.contains(raw) else { return "" }
         if showTransposed && engine.pitchSemitones != 0 {
-            return ChordTransposer.transpose(nextChord?.chord ?? "", semitones: engine.pitchSemitones)
+            return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
         }
-        return nextChord?.chord ?? ""
+        return raw
     }
 
     func savePitchOffset() async {
         var updated = song
         updated.pitchOffset = engine.pitchSemitones
+        var songs = libraryStore.songs
+        if let idx = songs.firstIndex(where: { $0.id == song.id }) {
+            songs[idx] = updated
+            try? await cacheManager.writeLibraryIndex(songs)
+            await libraryStore.loadFromDisk()
+        }
+    }
+
+    func saveDisplayMode(showLyrics: Bool, showChords: Bool) async {
+        let mode: SongEntry.DisplayMode = switch (showLyrics, showChords) {
+        case (true, true): .lyricsAndChords
+        case (true, false): .lyrics
+        case (false, true): .chords
+        default: .waveforms
+        }
+        var updated = song
+        updated.displayMode = mode
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {
             songs[idx] = updated

@@ -136,6 +136,23 @@ final class PlaybackEngine {
         }
     }
 
+    func fadeOutAndStop(duration: TimeInterval = 0.4) async {
+        guard isPlaying else {
+            stop()
+            return
+        }
+        let steps = 20
+        let interval = duration / Double(steps)
+        let originalVolume = engine.mainMixerNode.outputVolume
+        for i in 1...steps {
+            let fraction = 1.0 - (Float(i) / Float(steps))
+            engine.mainMixerNode.outputVolume = originalVolume * fraction
+            try? await Task.sleep(for: .milliseconds(Int(interval * 1000)))
+        }
+        stop()
+        engine.mainMixerNode.outputVolume = originalVolume
+    }
+
     func seek(to time: TimeInterval) {
         let clampedTime = max(0, min(time, duration))
 

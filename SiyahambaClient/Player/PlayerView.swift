@@ -5,8 +5,16 @@ struct PlayerView: View {
     let onBack: () -> Void
 
     @State private var playerVM: PlayerViewModel?
-    @State private var showLyrics = false
-    @State private var showChords = false
+    @State private var showLyrics: Bool
+    @State private var showChords: Bool
+
+    init(song: SongEntry, onBack: @escaping () -> Void) {
+        self.song = song
+        self.onBack = onBack
+        let mode = song.displayMode ?? .waveforms
+        _showLyrics = State(initialValue: mode == .lyrics || mode == .lyricsAndChords)
+        _showChords = State(initialValue: mode == .chords || mode == .lyricsAndChords)
+    }
     @FocusState private var isContentFocused: Bool
 
     @Environment(PlaybackEngine.self) private var engine
@@ -83,7 +91,8 @@ struct PlayerView: View {
             Button {
                 Task {
                     await vm.savePitchOffset()
-                    engine.stop()
+                    await vm.saveDisplayMode(showLyrics: showLyrics, showChords: showChords)
+                    await engine.fadeOutAndStop()
                     onBack()
                 }
             } label: {
@@ -107,18 +116,21 @@ struct PlayerView: View {
     private func mainZone(vm: PlayerViewModel) -> some View {
         if !showLyrics && !showChords {
             WaveformsView(songID: song.id)
-        } else if showLyrics && !showChords {
-            LyricsView()
-        } else if showLyrics && showChords {
+        } else {
             VStack(spacing: 0) {
-                LyricsView()
-                Divider()
-                ChordView()
-                    .frame(maxHeight: 220)
+                if showLyrics {
+                    LyricsView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                if showLyrics && showChords {
+                    Divider()
+                }
+                if showChords {
+                    ChordView()
+                        .frame(maxHeight: showLyrics ? 220 : .infinity)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            ChordView()
         }
     }
 

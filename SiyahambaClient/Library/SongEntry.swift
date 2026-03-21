@@ -11,6 +11,14 @@ struct SongEntry: Codable, Identifiable, Sendable {
     let addedAt: Date
     var pitchOffset: Int?
     var key: String?
+    var displayMode: DisplayMode?
+
+    enum DisplayMode: String, Codable, Sendable {
+        case waveforms
+        case lyrics
+        case lyricsAndChords
+        case chords
+    }
 
     init(
         id: UUID,
@@ -22,7 +30,8 @@ struct SongEntry: Codable, Identifiable, Sendable {
         sourceHash: String,
         addedAt: Date,
         pitchOffset: Int? = nil,
-        key: String? = nil
+        key: String? = nil,
+        displayMode: DisplayMode? = nil
     ) {
         self.id = id
         self.title = title
@@ -34,6 +43,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.addedAt = addedAt
         self.pitchOffset = pitchOffset
         self.key = key
+        self.displayMode = displayMode
     }
 
     init(from decoder: Decoder) throws {
@@ -48,9 +58,10 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.addedAt = try container.decode(Date.self, forKey: .addedAt)
         self.pitchOffset = try container.decodeIfPresent(Int.self, forKey: .pitchOffset)
         self.key = try container.decodeIfPresent(String.self, forKey: .key)
+        self.displayMode = try container.decodeIfPresent(DisplayMode.self, forKey: .displayMode)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, key
+        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, key, displayMode
     }
 }
