@@ -12,6 +12,7 @@ final class ImportViewModel {
     private let libraryStore: LibraryStore
     private var authViewModel: any AuthTokenProviderProtocol
     private var currentTask: Task<Void, Never>?
+    private var placeholderID: UUID?
 
     init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: any AuthTokenProviderProtocol) {
         self.apiClient = apiClient
@@ -29,6 +30,10 @@ final class ImportViewModel {
 
     func cancel() {
         cancelCurrentTask()
+        if let pid = placeholderID {
+            libraryStore.removePlaceholder(id: pid)
+            placeholderID = nil
+        }
         phase = .idle
     }
 
@@ -56,6 +61,10 @@ final class ImportViewModel {
                 return
             }
 
+            let placeholder = SongEntry.placeholder(fileName: fileURL.lastPathComponent, sourceHash: hash)
+            placeholderID = placeholder.id
+            libraryStore.addPlaceholder(placeholder)
+
             phase = .uploading
             try Task.checkCancellation()
 
@@ -76,10 +85,13 @@ final class ImportViewModel {
                 fileName: fileURL.lastPathComponent
             )
         } catch let error as APIError where error == .httpError(429) {
+            if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {
+            if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .idle
         } catch {
+            if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .error(error.localizedDescription)
         }
     }
@@ -115,7 +127,12 @@ final class ImportViewModel {
         }.value
 
         try await cacheManager.materializeSong(id: songEntry.id, from: tempDir)
-        await libraryStore.addSong(songEntry)
+        if let pid = placeholderID {
+            await libraryStore.replacePlaceholder(id: pid, with: songEntry)
+            placeholderID = nil
+        } else {
+            await libraryStore.addSong(songEntry)
+        }
         phase = .ready(cached: false)
     }
 

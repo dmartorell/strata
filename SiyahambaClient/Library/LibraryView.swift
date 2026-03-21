@@ -65,30 +65,48 @@ struct LibraryView: View {
         } else {
             Table(libraryStore.songs, selection: $selection) {
                 TableColumn("Título") { song in
-                    Text(song.title)
+                    if song.isPlaceholder == true {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .controlSize(.mini)
+                            Text(song.title)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text(song.title)
+                    }
                 }
                 TableColumn("Artista") { song in
                     Text(song.artist ?? "—")
+                        .foregroundStyle(song.isPlaceholder == true ? .tertiary : .primary)
                 }
                 TableColumn("Tono") { song in
                     Text(song.key ?? "—")
+                        .foregroundStyle(song.isPlaceholder == true ? .tertiary : .primary)
                 }
                 .width(60)
                 TableColumn("Duración") { song in
                     Text(formatDuration(song.duration))
+                        .foregroundStyle(song.isPlaceholder == true ? .tertiary : .primary)
                 }
                 .width(80)
             }
             .contextMenu(forSelectionType: UUID.self) { ids in
-                Button(role: .destructive) {
-                    idsToDelete = ids
-                    showDeleteConfirmation = true
-                } label: {
-                    Label("Eliminar", systemImage: "trash")
+                let allPlaceholders = ids.allSatisfy { id in
+                    libraryStore.songs.first(where: { $0.id == id })?.isPlaceholder == true
+                }
+                if !allPlaceholders {
+                    Button(role: .destructive) {
+                        idsToDelete = ids
+                        showDeleteConfirmation = true
+                    } label: {
+                        Label("Eliminar", systemImage: "trash")
+                    }
                 }
             } primaryAction: { ids in
                 guard let id = ids.first,
-                      let song = libraryStore.songs.first(where: { $0.id == id }) else { return }
+                      let song = libraryStore.songs.first(where: { $0.id == id }),
+                      song.isPlaceholder != true else { return }
                 onSongSelected(song)
             }
         }
