@@ -29,7 +29,7 @@ struct ImportView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(isDragTargeted ? Color.accentColor.opacity(0.08) : Color.clear)
                 )
-                .frame(height: 100)
+                .frame(maxWidth: 320, minHeight: 200)
 
             VStack(spacing: 6) {
                 Image(systemName: "square.and.arrow.down")
