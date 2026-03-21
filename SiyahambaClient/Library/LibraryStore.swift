@@ -37,6 +37,20 @@ final class LibraryStore {
         try? await cacheManager.writeLibraryIndex(songs)
     }
 
+    func addPlaceholder(_ entry: SongEntry) {
+        songs.insert(entry, at: 0)
+    }
+
+    func replacePlaceholder(id: UUID, with entry: SongEntry) async {
+        guard let index = songs.firstIndex(where: { $0.id == id }) else { return }
+        songs[index] = entry
+        try? await cacheManager.writeLibraryIndex(songs.filter { $0.isPlaceholder != true })
+    }
+
+    func removePlaceholder(id: UUID) {
+        songs.removeAll { $0.id == id }
+    }
+
     func isCached(sourceHash: String) -> Bool {
         songs.contains { $0.sourceHash == sourceHash }
     }

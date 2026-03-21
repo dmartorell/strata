@@ -12,6 +12,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
     var pitchOffset: Int?
     var key: String?
     var displayMode: DisplayMode?
+    var isPlaceholder: Bool?
 
     enum DisplayMode: String, Codable, Sendable {
         case waveforms
@@ -31,7 +32,8 @@ struct SongEntry: Codable, Identifiable, Sendable {
         addedAt: Date,
         pitchOffset: Int? = nil,
         key: String? = nil,
-        displayMode: DisplayMode? = nil
+        displayMode: DisplayMode? = nil,
+        isPlaceholder: Bool? = nil
     ) {
         self.id = id
         self.title = title
@@ -44,6 +46,22 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.pitchOffset = pitchOffset
         self.key = key
         self.displayMode = displayMode
+        self.isPlaceholder = isPlaceholder
+    }
+
+    static func placeholder(fileName: String, sourceHash: String) -> SongEntry {
+        let nameWithoutExtension = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
+        return SongEntry(
+            id: UUID(),
+            title: nameWithoutExtension,
+            artist: nil,
+            duration: 0,
+            sourceURL: nil,
+            fileName: fileName,
+            sourceHash: sourceHash,
+            addedAt: Date(),
+            isPlaceholder: true
+        )
     }
 
     init(from decoder: Decoder) throws {
@@ -59,9 +77,10 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.pitchOffset = try container.decodeIfPresent(Int.self, forKey: .pitchOffset)
         self.key = try container.decodeIfPresent(String.self, forKey: .key)
         self.displayMode = try container.decodeIfPresent(DisplayMode.self, forKey: .displayMode)
+        self.isPlaceholder = try container.decodeIfPresent(Bool.self, forKey: .isPlaceholder)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, key, displayMode
+        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, key, displayMode, isPlaceholder
     }
 }
