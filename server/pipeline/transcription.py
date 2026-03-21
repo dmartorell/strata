@@ -87,6 +87,7 @@ def transcribe_vocals(whisper_model: Any, vocals_bytes: bytes, device: str = "cu
                     "end": w["end"],
                 }
                 for w in seg.get("words", [])
+                if "start" in w and "end" in w
             ]
             segments.append(
                 {

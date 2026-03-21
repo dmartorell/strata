@@ -11,7 +11,7 @@ struct UsageView: View {
             if let u = usage {
                 let costText = String(format: "%.2f", u.estimatedCostEur)
                 let songWord = u.songsProcessed == 1 ? "canción" : "canciones"
-                Text("\(u.songsProcessed) \(songWord) este mes (€\(costText) aprox)")
+                Text("\(u.songsProcessed) \(songWord) este mes · €\(costText)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else if !loadError {

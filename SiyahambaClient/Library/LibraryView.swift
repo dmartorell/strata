@@ -47,8 +47,8 @@ struct LibraryView: View {
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "waveform")
-                        Text("Convert")
+                        Image(systemName: "play.rectangle.fill")
+                        Text("YT Convert")
                     }
                     .foregroundStyle(Color.accentColor)
                 }

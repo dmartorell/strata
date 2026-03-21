@@ -156,6 +156,16 @@ private func extractToTemp(
     let metadataData = try Data(contentsOf: metadataURL)
     let metadata = try JSONDecoder().decode(SongMetadata.self, from: metadataData)
 
+    var inferredKey: String?
+    let chordsURL = tempDir.appendingPathComponent("chords.json")
+    if let chordsData = try? Data(contentsOf: chordsURL) {
+        let decoder = JSONDecoder()
+        let chords: [ChordEntry] = (try? decoder.decode(ChordsFile.self, from: chordsData).chords)
+            ?? (try? decoder.decode([ChordEntry].self, from: chordsData))
+            ?? []
+        inferredKey = ChordTransposer.inferKey(from: chords)
+    }
+
     let songID = UUID()
     let entry = SongEntry(
         id: songID,
@@ -165,7 +175,8 @@ private func extractToTemp(
         sourceURL: sourceURL,
         fileName: fileName,
         sourceHash: sourceHash,
-        addedAt: Date()
+        addedAt: Date(),
+        key: inferredKey
     )
     return (entry, tempDir)
 }

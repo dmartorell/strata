@@ -19,17 +19,9 @@ struct JobResult: Sendable {
     var status: String = ""
 }
 
-struct UsageResponse: Decodable {
-    let month: String
-    let songs_processed: Int
-    let gpu_seconds: Double
-    let estimated_cost_usd: Double
-}
-
 struct UsageData: Decodable, Sendable {
     let month: String
     let songsProcessed: Int
-    let gpuSeconds: Double
     let estimatedCostUsd: Double
     let spendingLimitUsd: Double
 
@@ -38,7 +30,6 @@ struct UsageData: Decodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case month
         case songsProcessed = "songs_processed"
-        case gpuSeconds = "gpu_seconds"
         case estimatedCostUsd = "estimated_cost_usd"
         case spendingLimitUsd = "spending_limit_usd"
     }
@@ -229,16 +220,6 @@ struct APIClient: Sendable {
         return try decode(UsageData.self, from: data)
     }
 
-    /// GET /usage — consulta de uso mensual
-    func getUsage(token: String) async throws -> UsageResponse {
-        let endpoint = APIEndpoint.usage
-        let request = makeRequest(endpoint: endpoint, token: token)
-
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        return try decode(UsageResponse.self, from: data)
-    }
 
     // MARK: - Private Helpers
 
