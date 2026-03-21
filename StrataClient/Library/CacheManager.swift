@@ -12,7 +12,6 @@ protocol CacheManagerProtocol: Actor {
     func lyricsURL(songID: UUID) -> URL
     func chordsURL(songID: UUID) -> URL
     func sha256(of fileURL: URL) throws -> String
-    func youtubeVideoID(from urlString: String) -> String?
     func materializeSong(id: UUID, from tempDir: URL) throws
 }
 
@@ -97,29 +96,6 @@ extension CacheManager {
             hasher.update(data: chunk)
         }
         return hasher.finalize().compactMap { String(format: "%02x", $0) }.joined()
-    }
-}
-
-// MARK: - Extraccion de YouTube video ID
-
-extension CacheManager {
-    func youtubeVideoID(from urlString: String) -> String? {
-        guard let url = URL(string: urlString),
-              let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-        // youtube.com/watch?v=VIDEO_ID (y variantes con parametros extra como &t=30s)
-        if let videoID = components.queryItems?.first(where: { $0.name == "v" })?.value,
-           !videoID.isEmpty {
-            return videoID
-        }
-        // youtu.be/VIDEO_ID
-        if url.host == "youtu.be" {
-            let path = url.path
-            let id = path.hasPrefix("/") ? String(path.dropFirst()) : path
-            return id.isEmpty ? nil : id
-        }
-        return nil
     }
 }
 

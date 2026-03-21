@@ -27,13 +27,6 @@ final class ImportViewModel {
         }
     }
 
-    func startURLImport(urlString: String) {
-        cancelCurrentTask()
-        currentTask = Task {
-            await runURLImport(urlString: urlString)
-        }
-    }
-
     func cancel() {
         cancelCurrentTask()
         phase = .idle
@@ -82,54 +75,6 @@ final class ImportViewModel {
                 sourceURL: nil,
                 fileName: fileURL.lastPathComponent
             )
-        } catch let error as APIError where error == .httpError(429) {
-            phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
-        } catch is CancellationError {
-            phase = .idle
-        } catch {
-            phase = .error(error.localizedDescription)
-        }
-    }
-
-    private func runURLImport(urlString: String) async {
-        do {
-            phase = .validating
-            try Task.checkCancellation()
-
-            var url = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
-                url = "https://\(url)"
-            }
-
-            guard let videoID = await cacheManager.youtubeVideoID(from: url) else {
-                phase = .error("URL de YouTube no válida")
-                return
-            }
-
-            if libraryStore.isCached(sourceHash: videoID) {
-                phase = .ready(cached: true)
-                return
-            }
-
-            guard let token = authViewModel.token else {
-                phase = .error("No hay sesión activa")
-                return
-            }
-
-            phase = .uploading
-            try Task.checkCancellation()
-
-            let jobId = try await apiClient.uploadURL(urlString: url, token: token)
-
-            try await pollAndFinalize(
-                jobId: jobId,
-                sourceHash: videoID,
-                displayName: url,
-                sourceURL: url,
-                fileName: nil
-            )
-        } catch let error as APIError where error == .youtubeAuthExpired {
-            phase = .error("No se pudo descargar de YouTube. Prueba subiendo el archivo directamente.")
         } catch let error as APIError where error == .httpError(429) {
             phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {

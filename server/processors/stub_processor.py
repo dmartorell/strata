@@ -3,7 +3,6 @@ Endpoints HTTP de procesamiento de audio para Strata.
 
 FastAPI router con:
   - POST /process-file: acepta archivo de audio, valida tamano, lanza pipeline real
-  - POST /process-url: acepta URL de YouTube, lanza pipeline real
   - GET /result/{job_id}: devuelve progreso o ZIP cuando completado
 
 El procesamiento real se ejecuta en AudioPipeline (GPU Modal) via .spawn.
@@ -77,42 +76,6 @@ async def process_file(
     return {"job_id": job_id}
 
 
-@router.post("/process-url")
-async def process_url(
-    body: dict,
-    username: str = Depends(require_auth),
-):
-    """Acepta una URL de YouTube y lanza el pipeline GPU completo.
-
-    AudioPipeline.process_youtube descarga el audio con yt-dlp (cookies via Modal
-    Secret) y ejecuta el pipeline completo: Demucs + WhisperX + chord-extractor.
-    """
-    import modal
-    from usage.tracker import check_limit
-
-    if check_limit(username):
-        return JSONResponse(
-            status_code=429,
-            content={"detail": "Monthly spending limit reached"},
-        )
-
-    url = body.get("url", "")
-    if not url:
-        raise HTTPException(status_code=400, detail="URL requerida")
-
-    job_dict = _get_job_dict()
-    pipeline = _get_pipeline()
-
-    call = await pipeline.process_youtube.spawn.aio(
-        url=url,
-        username=username,
-    )
-    job_id = call.object_id
-    # El pipeline usa modal.current_function_call_id() internamente para el progreso
-    job_dict[job_id] = "queued"
-    return {"job_id": job_id}
-
-
 @router.get("/result/{job_id}")
 async def get_result(
     job_id: str,
@@ -131,14 +94,6 @@ async def get_result(
     # Error propagado desde el pipeline (formato "error:{mensaje}")
     if isinstance(status, str) and status.startswith("error:"):
         error_detail = status[len("error:"):]
-        if error_detail == "youtube_auth_expired":
-            return JSONResponse(
-                status_code=502,
-                content={
-                    "error_code": "youtube_auth_expired",
-                    "detail": "No se pudo descargar de YouTube. Prueba subiendo el archivo directamente.",
-                },
-            )
         raise HTTPException(status_code=500, detail=f"Pipeline error: {error_detail}")
 
     # Error sin mensaje adjunto

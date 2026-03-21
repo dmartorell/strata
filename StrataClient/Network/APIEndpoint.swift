@@ -13,7 +13,6 @@ enum APIEndpoint {
     case login
     case renew
     case processFile
-    case processURL
     case result(jobId: String)
     case usage
 
@@ -25,8 +24,6 @@ enum APIEndpoint {
             return APIEndpoint.baseURL.appendingPathComponent("auth/renew")
         case .processFile:
             return APIEndpoint.baseURL.appendingPathComponent("process-file")
-        case .processURL:
-            return APIEndpoint.baseURL.appendingPathComponent("process-url")
         case .result(let jobId):
             return APIEndpoint.baseURL.appendingPathComponent("result/\(jobId)")
         case .usage:
@@ -36,7 +33,7 @@ enum APIEndpoint {
 
     var method: String {
         switch self {
-        case .login, .renew, .processFile, .processURL:
+        case .login, .renew, .processFile:
             return "POST"
         case .result, .usage:
             return "GET"

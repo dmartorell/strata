@@ -206,6 +206,7 @@ from pipeline.image import gpu_image  # noqa: E402
     max_containers=2,
     scaledown_window=300,
     timeout=600,
+    volumes={"/data": usage_vol},
 )
 class AudioPipeline:
     """Pipeline end-to-end de audio: Demucs + WhisperX + chord-extractor.
@@ -242,17 +243,14 @@ class AudioPipeline:
         source_type: str,
         source_name: str,
         username: str,
-        youtube_metadata: dict | None = None,
     ) -> bytes:
         """Pipeline end-to-end: audio_bytes -> ZIP con stems + JSONs.
 
         Args:
             audio_bytes: Bytes del archivo de audio (MP3, M4A, WAV...).
-            source_type: "file" o "youtube".
-            source_name: Nombre del archivo original o URL de YouTube.
+            source_type: Tipo de fuente ("file").
+            source_name: Nombre del archivo original.
             username: Usuario que solicita el procesamiento (para usage).
-            youtube_metadata: Metadatos YouTube de download_youtube_audio().
-                              Si se pasa, se hace merge sobre metadata.json.
 
         Returns:
             Bytes del ZIP con 4 stems WAV + lyrics.json + chords.json + metadata.json.
@@ -313,10 +311,6 @@ class AudioPipeline:
                 "processed_at": datetime.utcnow().isoformat() + "Z",
                 "original_filename": source_name if source_type == "file" else None,
             }
-            # Merge YouTube metadata (sobreescribe campos base con info de YT)
-            if youtube_metadata:
-                metadata.update(youtube_metadata)
-
             # Registrar uso antes de marcar como completado
             if record_usage is not None:
                 record_usage(username=username, source_type=source_type, source_name=source_name)
@@ -325,41 +319,6 @@ class AudioPipeline:
 
             progress[job_id] = "completed"
             return result
-        except Exception as e:
-            progress[job_id] = f"error:{e}"
-            raise
-
-    @modal.method()
-    def process_youtube(self, url: str, username: str) -> bytes:
-        """Descarga audio de YouTube y ejecuta el pipeline completo.
-
-        Args:
-            url: URL de YouTube a descargar.
-            username: Usuario que solicita el procesamiento.
-
-        Returns:
-            Bytes del ZIP resultado del pipeline.
-        """
-        import sys
-        if "/root" not in sys.path:
-            sys.path.insert(0, "/root")
-
-        job_id = modal.current_function_call_id()
-        progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
-
-        try:
-            from pipeline.downloader import download_youtube_audio, YouTubeAuthError
-            audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
-            return self.process.local(
-                audio_bytes,
-                "youtube",
-                url,
-                username,
-                youtube_metadata=yt_metadata,
-            )
-        except YouTubeAuthError:
-            progress[job_id] = "error:youtube_auth_expired"
-            raise
         except Exception as e:
             progress[job_id] = f"error:{e}"
             raise

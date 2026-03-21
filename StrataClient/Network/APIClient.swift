@@ -100,7 +100,6 @@ struct MultipartRequest {
 
 protocol ImportAPIClientProtocol: Sendable {
     func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String
-    func uploadURL(urlString: String, token: String) async throws -> String
     func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int, onStageChange: (@Sendable (String) -> Void)?) async throws -> JobResult
 }
 
@@ -171,20 +170,6 @@ struct APIClient: Sendable {
         return decoded.job_id
     }
 
-    /// POST /process-url — envía URL de YouTube, devuelve job_id
-    func uploadURL(urlString: String, token: String) async throws -> String {
-        let endpoint = APIEndpoint.processURL
-        var request = makeRequest(endpoint: endpoint, token: token)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: ["url": urlString])
-
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        let decoded = try decode(ProcessResponse.self, from: data)
-        return decoded.job_id
-    }
-
     /// GET /result/{jobId} — polling hasta completed o error
     /// - Parameters:
     ///   - intervalSeconds: segundos entre intentos (default 3, override en tests con 0)
@@ -204,17 +189,9 @@ struct APIClient: Sendable {
 
             let (data, response) = try await transport.data(for: request)
 
-            let httpResponse = response as! HTTPURLResponse
-
-            if httpResponse.statusCode == 502 {
-                if let body = try? JSONDecoder().decode([String: String].self, from: data),
-                   body["error_code"] == "youtube_auth_expired" {
-                    throw APIError.youtubeAuthExpired
-                }
-            }
-
             try checkResponse(response, isAuthenticated: true)
 
+            let httpResponse = response as! HTTPURLResponse
             let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type") ?? ""
             if contentType.hasPrefix("application/zip") {
                 return JobResult(zipData: data, status: "completed")

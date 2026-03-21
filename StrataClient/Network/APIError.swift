@@ -8,7 +8,6 @@ enum APIError: Error, LocalizedError, Equatable {
     case timeout               // 60 intentos agotados en polling
     case decodingError(String)
     case rateLimited
-    case youtubeAuthExpired
 
     var errorDescription: String? {
         switch self {
@@ -26,8 +25,6 @@ enum APIError: Error, LocalizedError, Equatable {
             return "Error decodificando respuesta: \(msg)"
         case .rateLimited:
             return "Limite mensual de procesamiento alcanzado"
-        case .youtubeAuthExpired:
-            return "No se pudo descargar de YouTube. Prueba subiendo el archivo directamente."
         }
     }
 
@@ -40,7 +37,6 @@ enum APIError: Error, LocalizedError, Equatable {
         case (.timeout, .timeout): return true
         case (.decodingError(let a), .decodingError(let b)): return a == b
         case (.rateLimited, .rateLimited): return true
-        case (.youtubeAuthExpired, .youtubeAuthExpired): return true
         default: return false
         }
     }
