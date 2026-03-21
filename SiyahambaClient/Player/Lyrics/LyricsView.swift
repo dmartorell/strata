@@ -20,7 +20,7 @@ struct LyricsView: View {
                 }
                 .padding(.vertical, 200)
             }
-            .background(Color.black)
+            .background(Color(red: 0.10, green: 0.16, blue: 0.27))
             .onChange(of: vm.currentLine?.id) { _, newID in
                 guard let id = newID else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -38,9 +38,8 @@ private struct LyricLineView: View {
     let currentTime: TimeInterval
     let linePassed: Bool
 
-    private var lineOpacity: Double {
-        (isActive || linePassed) ? 1.0 : 0.4
-    }
+    private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
+    private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
 
     var body: some View {
         let sublines = splitWords(line.words)
@@ -48,26 +47,25 @@ private struct LyricLineView: View {
             ForEach(sublines.indices, id: \.self) { idx in
                 HStack(spacing: 0) {
                     ForEach(sublines[idx]) { word in
-                        let isHighlighted = activeWord?.id == word.id
-                        let passed = word.end <= currentTime
                         Text(word.word + " ")
-                            .font(.system(size: 28, weight: isHighlighted ? .bold : .regular))
-                            .foregroundColor(wordColor(isHighlighted: isHighlighted, passed: passed))
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(colorForWord(word))
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .opacity(lineOpacity)
     }
 
-    private func wordColor(isHighlighted: Bool, passed: Bool) -> Color {
-        if isHighlighted { return .white }
-        if passed { return .white }
-        return .gray
+    private func colorForWord(_ word: LyricWord) -> Color {
+        if linePassed { return Self.passedColor }
+        if !isActive { return Self.upcomingColor }
+        if word.end <= currentTime { return .white }
+        if currentTime >= word.start { return .white }
+        return Self.upcomingColor
     }
 
-    private func splitWords(_ words: [LyricWord], maxPerLine: Int = 6) -> [[LyricWord]] {
+private func splitWords(_ words: [LyricWord], maxPerLine: Int = 6) -> [[LyricWord]] {
         guard !words.isEmpty else { return [] }
         var result: [[LyricWord]] = []
         var i = words.startIndex
