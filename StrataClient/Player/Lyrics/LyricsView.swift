@@ -72,9 +72,26 @@ private struct LyricLineView: View {
         var result: [[LyricWord]] = []
         var i = words.startIndex
         while i < words.endIndex {
-            let end = min(i + maxPerLine, words.endIndex)
-            result.append(Array(words[i..<end]))
-            i = end
+            let remaining = words.endIndex - i
+            if remaining <= maxPerLine {
+                result.append(Array(words[i..<words.endIndex]))
+                break
+            }
+            let searchEnd = min(i + maxPerLine + 2, words.endIndex)
+            var breakAt = min(i + (remaining + 1) / 2, i + maxPerLine)
+            for j in i..<searchEnd {
+                if words[j].word.hasSuffix(",") {
+                    breakAt = j + 1
+                    break
+                }
+                let lower = words[j].word.lowercased()
+                if (lower == "and" || lower == "y") && j > i {
+                    breakAt = j
+                    break
+                }
+            }
+            result.append(Array(words[i..<breakAt]))
+            i = breakAt
         }
         return result
     }
