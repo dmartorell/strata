@@ -19,21 +19,17 @@ Estructura de usage.json:
   }
 }
 
-NOTA: Este modulo se usa en dos contextos:
-  1. Contexto web (ASGI): get_usage() lee /data/usage.json via Volume montado en web handler
-     (el Volume NO se monta en web — get_usage lee via modal.Volume.lookup si es necesario)
-  2. Contexto GPU (process_job): record_usage() escribe en /data/usage.json (Volume montado)
+NOTA: Este modulo importa usage_vol desde app.py para garantizar que commit() y
+reload() operan en la misma instancia de Volume que esta montada en /data.
+  1. Contexto web (ASGI): reload() en usage_endpoint actualiza la instancia montada
+  2. Contexto GPU (process_job): commit() en _write_usage persiste los cambios al Volume
 """
 
 import json
-import modal
+from app import usage_vol
 from datetime import datetime, timezone
 from pathlib import Path
 from fastapi import APIRouter, Depends
-
-# Modal Volume para persistencia de datos de uso entre deploys
-# Se declara aqui para que app.py pueda referenciarla
-usage_vol = modal.Volume.from_name("strata-usage", create_if_missing=True)
 
 # Tasa Modal T4: $0.000164/s
 MODAL_T4_RATE_PER_SECOND = 0.000164
@@ -171,4 +167,5 @@ from auth.auth import require_auth  # noqa: E402
 @router.get("/usage")
 def usage_endpoint(username: str = Depends(require_auth)):
     """Devuelve el uso mensual del usuario autenticado."""
+    usage_vol.reload()
     return get_usage(username)
