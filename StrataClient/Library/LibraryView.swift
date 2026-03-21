@@ -6,6 +6,8 @@ struct LibraryView: View {
     var onSongSelected: (SongEntry) -> Void
 
     @State private var selection = Set<UUID>()
+    @State private var idsToDelete = Set<UUID>()
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,29 +25,36 @@ struct LibraryView: View {
             UsageView()
                 .layoutPriority(1)
         }
+        .alert(
+            "¿Eliminar \(idsToDelete.count == 1 ? "esta canción" : "estas \(idsToDelete.count) canciones")?",
+            isPresented: $showDeleteConfirmation
+        ) {
+            Button("Cancelar", role: .cancel) {}
+            Button("Eliminar", role: .destructive) {
+                let ids = idsToDelete
+                Task { await libraryStore.deleteSongs(ids: ids) }
+                selection = selection.subtracting(ids)
+                idsToDelete = []
+            }
+        } message: {
+            Text("Esta acción no se puede deshacer.")
+        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    if let urlString = NSPasteboard.general.string(forType: .string) {
-                        importViewModel.startURLImport(urlString: urlString)
+                    if let url = URL(string: "https://v1.y2mate.nu/") {
+                        NSWorkspace.shared.open(url)
                     }
                 } label: {
-                    Label("Pegar URL de YouTube", systemImage: "link")
+                    HStack(spacing: 4) {
+                        Image(systemName: "waveform")
+                        Text("Convert")
+                    }
+                    .foregroundStyle(Color.accentColor)
                 }
-                .help("Pega una URL de YouTube del portapapeles (⌘V)")
-                .disabled(importViewModel.phase.isActive)
+                .help("Abre y2mate para convertir YouTube a MP3")
             }
 
-            ToolbarItem(placement: .destructiveAction) {
-                if !selection.isEmpty {
-                    Button(role: .destructive) {
-                        Task { await libraryStore.deleteSongs(ids: selection) }
-                        selection = []
-                    } label: {
-                        Label("Eliminar selección", systemImage: "trash")
-                    }
-                }
-            }
         }
     }
 
@@ -72,8 +81,8 @@ struct LibraryView: View {
             }
             .contextMenu(forSelectionType: UUID.self) { ids in
                 Button(role: .destructive) {
-                    Task { await libraryStore.deleteSongs(ids: ids) }
-                    selection = selection.subtracting(ids)
+                    idsToDelete = ids
+                    showDeleteConfirmation = true
                 } label: {
                     Label("Eliminar", systemImage: "trash")
                 }
@@ -91,7 +100,7 @@ struct LibraryView: View {
             Text("Biblioteca vacía")
                 .font(.headline)
                 .foregroundStyle(.secondary)
-            Text("Arrastra un archivo o pega una URL de YouTube para importar")
+            Text("Arrastra un archivo de audio para importar")
                 .font(.subheadline)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
