@@ -18,29 +18,20 @@ Estructura de usage.json:
     }
   }
 }
-
-NOTA: Este modulo importa usage_vol desde app.py para garantizar que commit() y
-reload() operan en la misma instancia de Volume que esta montada en /data.
-  1. Contexto web (ASGI): reload() en usage_endpoint actualiza la instancia montada
-  2. Contexto GPU (process_job): commit() en _write_usage persiste los cambios al Volume
 """
 
 import json
-from app import usage_vol
+import modal
 from datetime import datetime, timezone
 from pathlib import Path
-from fastapi import APIRouter, Depends
 
-# Tasa Modal T4: $0.000164/s
 MODAL_T4_RATE_PER_SECOND = 0.000164
-# Segundos GPU estimados por procesamiento stub (equivalente real ~45s)
 GPU_SECONDS_PER_SONG = 45
-# Limite de gasto mensual
 SPENDING_LIMIT_USD = 10.00
 
 USAGE_FILE = Path("/data/usage.json")
 
-router = APIRouter(tags=["usage"])
+usage_vol = modal.Volume.from_name("strata-usage")
 
 
 def _read_usage() -> dict:
@@ -59,22 +50,21 @@ def _write_usage(data: dict) -> None:
     USAGE_FILE.parent.mkdir(parents=True, exist_ok=True)
     with USAGE_FILE.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
-    # Commit del Volume para persistir los cambios
     usage_vol.commit()
 
 
-def record_usage(username: str, source_type: str, source_name: str) -> None:
+def record_usage(username: str, source_type: str, source_name: str, gpu_seconds: float | None = None) -> None:
     """Registra un procesamiento en usage.json.
 
     Incrementa songs_processed y gpu_seconds para el mes actual y el usuario.
     Debe llamarse desde una funcion Modal que tenga el Volume montado en /data.
     """
+    actual_gpu_seconds = gpu_seconds if gpu_seconds is not None else GPU_SECONDS_PER_SONG
     now = datetime.now(timezone.utc)
     month_key = now.strftime("%Y-%m")
 
     data = _read_usage()
 
-    # Inicializar estructura del mes si no existe
     if month_key not in data:
         data[month_key] = {
             "songs_processed": 0,
@@ -85,19 +75,17 @@ def record_usage(username: str, source_type: str, source_name: str) -> None:
 
     month = data[month_key]
 
-    # Incrementar totales del mes
     month["songs_processed"] += 1
-    month["gpu_seconds"] += GPU_SECONDS_PER_SONG
+    month["gpu_seconds"] += actual_gpu_seconds
     month["estimated_cost_usd"] = round(
         month["gpu_seconds"] * MODAL_T4_RATE_PER_SECOND, 4
     )
 
-    # Incrementar totales por usuario
     if username not in month["by_user"]:
         month["by_user"][username] = {"songs": 0, "gpu_seconds": 0}
 
     month["by_user"][username]["songs"] += 1
-    month["by_user"][username]["gpu_seconds"] += GPU_SECONDS_PER_SONG
+    month["by_user"][username]["gpu_seconds"] += actual_gpu_seconds
 
     _write_usage(data)
 
@@ -115,20 +103,7 @@ def check_limit(username: str) -> bool:
 
 
 def get_usage(username: str) -> dict:
-    """Devuelve el resumen de uso del mes actual.
-
-    Lee directamente desde el Volume si esta montado (/data),
-    o devuelve ceros si no hay datos todavia.
-
-    Formato de respuesta:
-    {
-      "month": "YYYY-MM",
-      "songs_processed": N,
-      "gpu_seconds": N,
-      "estimated_cost_usd": float,
-      "spending_limit_usd": 10.00
-    }
-    """
+    """Devuelve el resumen de uso del mes actual."""
     now = datetime.now(timezone.utc)
     month_key = now.strftime("%Y-%m")
 
@@ -145,27 +120,19 @@ def get_usage(username: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# FastAPI endpoint
+# FastAPI endpoint — solo se usa en el web container (tiene fastapi instalado)
 # ---------------------------------------------------------------------------
 
-def _lazy_require_auth(credentials=None):
-    """Dependencia lazy que delega a require_auth en auth.auth."""
+def build_router():
+    """Construye el router FastAPI. Llamar solo desde el web container."""
+    from fastapi import APIRouter, Depends
     from auth.auth import require_auth
-    from fastapi import Depends
-    # FastAPI llama a esta funcion como dependency
-    # Necesitamos que sea un callable que FastAPI pueda invocar como Depends
-    # Pero esto no funciona directamente — se resuelve en el endpoint con la solucion de abajo
-    return require_auth(credentials)
 
+    router = APIRouter(tags=["usage"])
 
-# Importamos require_auth aqui — este import ocurre cuando tracker.py se carga,
-# lo que solo sucede desde web() (donde /root esta en sys.path) o desde process_job
-# (donde sys.path ya tiene /root por el sys.path.insert al inicio de process_job)
-from auth.auth import require_auth  # noqa: E402
+    @router.get("/usage")
+    def usage_endpoint(username: str = Depends(require_auth)):
+        usage_vol.reload()
+        return get_usage(username)
 
-
-@router.get("/usage")
-def usage_endpoint(username: str = Depends(require_auth)):
-    """Devuelve el uso mensual del usuario autenticado."""
-    usage_vol.reload()
-    return get_usage(username)
+    return router

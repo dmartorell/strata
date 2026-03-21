@@ -178,7 +178,8 @@ def web():
     from fastapi import FastAPI
     from auth.auth import router as auth_router
     from processors.stub_processor import router as processor_router
-    from usage.tracker import router as usage_router
+    from usage.tracker import build_router
+    usage_router = build_router()
 
     web_app = FastAPI(title="Strata API")
 
@@ -256,26 +257,25 @@ class AudioPipeline:
             Bytes del ZIP con 4 stems WAV + lyrics.json + chords.json + metadata.json.
         """
         import sys
+        import time
         import soundfile as sf
         import io as _io
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
-        # Obtener job_id del contexto Modal (es el object_id del FunctionCall)
+        t0 = time.monotonic()
+
         job_id = modal.current_function_call_id()
         progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
 
-        # Validar limites antes de tocar GPU
         from pipeline.validators import validate_audio
         validate_audio(audio_bytes)
 
         try:
-            # Step 1: Separar stems (Demucs htdemucs)
             progress[job_id] = "separating"
             from pipeline.separation import separate_stems
             stems = separate_stems(self.demucs_model, audio_bytes)
 
-            # Calcular duracion a partir del stem vocals (disponible siempre)
             duration_seconds: float | None = None
             try:
                 vocals_bytes = stems.get("vocals", b"")
@@ -285,23 +285,19 @@ class AudioPipeline:
             except Exception:
                 pass
 
-            # Step 2: Transcribir vocals (WhisperX)
             progress[job_id] = "transcribing"
             from pipeline.transcription import transcribe_vocals
             lyrics = transcribe_vocals(self.whisper_model, stems.get("vocals", b""))
 
-            # Step 3: Detectar acordes sobre stem 'other'
             progress[job_id] = "detecting_chords"
             from pipeline.chords import detect_chords
             chords = detect_chords(stems.get("other", b""))
 
-            # Step 4: Empaquetar todo en ZIP
             progress[job_id] = "packaging"
             from pipeline.packaging import package_results
-            try:
-                from usage.tracker import record_usage
-            except ImportError:
-                record_usage = None
+            from usage.tracker import record_usage
+
+            gpu_seconds = time.monotonic() - t0
 
             metadata = {
                 "title": source_name,
@@ -311,9 +307,7 @@ class AudioPipeline:
                 "processed_at": datetime.utcnow().isoformat() + "Z",
                 "original_filename": source_name if source_type == "file" else None,
             }
-            # Registrar uso antes de marcar como completado
-            if record_usage is not None:
-                record_usage(username=username, source_type=source_type, source_name=source_name)
+            record_usage(username=username, source_type=source_type, source_name=source_name, gpu_seconds=gpu_seconds)
 
             result = package_results(stems, lyrics, chords, metadata)
 
