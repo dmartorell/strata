@@ -72,7 +72,7 @@ async def process_file(
     )
     job_id = call.object_id
     # El pipeline usa modal.current_function_call_id() internamente para el progreso
-    job_dict[job_id] = "queued"
+    await job_dict.put.aio(job_id, "queued")
     return {"job_id": job_id}
 
 

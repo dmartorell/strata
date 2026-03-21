@@ -20,7 +20,7 @@ from pydantic import BaseModel
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 # JWT Secret: leer de variable de entorno, fallback a secreto de desarrollo
-JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret-change-in-prod")
+JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret-change-in-prod-min32b")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRY_DAYS = 90
 
