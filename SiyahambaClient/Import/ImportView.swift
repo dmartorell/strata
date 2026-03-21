@@ -25,11 +25,12 @@ struct ImportView: View {
                     isDragTargeted ? Color.accentColor : Color.secondary.opacity(0.4),
                     style: StrokeStyle(lineWidth: 2, dash: [6, 4])
                 )
+                .frame(height: 160)
+                .frame(maxWidth: 700)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(isDragTargeted ? Color.accentColor.opacity(0.08) : Color.clear)
                 )
-                .frame(maxWidth: 320, minHeight: 200)
 
             VStack(spacing: 6) {
                 Image(systemName: "square.and.arrow.down")
