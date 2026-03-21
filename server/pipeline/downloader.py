@@ -1,25 +1,25 @@
-"""YouTube audio downloader with cookies, retry and exponential backoff.
+"""YouTube audio downloader using Cobalt Tools API with retry and exponential backoff.
 
-Descarga audio de una URL de YouTube usando yt-dlp con:
-- Autenticacion via cookies (Modal Secret YT_COOKIES_TXT)
+Descarga audio de una URL de YouTube usando la API de Cobalt Tools:
+- Sin cookies ni autenticacion de YouTube
 - 3 reintentos con backoff exponencial (1s, 2s, 4s)
 - Extraccion de metadatos para metadata.json
 
-El cookie handling usa una env var porque Modal Secrets inyectan variables de
-entorno, NO ficheros en disco. downloader.py escribe el contenido a
-/tmp/yt-cookies.txt antes de cada descarga.
-
-Configurar el Secret:
-    modal secret create youtube-cookies YT_COOKIES_TXT="$(cat cookies.txt)"
+Configuracion via variables de entorno:
+    COBALT_API_URL  URL base de la instancia Cobalt (default: https://api.cobalt.tools)
+    COBALT_API_KEY  API key opcional para instancias autenticadas
 """
 
+import json
 import os
+import re
 import time
+import urllib.request
 from urllib.parse import urlparse
 
 
 class YouTubeAuthError(Exception):
-    """YouTube requiere autenticación — cookies expiradas o ausentes."""
+    """YouTube requiere autenticacion -- Cobalt no pudo acceder al video."""
     pass
 
 
@@ -30,7 +30,22 @@ _ALLOWED_HOSTNAMES = frozenset({
     "m.youtube.com",
 })
 
-_COOKIES_TMP_PATH = "/tmp/yt-cookies.txt"
+COBALT_API_URL = os.environ.get("COBALT_API_URL", "https://api.cobalt.tools")
+COBALT_API_KEY = os.environ.get("COBALT_API_KEY", "")
+
+_COBALT_ERROR_KEYWORDS = (
+    "rate limit",
+    "ratelimit",
+    "content.unavailable",
+    "content.age_restricted",
+    "content.geoblocked",
+    "youtube.login",
+    "youtube.age",
+    "youtube.blocked",
+    "youtube.private",
+    "youtube.unavailable",
+    "youtube.auth",
+)
 
 
 def _validate_youtube_url(url: str) -> None:
@@ -46,126 +61,133 @@ def _validate_youtube_url(url: str) -> None:
         )
 
 
-def _write_cookies() -> str | None:
-    """Escribe cookies de la env var YT_COOKIES_TXT a fichero temporal.
+def _extract_video_id(url: str) -> str | None:
+    """Extrae el video ID de una URL de YouTube.
 
-    Returns:
-        Ruta al fichero de cookies, o None si la env var no esta definida.
+    Soporta:
+        https://www.youtube.com/watch?v=XXXXXXXXXXX
+        https://youtu.be/XXXXXXXXXXX
     """
-    yt_cookies_env = os.environ.get("YT_COOKIES_TXT", "")
-    if yt_cookies_env:
-        with open(_COOKIES_TMP_PATH, "w") as f:
-            f.write(yt_cookies_env)
-        return _COOKIES_TMP_PATH
+    # youtu.be/ID
+    short = re.search(r"youtu\.be/([A-Za-z0-9_-]{11})", url)
+    if short:
+        return short.group(1)
+    # youtube.com/watch?v=ID
+    full = re.search(r"[?&]v=([A-Za-z0-9_-]{11})", url)
+    if full:
+        return full.group(1)
     return None
 
 
-def _build_ydl_opts(output_dir: str, cookies_path: str | None) -> dict:
-    """Construye las opciones de yt-dlp."""
-    opts = {
-        "format": "m4a/bestaudio/best",
-        "outtmpl": os.path.join(output_dir, "%(id)s.%(ext)s"),
-        "retries": 3,
-        "socket_timeout": 30,
-        "postprocessors": [
-            {
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "m4a",
-            }
-        ],
-        "quiet": True,
-    }
-    if cookies_path:
-        opts["cookiefile"] = cookies_path
-    return opts
-
-
-def _extract_metadata(url: str, info: dict) -> dict:
-    """Extrae los campos de metadatos YouTube del info_dict de yt-dlp."""
-    return {
-        "youtube_url": url,
-        "youtube_id": info.get("id"),
-        "title": info.get("title"),
-        "uploader": info.get("uploader"),
-        "thumbnail_url": info.get("thumbnail"),
-        "duration_seconds": info.get("duration"),
-    }
-
-
 def download_youtube_audio(url: str, output_dir: str) -> tuple[bytes, dict]:
-    """Descarga audio de YouTube y devuelve bytes + metadatos.
+    """Descarga audio de YouTube via Cobalt API y devuelve bytes + metadatos.
 
     Args:
         url: URL de YouTube (youtube.com o youtu.be).
-        output_dir: Directorio donde yt-dlp escribe el archivo descargado.
+        output_dir: Directorio de salida (no se usa; se mantiene por compatibilidad).
 
     Returns:
         Tupla (audio_bytes, metadata) donde:
-        - audio_bytes: Contenido del archivo de audio descargado (m4a).
+        - audio_bytes: Contenido del archivo MP3 descargado.
         - metadata: Dict con campos YouTube para metadata.json:
             {youtube_url, youtube_id, title, uploader, thumbnail_url, duration_seconds}
 
     Raises:
         ValueError: Si la URL no es de YouTube.
+        YouTubeAuthError: Si Cobalt reporta error de acceso a YouTube.
         Exception: Si la descarga falla tras 3 intentos.
     """
-    import yt_dlp
-
     _validate_youtube_url(url)
-
-    cookies_path = _write_cookies()
-    ydl_opts = _build_ydl_opts(output_dir, cookies_path)
 
     last_exception: Exception | None = None
 
     for attempt in range(3):
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(url, download=True)
+            cobalt_response = _call_cobalt_api(url)
 
-            # Localizar el archivo descargado en output_dir
-            video_id = info.get("id", "")
-            audio_path: str | None = None
+            status = cobalt_response.get("status", "")
+            if status in ("tunnel", "redirect"):
+                download_url = cobalt_response.get("url", "")
+                filename = cobalt_response.get("filename", "Unknown")
+                audio_bytes = _download_bytes(download_url)
 
-            # yt-dlp puede cambiar la extension tras el postprocessor
-            for ext in ("m4a", "mp4", "webm", "opus", "ogg", "mp3"):
-                candidate = os.path.join(output_dir, f"{video_id}.{ext}")
-                if os.path.exists(candidate):
-                    audio_path = candidate
-                    break
+                metadata = {
+                    "youtube_url": url,
+                    "youtube_id": _extract_video_id(url),
+                    "title": filename,
+                    "uploader": None,
+                    "thumbnail_url": None,
+                    "duration_seconds": None,
+                }
+                return audio_bytes, metadata
 
-            if audio_path is None:
-                # Buscar cualquier archivo en output_dir con ese id como prefijo
-                for fname in os.listdir(output_dir):
-                    if fname.startswith(video_id):
-                        audio_path = os.path.join(output_dir, fname)
-                        break
+            elif status == "error":
+                error_info = cobalt_response.get("error", {})
+                error_code = error_info.get("code", "") if isinstance(error_info, dict) else str(error_info)
+                error_lower = error_code.lower()
+                if any(kw in error_lower for kw in _COBALT_ERROR_KEYWORDS):
+                    raise YouTubeAuthError(
+                        f"Cobalt no pudo acceder al video de YouTube: {error_code}"
+                    )
+                raise RuntimeError(f"Cobalt API error: {error_code}")
 
-            if audio_path is None:
-                raise RuntimeError(
-                    f"yt-dlp no genero ningun archivo en {output_dir} para video_id={video_id!r}"
-                )
+            else:
+                raise RuntimeError(f"Cobalt API respuesta inesperada con status: {status!r}")
 
-            with open(audio_path, "rb") as f:
-                audio_bytes = f.read()
-
-            # Limpiar archivo descargado
-            try:
-                os.unlink(audio_path)
-            except OSError:
-                pass
-
-            metadata = _extract_metadata(url, info)
-            return audio_bytes, metadata
-
+        except YouTubeAuthError:
+            raise
         except Exception as e:
             last_exception = e
-            if "Sign in to confirm" in str(e) or "confirm you're not a bot" in str(e):
-                raise YouTubeAuthError(
-                    "YouTube requiere autenticación. Las cookies han expirado o no están configuradas."
-                ) from e
             if attempt < 2:
-                sleep_seconds = 2 ** attempt  # 1s, 2s
-                time.sleep(sleep_seconds)
+                time.sleep(2 ** attempt)
 
     raise last_exception  # type: ignore[misc]
+
+
+def _call_cobalt_api(url: str) -> dict:
+    """Hace POST al endpoint Cobalt y devuelve el JSON de respuesta.
+
+    Args:
+        url: URL de YouTube a descargar.
+
+    Returns:
+        Dict con la respuesta JSON de Cobalt.
+
+    Raises:
+        RuntimeError: Si la llamada HTTP falla.
+    """
+    payload = json.dumps({
+        "url": url,
+        "audioFormat": "mp3",
+        "audioBitrate": "320",
+    }).encode("utf-8")
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    if COBALT_API_KEY:
+        headers["Authorization"] = f"Api-Key {COBALT_API_KEY}"
+
+    req = urllib.request.Request(
+        COBALT_API_URL,
+        data=payload,
+        headers=headers,
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _download_bytes(download_url: str) -> bytes:
+    """Descarga los bytes de audio desde la URL proporcionada por Cobalt.
+
+    Args:
+        download_url: URL directa de descarga devuelta por Cobalt.
+
+    Returns:
+        Bytes del archivo de audio.
+    """
+    req = urllib.request.Request(download_url)
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        return resp.read()
