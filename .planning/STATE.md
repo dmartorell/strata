@@ -167,11 +167,13 @@ None yet.
 | 7 | Cambio de look pantalla de letras: background oscuro, fuente mayor, partir frases, color gris a blanco | 2026-03-06 | 4b10407 | [7-cambio-de-look-pantalla-de-letras-backgr](./quick/7-cambio-de-look-pantalla-de-letras-backgr/) |
 | 8 | Reemplazar yt-dlp por Cobalt Tools API para descarga de YouTube | 2026-03-21 | 6d535ef | [8-replace-yt-dlp-with-cobalt-tools-api-for](./quick/8-replace-yt-dlp-with-cobalt-tools-api-for/) |
 | 9 | Fix UsageView mostrando datos stale: instancia duplicada de Modal Volume en tracker.py + re-fetch al reaparecer en cliente | 2026-03-21 | 639fd63 | [9-fix-usageview-always-showing-stale-song-](./quick/9-fix-usageview-always-showing-stale-song-/) |
+| 10 | Mostrar canción en procesamiento inmediatamente en biblioteca con fila placeholder y spinner | 2026-03-22 | 60d5a4b | [10-show-processing-song-immediately-in-libr](./quick/10-show-processing-song-immediately-in-libr/) |
+| 11 | Análisis de viabilidad para añadir edición de letras a LyricsView | 2026-03-22 | — | [11-analyze-adding-lyrics-editing-to-lyricsv](./quick/11-analyze-adding-lyrics-editing-to-lyricsv/) |
 
 ## Session Continuity
 
-Last session: 2026-03-21
-Stopped at: Completed quick task 9 — Fix UsageView datos stale (Modal Volume instancia compartida + task(id:) refresh)
+Last session: 2026-03-22
+Stopped at: Completed quick task 10 — Placeholder row en biblioteca durante importación (spinner + reemplazo en éxito, eliminación en error/cancel)
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
