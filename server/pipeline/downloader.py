@@ -18,6 +18,11 @@ import time
 from urllib.parse import urlparse
 
 
+class YouTubeAuthError(Exception):
+    """YouTube requiere autenticación — cookies expiradas o ausentes."""
+    pass
+
+
 _ALLOWED_HOSTNAMES = frozenset({
     "youtube.com",
     "www.youtube.com",
@@ -155,6 +160,10 @@ def download_youtube_audio(url: str, output_dir: str) -> tuple[bytes, dict]:
 
         except Exception as e:
             last_exception = e
+            if "Sign in to confirm" in str(e) or "confirm you're not a bot" in str(e):
+                raise YouTubeAuthError(
+                    "YouTube requiere autenticación. Las cookies han expirado o no están configuradas."
+                ) from e
             if attempt < 2:
                 sleep_seconds = 2 ** attempt  # 1s, 2s
                 time.sleep(sleep_seconds)

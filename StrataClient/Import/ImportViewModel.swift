@@ -128,6 +128,8 @@ final class ImportViewModel {
                 sourceURL: url,
                 fileName: nil
             )
+        } catch let error as APIError where error == .youtubeAuthExpired {
+            phase = .error("No se pudo descargar de YouTube. Prueba subiendo el archivo directamente.")
         } catch let error as APIError where error == .httpError(429) {
             phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {

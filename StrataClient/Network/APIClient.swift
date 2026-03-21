@@ -203,9 +203,18 @@ struct APIClient: Sendable {
             try Task.checkCancellation()
 
             let (data, response) = try await transport.data(for: request)
-            try checkResponse(response, isAuthenticated: true)
 
             let httpResponse = response as! HTTPURLResponse
+
+            if httpResponse.statusCode == 502 {
+                if let body = try? JSONDecoder().decode([String: String].self, from: data),
+                   body["error_code"] == "youtube_auth_expired" {
+                    throw APIError.youtubeAuthExpired
+                }
+            }
+
+            try checkResponse(response, isAuthenticated: true)
+
             let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type") ?? ""
             if contentType.hasPrefix("application/zip") {
                 return JobResult(zipData: data, status: "completed")
@@ -234,7 +243,8 @@ struct APIClient: Sendable {
     /// GET /usage — consulta de uso mensual (UsageData con camelCase y EUR)
     func fetchUsage(token: String) async throws -> UsageData {
         let endpoint = APIEndpoint.usage
-        let request = makeRequest(endpoint: endpoint, token: token)
+        var request = makeRequest(endpoint: endpoint, token: token)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
 
         let (data, response) = try await transport.data(for: request)
         try checkResponse(response, isAuthenticated: true)

@@ -349,7 +349,7 @@ class AudioPipeline:
         progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
 
         try:
-            from pipeline.downloader import download_youtube_audio
+            from pipeline.downloader import download_youtube_audio, YouTubeAuthError
             audio_bytes, yt_metadata = download_youtube_audio(url, "/tmp")
             return self.process.local(
                 audio_bytes,
@@ -358,6 +358,9 @@ class AudioPipeline:
                 username,
                 youtube_metadata=yt_metadata,
             )
+        except YouTubeAuthError:
+            progress[job_id] = "error:youtube_auth_expired"
+            raise
         except Exception as e:
             progress[job_id] = f"error:{e}"
             raise

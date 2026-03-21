@@ -131,6 +131,14 @@ async def get_result(
     # Error propagado desde el pipeline (formato "error:{mensaje}")
     if isinstance(status, str) and status.startswith("error:"):
         error_detail = status[len("error:"):]
+        if error_detail == "youtube_auth_expired":
+            return JSONResponse(
+                status_code=502,
+                content={
+                    "error_code": "youtube_auth_expired",
+                    "detail": "No se pudo descargar de YouTube. Prueba subiendo el archivo directamente.",
+                },
+            )
         raise HTTPException(status_code=500, detail=f"Pipeline error: {error_detail}")
 
     # Error sin mensaje adjunto
