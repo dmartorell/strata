@@ -4,6 +4,7 @@ struct UsageView: View {
     @Environment(AuthViewModel.self) private var auth
     @State private var usage: UsageData?
     @State private var loadError: Bool = false
+    @State private var refreshID = UUID()
 
     var body: some View {
         VStack(spacing: 4) {
@@ -20,10 +21,13 @@ struct UsageView: View {
         .frame(minHeight: 44)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .task { await fetchUsage() }
+        .task(id: refreshID) { await fetchUsage() }
+        .onAppear { refreshID = UUID() }
     }
 
     private func fetchUsage() async {
+        usage = nil
+        loadError = false
         guard let token = auth.token else { return }
         do {
             usage = try await APIClient().fetchUsage(token: token)
