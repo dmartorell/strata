@@ -48,7 +48,7 @@ private struct LyricLineView: View {
                 HStack(spacing: 0) {
                     ForEach(sublines[idx]) { word in
                         Text(word.word + " ")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: 32, weight: .bold))
                             .foregroundColor(colorForWord(word))
                     }
                 }
