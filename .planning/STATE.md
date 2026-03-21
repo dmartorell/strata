@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-05 - Completed 07-05: LyricsView + ChordView + UsageView fixes
+Last activity: 2026-03-06 - Completed quick task 7: Cambio de look pantalla de letras
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -152,7 +152,7 @@ None yet.
 
 - **Plan 01-03 checkpoint:** CREMA 0.2.0 + Python 3.11 compatibilidad se verifica durante el deploy — si falla la build, escalar (no eliminar CREMA silenciosamente)
 - **Plan 01-03 checkpoint:** Cold start medido empiricamente tras deploy — gate bloqueante: debe ser <15s
-- **Fase 6:** yt-dlp en IPs de datacenter de Modal tiene tasa de exito 20-40% — cookies caducan frecuentemente; Phase 8 resuelve esto moviendo la descarga al cliente
+- **Fase 6:** yt-dlp en IPs de datacenter de Modal tiene tasa de exito 20-40% — RESUELTO en quick task 8 via Cobalt Tools API (sin cookies)
 
 ### Quick Tasks Completed
 
@@ -164,11 +164,13 @@ None yet.
 | 4 | Mejora UI: progress bar centrado y controles centrados | 2026-03-05 | 422c650 | [4-mejora-de-ui-progress-bar-centrado-y-com](./quick/4-mejora-de-ui-progress-bar-centrado-y-com/) |
 | 5 | Retoques UI: flechas seek ±10s, go-to-start, controles centrados, toggle visual M/S | 2026-03-05 | b90a36e | [5-retoques-ui-flechas-seek-controles-centr](./quick/5-retoques-ui-flechas-seek-controles-centr/) |
 | 6 | A/B loop visual en waveform con Option+drag y bordes arrastrables | 2026-03-05 | 9b84ad1 | [6-implementar-a-b-loop-visual-en-waveform](./quick/6-implementar-a-b-loop-visual-en-waveform/) |
+| 7 | Cambio de look pantalla de letras: background oscuro, fuente mayor, partir frases, color gris a blanco | 2026-03-06 | 4b10407 | [7-cambio-de-look-pantalla-de-letras-backgr](./quick/7-cambio-de-look-pantalla-de-letras-backgr/) |
+| 8 | Reemplazar yt-dlp por Cobalt Tools API para descarga de YouTube | 2026-03-21 | 6d535ef | [8-replace-yt-dlp-with-cobalt-tools-api-for](./quick/8-replace-yt-dlp-with-cobalt-tools-api-for/) |
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: Completed quick task 6 — A/B loop visual en waveform con Option+drag, bordes arrastrables, ABLoopButton simplificado
+Last session: 2026-03-21
+Stopped at: Completed quick task 8 — Reemplazar yt-dlp por Cobalt Tools API, eliminar youtube-cookies secret
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
