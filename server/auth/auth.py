@@ -1,4 +1,4 @@
-# Modulo de autenticacion para Strata
+# Modulo de autenticacion para Siyahamba
 #
 # Contrasenas de prueba (desarrollo):
 #   papa: papa123

@@ -2,13 +2,13 @@ import modal
 from datetime import datetime
 
 # Modal App definition
-app = modal.App("strata")
+app = modal.App("siyahamba")
 
 # Modal Dict para progreso de jobs (accesible desde web handler y processing function)
-job_progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
+job_progress = modal.Dict.from_name("siyahamba-job-progress", create_if_missing=True)
 
 # Modal Volume para persistencia de datos de uso
-usage_vol = modal.Volume.from_name("strata-usage", create_if_missing=True)
+usage_vol = modal.Volume.from_name("siyahamba-usage", create_if_missing=True)
 
 
 # Inline script to bake ML model weights at build time.
@@ -181,7 +181,7 @@ def web():
     from usage.tracker import build_router
     usage_router = build_router()
 
-    web_app = FastAPI(title="Strata API")
+    web_app = FastAPI(title="Siyahamba API")
 
     @web_app.get("/health")
     def health():
@@ -266,7 +266,7 @@ class AudioPipeline:
         t0 = time.monotonic()
 
         job_id = modal.current_function_call_id()
-        progress = modal.Dict.from_name("strata-job-progress", create_if_missing=True)
+        progress = modal.Dict.from_name("siyahamba-job-progress", create_if_missing=True)
 
         from pipeline.validators import validate_audio
         validate_audio(audio_bytes)

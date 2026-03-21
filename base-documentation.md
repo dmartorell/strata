@@ -1,4 +1,4 @@
-# Strata — Planning de Desarrollo
+# Siyahamba — Planning de Desarrollo
 
 ## Resumen del proyecto
 
@@ -23,7 +23,7 @@ App nativa macOS (SwiftUI) para separación de pistas, pitch shifting en tiempo 
 │  - Overlay letras + acordes sincronizados          │
 │  - Biblioteca local (caché de canciones)           │
 │                                                    │
-│  Menú: Strata → Uso este mes                   │
+│  Menú: Siyahamba → Uso este mes                   │
 │  (canciones procesadas + coste estimado)           │
 └──────────────┬────────────────────────────────────┘
                │ HTTPS
@@ -84,7 +84,7 @@ App nativa macOS (SwiftUI) para separación de pistas, pitch shifting en tiempo 
 
 **Consultar gasto:**
 
-1. Menú superior: Strata → Uso este mes
+1. Menú superior: Siyahamba → Uso este mes
 2. Ve: "12 canciones procesadas · Coste estimado: $0.35"
 
 **En ambos flujos:** Si la canción ya fue procesada → carga instantánea desde caché local.
@@ -121,7 +121,7 @@ App nativa macOS (SwiftUI) para separación de pistas, pitch shifting en tiempo 
 ## Estructura del proyecto
 
 ```
-strata/
+siyahamba/
 ├── server/
 │   ├── app.py                  # Entrypoint Modal + endpoints
 │   ├── auth/
@@ -136,9 +136,9 @@ strata/
 │   │   └── tracker.py          # Registro y consulta de uso mensual
 │   └── requirements.txt
 │
-└── Strata/                 # Proyecto Xcode
+└── Siyahamba/                 # Proyecto Xcode
     ├── App/
-    │   └── StrataApp.swift    # Entry point
+    │   └── SiyahambaApp.swift    # Entry point
     ├── Models/
     │   ├── Song.swift          # Modelo de canción (soporta ambos orígenes)
     │   ├── SongSource.swift    # Enum: .file(path) | .youtube(url, title, thumbnail)
@@ -257,7 +257,7 @@ Response:
 
 ### Cliente: menú "Uso este mes"
 
-Accesible desde la barra de menú de macOS: **Strata → Uso este mes**
+Accesible desde la barra de menú de macOS: **Siyahamba → Uso este mes**
 
 Muestra una ventana simple:
 
@@ -341,7 +341,7 @@ Para archivos locales:
 ### Estructura de caché local
 
 ```
-~/Music/Strata/
+~/Music/Siyahamba/
 ├── a1b2c3d4/                   # ID único por canción
 │   ├── metadata.json
 │   ├── vocals.wav
@@ -500,7 +500,7 @@ Response 200:
 | 3.4 | Validación de entrada: archivo válido o URL de YouTube | 0.5 día |
 | 3.5 | APIClient: /process-file y /process-url (con JWT) | 0.5 día |
 | 3.6 | Descarga y descompresión de ZIP resultado | 0.5 día |
-| 3.7 | SongLibrary: caché en ~/Music/Strata/ + library.json | 0.5 día |
+| 3.7 | SongLibrary: caché en ~/Music/Siyahamba/ + library.json | 0.5 día |
 | 3.8 | Estados de UI: validando → procesando → listo / error | 0.5 día |
 
 **Entregable:** Login → entrada dual → procesamiento → reproducción. Caché operativa.
@@ -566,7 +566,7 @@ Response 200:
 |---|---|---|
 | 6.1 | MainView: biblioteca con thumbnails + drop zone + campo URL | 1 día |
 | 6.2 | PlayerView: layout completo con todos los componentes | 0.5 día |
-| 6.3 | UsageView: ventana "Uso este mes" (menú Strata → Uso este mes) | 0.5 día |
+| 6.3 | UsageView: ventana "Uso este mes" (menú Siyahamba → Uso este mes) | 0.5 día |
 | 6.4 | Waveform visual por stem | 0.5 día |
 | 6.5 | Atajos de teclado (espacio=play, flechas=seek, ⌘V=pegar URL) | 0.5 día |
 | 6.6 | Pulido visual, dark mode, iconos, textos accesibles | 0.5 día |
@@ -574,7 +574,7 @@ Response 200:
 **Entregable:** App lista para uso diario.
 
 **Validación:**
-- [ ] Menú Strata → Uso este mes muestra canciones y coste
+- [ ] Menú Siyahamba → Uso este mes muestra canciones y coste
 - [ ] Barra de progreso visual del spending limit
 - [ ] Entrada dual intuitiva
 - [ ] Navegación fluida entre biblioteca y reproductor

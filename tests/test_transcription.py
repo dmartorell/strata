@@ -64,7 +64,7 @@ class TestTranscriptionIntegration:
         _requires_modal()
         import modal
 
-        service = modal.Cls.from_name("strata", "ProcessingService")
+        service = modal.Cls.from_name("siyahamba", "ProcessingService")
         result = service().transcribe.remote(vocals_wav_bytes)
 
         assert isinstance(result, dict), "Output debe ser dict"
@@ -76,7 +76,7 @@ class TestTranscriptionIntegration:
         _requires_modal()
         import modal
 
-        service = modal.Cls.from_name("strata", "ProcessingService")
+        service = modal.Cls.from_name("siyahamba", "ProcessingService")
         result = service().transcribe.remote(vocals_wav_bytes)
 
         assert "segments" in result, "Output debe contener key 'segments'"
@@ -87,7 +87,7 @@ class TestTranscriptionIntegration:
         _requires_modal()
         import modal
 
-        service = modal.Cls.from_name("strata", "ProcessingService")
+        service = modal.Cls.from_name("siyahamba", "ProcessingService")
         result = service().transcribe.remote(vocals_wav_bytes)
 
         for seg in result.get("segments", []):
@@ -102,7 +102,7 @@ class TestTranscriptionIntegration:
         _requires_modal()
         import modal
 
-        service = modal.Cls.from_name("strata", "ProcessingService")
+        service = modal.Cls.from_name("siyahamba", "ProcessingService")
         result = service().transcribe.remote(vocals_wav_bytes)
 
         for seg in result.get("segments", []):
@@ -118,7 +118,7 @@ class TestTranscriptionIntegration:
         _requires_modal()
         import modal
 
-        service = modal.Cls.from_name("strata", "ProcessingService")
+        service = modal.Cls.from_name("siyahamba", "ProcessingService")
         result = service().transcribe.remote(vocals_wav_bytes)
 
         # Top level

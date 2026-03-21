@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Security
-@testable import StrataClient
+@testable import SiyahambaClient
 
 // NOTA: Estos tests usan el Keychain real del entorno de test (no mockeado).
 // Security.framework no tiene mock oficial y el comportamiento real es lo que importa.
@@ -22,7 +22,7 @@ import Security
 struct KeychainServiceTests {
 
     // Service/account unicos para tests — no interfieren con datos reales de la app
-    let testService = "com.strata.client.tests"
+    let testService = "com.siyahamba.client.tests"
     let testAccount = "jwt-token-test"
 
     func makeService() -> KeychainService {

@@ -1,7 +1,7 @@
 """
-Usage tracker para Strata — Task 01-02
+Usage tracker para Siyahamba — Task 01-02
 
-Registra el uso mensual en Modal Volume (strata-usage).
+Registra el uso mensual en Modal Volume (siyahamba-usage).
 Proporciona:
   - record_usage(username, source_type, source_name): registra un procesamiento
   - get_usage(username): devuelve resumen del mes actual
@@ -31,7 +31,7 @@ SPENDING_LIMIT_USD = 10.00
 
 USAGE_FILE = Path("/data/usage.json")
 
-usage_vol = modal.Volume.from_name("strata-usage")
+usage_vol = modal.Volume.from_name("siyahamba-usage")
 
 
 def _read_usage() -> dict:

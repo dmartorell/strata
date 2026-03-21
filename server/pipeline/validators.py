@@ -1,4 +1,4 @@
-"""Validadores de audio para el pipeline de Strata.
+"""Validadores de audio para el pipeline de Siyahamba.
 
 Rechaza archivos que superen los limites de tamano y duracion ANTES de tocar GPU,
 evitando costes innecesarios y tiempos de espera excesivos.

@@ -2,7 +2,7 @@
 
 Todos los tests requieren:
 - Modal token configurado (MODAL_TOKEN_ID + MODAL_TOKEN_SECRET)
-- App "strata" deployada: `modal deploy server/app.py`
+- App "siyahamba" deployada: `modal deploy server/app.py`
 
 Presupuestos de tiempo validados:
 - PROC-05: archivo local -> ZIP en <60 segundos

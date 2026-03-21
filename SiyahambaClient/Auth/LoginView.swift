@@ -8,7 +8,7 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("Strata").font(.largeTitle).fontWeight(.semibold)
+            Text("Siyahamba").font(.largeTitle).fontWeight(.semibold)
             SecureField("Contraseña", text: $password)
                 .frame(width: 280)
                 .textFieldStyle(.roundedBorder)

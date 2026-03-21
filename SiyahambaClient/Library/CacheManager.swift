@@ -27,7 +27,7 @@ actor CacheManager: CacheManagerProtocol {
             appropriateFor: nil,
             create: false
         )
-        rootURL = musicURL.appendingPathComponent("Strata", isDirectory: true)
+        rootURL = musicURL.appendingPathComponent("Siyahamba", isDirectory: true)
         try FileManager.default.createDirectory(
             at: rootURL,
             withIntermediateDirectories: true,

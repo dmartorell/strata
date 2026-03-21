@@ -1,5 +1,5 @@
 """
-Stub ZIP builder para Strata.
+Stub ZIP builder para Siyahamba.
 
 Modulo puro (solo stdlib) — sin imports de FastAPI, modal ni auth.
 Se puede importar tanto desde el contexto web como desde el contexto GPU.
@@ -38,7 +38,7 @@ def build_stub_zip(source_type: str, source_name: str) -> bytes:
     metadata = {
         "id": "stub-test-001",
         "title": source_name,
-        "artist": "Strata Test",
+        "artist": "Siyahamba Test",
         "duration": 30.0,
         "source": {
             "type": source_type,
@@ -53,13 +53,13 @@ def build_stub_zip(source_type: str, source_name: str) -> bytes:
             {
                 "start": 0.0,
                 "end": 5.0,
-                "text": "Hello world this is strata",
+                "text": "Hello world this is siyahamba",
                 "words": [
                     {"word": "Hello", "start": 0.0, "end": 0.8},
                     {"word": "world", "start": 0.9, "end": 1.5},
                     {"word": "this", "start": 1.6, "end": 2.0},
                     {"word": "is", "start": 2.1, "end": 2.4},
-                    {"word": "strata", "start": 2.5, "end": 3.2},
+                    {"word": "siyahamba", "start": 2.5, "end": 3.2},
                 ],
             }
         ],

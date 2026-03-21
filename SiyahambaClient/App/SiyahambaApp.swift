@@ -12,7 +12,7 @@ extension EnvironmentValues {
 }
 
 @main
-struct StrataApp: App {
+struct SiyahambaApp: App {
     @State private var authViewModel: AuthViewModel
     @State private var libraryStore: LibraryStore
     @State private var importViewModel: ImportViewModel

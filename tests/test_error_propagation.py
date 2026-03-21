@@ -50,7 +50,7 @@ def test_process_youtube_sets_error_on_failure():
         import modal as modal_mod
 
         job_id = modal_mod.current_function_call_id()
-        progress = modal_mod.Dict.from_name("strata-job-progress", create_if_missing=True)
+        progress = modal_mod.Dict.from_name("siyahamba-job-progress", create_if_missing=True)
 
         # Simular la lógica del try/except añadido en process_youtube()
         caught_error = None
@@ -92,7 +92,7 @@ def test_process_sets_error_on_stage_failure():
         from server.pipeline.validators import validate_audio
 
         job_id = modal_mod.current_function_call_id()
-        progress = modal_mod.Dict.from_name("strata-job-progress", create_if_missing=True)
+        progress = modal_mod.Dict.from_name("siyahamba-job-progress", create_if_missing=True)
 
         # Audio válido mínimo
         import io

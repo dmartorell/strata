@@ -1,13 +1,13 @@
 import Foundation
 
 enum APIEndpoint {
-    // La baseURL se puede sobreescribir con la variable de entorno STRATA_API_URL (útil en tests)
+    // La baseURL se puede sobreescribir con la variable de entorno SIYAHAMBA_API_URL (útil en tests)
     static var baseURL: URL = {
-        if let envURL = ProcessInfo.processInfo.environment["STRATA_API_URL"],
+        if let envURL = ProcessInfo.processInfo.environment["SIYAHAMBA_API_URL"],
            let url = URL(string: envURL) {
             return url
         }
-        return URL(string: "https://dani-martorell--strata-web.modal.run")!
+        return URL(string: "https://dani-martorell--siyahamba-web.modal.run")!
     }()
 
     case login

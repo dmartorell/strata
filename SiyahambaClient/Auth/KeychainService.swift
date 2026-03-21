@@ -5,7 +5,7 @@ import Foundation
 ///
 /// Clave de almacenamiento:
 ///   - kSecClass: kSecClassGenericPassword
-///   - kSecAttrService: "com.strata.client"
+///   - kSecAttrService: "com.siyahamba.client"
 ///   - kSecAttrAccount: "jwt-token"
 ///   - kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly (por defecto)
 ///     (accesible tras primer desbloqueo; no migra a otros dispositivos via iCloud Keychain)
@@ -34,12 +34,12 @@ final class KeychainService {
     // MARK: - Init
 
     /// - Parameters:
-    ///   - service: Identificador de servicio del Keychain (default: "com.strata.client").
+    ///   - service: Identificador de servicio del Keychain (default: "com.siyahamba.client").
     ///   - account: Nombre de cuenta del Keychain (default: "jwt-token").
     ///   - accessible: Politica de accesibilidad (default: AfterFirstUnlockThisDeviceOnly).
     ///     Los tests pueden pasar kSecAttrAccessibleAlways para operar sin firma Apple Development.
     init(
-        service: String = "com.strata.client",
+        service: String = "com.siyahamba.client",
         account: String = "jwt-token",
         accessible: CFString = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     ) {

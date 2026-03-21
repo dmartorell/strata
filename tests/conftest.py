@@ -1,4 +1,4 @@
-"""Fixtures y configuracion global de pytest para tests de Strata.
+"""Fixtures y configuracion global de pytest para tests de Siyahamba.
 
 - sample_audio_bytes: MP3 sintetico de ~30s con tono sinusoidal.
 - modal_pipeline: referencia a AudioPipeline en Modal (requiere deployment).
@@ -77,9 +77,9 @@ def modal_pipeline():
 
     Requiere:
     - modal token configurado (MODAL_TOKEN_ID + MODAL_TOKEN_SECRET)
-    - App "strata" deployada con modal deploy server/app.py
+    - App "siyahamba" deployada con modal deploy server/app.py
     """
     import modal
 
-    cls = modal.Cls.from_name("strata", "AudioPipeline")
+    cls = modal.Cls.from_name("siyahamba", "AudioPipeline")
     return cls()

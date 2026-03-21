@@ -1,0 +1,699 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03DD6E718F1BC468B27CBE92 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7634123E16218DC5A1AA8E /* ImportView.swift */; };
+		063A46ECEB2ECACFA9F90BAD /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */; };
+		1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */; };
+		2FA19E1C0849E0D948E8291B /* StemControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22C041447298177A06284C /* StemControlsView.swift */; };
+		2FFE119B179855EB74CDDF18 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */; };
+		3BF06BE6764B44CA2A836FAB /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FA9116C73430A0C786D478 /* APIClient.swift */; };
+		4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */; };
+		4D6CC45B6B1899D96330E4E9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B145FC49F2014C0A488EE6 /* LoginView.swift */; };
+		50A4FFC81E7743DBD797CDCF /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD0B1AA4918EC908B1B692E /* MockAPIClient.swift */; };
+		56F658BB9DF5A7838C7E71B9 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */; };
+		64C5B37C1185B0913309601F /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */; };
+		656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */; };
+		6761DBEC4D7662FC420CC909 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4856064F0C509BF472143336 /* LibraryView.swift */; };
+		82D4295391062302669E3B28 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */; };
+		82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */; };
+		859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */; };
+		8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */; };
+		97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */; };
+		9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 998BC93CD52AA9C6DAF56B92 /* JWTDecode */; };
+		A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */; };
+		A6C44866323DCFD139B0164A /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = FD861707765DFE48A0ABC096 /* ZIPFoundation */; };
+		A778C7CFC64E86D6C30F8140 /* LyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4781FA5205CE9A1FBCC674 /* LyricsView.swift */; };
+		A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867B6A9669043A3975DEADC2 /* AuthViewModel.swift */; };
+		BBF9D7F38619420E4E003491 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F265EBBA1D2995D21F1958 /* TransportBarView.swift */; };
+		BE1691AF0717F7B44E91E8F0 /* LyricsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D270581D830D515699977095 /* LyricsModels.swift */; };
+		BE2405A83E9CC9D68473B957 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */; };
+		CE223056CE8D7105A39CED39 /* ImportPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C0FCDA75701C2634240AC54 /* ImportPhase.swift */; };
+		D07DF5C26010BCF599547909 /* DSWaveformImageViews in Frameworks */ = {isa = PBXBuildFile; productRef = 5CAD719FF1B40EFF778D64B6 /* DSWaveformImageViews */; };
+		D1119654F0AC3C2368C17D02 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D989ACF83FE053F49B3E8B3B /* KeychainService.swift */; };
+		E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7FDDF133EFE4572F04205 /* ChordView.swift */; };
+		E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA47CF4B211B6945DC34DFC /* ChordModels.swift */; };
+		EEE23CC8A08160B46EA782FE /* ImportViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */; };
+		EEEDFC1681168A94B5916CC8 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0921C3549CA25165EA23171 /* APIEndpoint.swift */; };
+		F0D12DADF24C633AE653792D /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E879470A8827FE5CB27E646E /* LibraryStore.swift */; };
+		F55C1193482B4C2EB7F20E18 /* WaveformsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE358B2A83AF471474630C7 /* WaveformsView.swift */; };
+		F6BB3A17737DA2AD4B7090B7 /* PitchPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7573503C00F1262463D56C3 /* PitchPopover.swift */; };
+		FAA70805A8D0B80C83F49742 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A90DB53108F2F44B06771 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0A0C7402D8F0E1F9911C1ABA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B3AC798AE976B801382245C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FBF5B06C048BC69014B81DC9;
+			remoteInfo = SiyahambaClient;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiyahambaApp.swift; sourceTree = "<group>"; };
+		17B145FC49F2014C0A488EE6 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
+		1A2A90DB53108F2F44B06771 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		2D6FBA82D14CB8BB61E70466 /* SiyahambaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SiyahambaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FD0B1AA4918EC908B1B692E /* MockAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
+		33135A203A13ECEF95735C45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		36F265EBBA1D2995D21F1958 /* TransportBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportBarView.swift; sourceTree = "<group>"; };
+		3A4781FA5205CE9A1FBCC674 /* LyricsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsView.swift; sourceTree = "<group>"; };
+		3D22C041447298177A06284C /* StemControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StemControlsView.swift; sourceTree = "<group>"; };
+		4258D27DD5F2815A9F18EA9A /* SiyahambaClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiyahambaClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4856064F0C509BF472143336 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		4DE358B2A83AF471474630C7 /* WaveformsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformsView.swift; sourceTree = "<group>"; };
+		4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
+		4FA47CF4B211B6945DC34DFC /* ChordModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordModels.swift; sourceTree = "<group>"; };
+		5C7634123E16218DC5A1AA8E /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		867B6A9669043A3975DEADC2 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordTransposer.swift; sourceTree = "<group>"; };
+		93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetadata.swift; sourceTree = "<group>"; };
+		9C0FCDA75701C2634240AC54 /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
+		9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
+		A0F7FDDF133EFE4572F04205 /* ChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordView.swift; sourceTree = "<group>"; };
+		A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModelTests.swift; sourceTree = "<group>"; };
+		C7573503C00F1262463D56C3 /* PitchPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchPopover.swift; sourceTree = "<group>"; };
+		CCF55A56A46012FD930FE20E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D0921C3549CA25165EA23171 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
+		D270581D830D515699977095 /* LyricsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsModels.swift; sourceTree = "<group>"; };
+		D6FA9116C73430A0C786D478 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		D989ACF83FE053F49B3E8B3B /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
+		E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
+		E879470A8827FE5CB27E646E /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
+		FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F4FCBA650DBBCB95A890D296 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */,
+				A6C44866323DCFD139B0164A /* ZIPFoundation in Frameworks */,
+				D07DF5C26010BCF599547909 /* DSWaveformImageViews in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08214115E569018D13142CEB /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		25EF2FEBEC08681E835579B1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4258D27DD5F2815A9F18EA9A /* SiyahambaClient.app */,
+				2D6FBA82D14CB8BB61E70466 /* SiyahambaClientTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2769F309569F4441CBA71522 = {
+			isa = PBXGroup;
+			children = (
+				BDD0210611B945CEB15B09A7 /* SiyahambaClient */,
+				AC84FE0D8B7E835AD52B3F6A /* SiyahambaClientTests */,
+				25EF2FEBEC08681E835579B1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2FA450C00D1C1DCE8EBFD035 /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				9C0FCDA75701C2634240AC54 /* ImportPhase.swift */,
+				5C7634123E16218DC5A1AA8E /* ImportView.swift */,
+				EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		770A89910BF18FFB40CE2D5C /* Lyrics */ = {
+			isa = PBXGroup;
+			children = (
+				D270581D830D515699977095 /* LyricsModels.swift */,
+				3A4781FA5205CE9A1FBCC674 /* LyricsView.swift */,
+			);
+			path = Lyrics;
+			sourceTree = "<group>";
+		};
+		814EE2BDAE97EDBEC1CA766F /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */,
+				2FD0B1AA4918EC908B1B692E /* MockAPIClient.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		9BC01A8CF4D74589AAAF0630 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D6FA9116C73430A0C786D478 /* APIClient.swift */,
+				D0921C3549CA25165EA23171 /* APIEndpoint.swift */,
+				2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		A724A6F428D487B88AC927B9 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A78DBBA745F424F4F2C031EA /* Waveforms */ = {
+			isa = PBXGroup;
+			children = (
+				4DE358B2A83AF471474630C7 /* WaveformsView.swift */,
+			);
+			path = Waveforms;
+			sourceTree = "<group>";
+		};
+		AC84FE0D8B7E835AD52B3F6A /* SiyahambaClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */,
+				CCF55A56A46012FD930FE20E /* Info.plist */,
+				DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */,
+				FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */,
+				814EE2BDAE97EDBEC1CA766F /* Import */,
+			);
+			path = SiyahambaClientTests;
+			sourceTree = "<group>";
+		};
+		BD81D523DDCDEB4C67CBB7AD /* Chords */ = {
+			isa = PBXGroup;
+			children = (
+				4FA47CF4B211B6945DC34DFC /* ChordModels.swift */,
+				8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */,
+				A0F7FDDF133EFE4572F04205 /* ChordView.swift */,
+			);
+			path = Chords;
+			sourceTree = "<group>";
+		};
+		BDD0210611B945CEB15B09A7 /* SiyahambaClient */ = {
+			isa = PBXGroup;
+			children = (
+				1A2A90DB53108F2F44B06771 /* ContentView.swift */,
+				33135A203A13ECEF95735C45 /* Info.plist */,
+				A724A6F428D487B88AC927B9 /* App */,
+				08214115E569018D13142CEB /* Audio */,
+				D64BFB1CC4134AE8FB5F5F5D /* Auth */,
+				2FA450C00D1C1DCE8EBFD035 /* Import */,
+				D95C260D078182D989C1C535 /* Library */,
+				9BC01A8CF4D74589AAAF0630 /* Network */,
+				C557904D56CED1338249CB78 /* Player */,
+			);
+			path = SiyahambaClient;
+			sourceTree = "<group>";
+		};
+		C557904D56CED1338249CB78 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				C7573503C00F1262463D56C3 /* PitchPopover.swift */,
+				A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */,
+				61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */,
+				3D22C041447298177A06284C /* StemControlsView.swift */,
+				36F265EBBA1D2995D21F1958 /* TransportBarView.swift */,
+				BD81D523DDCDEB4C67CBB7AD /* Chords */,
+				770A89910BF18FFB40CE2D5C /* Lyrics */,
+				A78DBBA745F424F4F2C031EA /* Waveforms */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		D64BFB1CC4134AE8FB5F5F5D /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				867B6A9669043A3975DEADC2 /* AuthViewModel.swift */,
+				D989ACF83FE053F49B3E8B3B /* KeychainService.swift */,
+				17B145FC49F2014C0A488EE6 /* LoginView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		D95C260D078182D989C1C535 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */,
+				E879470A8827FE5CB27E646E /* LibraryStore.swift */,
+				4856064F0C509BF472143336 /* LibraryView.swift */,
+				17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */,
+				93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */,
+				9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C2E047E732535EEC362A5FFC /* SiyahambaClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 919B4138735DD61C8E811FFA /* Build configuration list for PBXNativeTarget "SiyahambaClientTests" */;
+			buildPhases = (
+				AA0D2550364CD4C83E149E65 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				47107EB951F3EAAD6188F019 /* PBXTargetDependency */,
+			);
+			name = SiyahambaClientTests;
+			packageProductDependencies = (
+			);
+			productName = SiyahambaClientTests;
+			productReference = 2D6FBA82D14CB8BB61E70466 /* SiyahambaClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FBF5B06C048BC69014B81DC9 /* SiyahambaClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 273B45248F9ED2ED390247FE /* Build configuration list for PBXNativeTarget "SiyahambaClient" */;
+			buildPhases = (
+				F9493A18FC4647EB51A208F1 /* Sources */,
+				F4FCBA650DBBCB95A890D296 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SiyahambaClient;
+			packageProductDependencies = (
+				998BC93CD52AA9C6DAF56B92 /* JWTDecode */,
+				FD861707765DFE48A0ABC096 /* ZIPFoundation */,
+				5CAD719FF1B40EFF778D64B6 /* DSWaveformImageViews */,
+			);
+			productName = SiyahambaClient;
+			productReference = 4258D27DD5F2815A9F18EA9A /* SiyahambaClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5B3AC798AE976B801382245C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					C2E047E732535EEC362A5FFC = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					FBF5B06C048BC69014B81DC9 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = E8ED047F6CF80856A4AA7CE7 /* Build configuration list for PBXProject "SiyahambaClient" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2769F309569F4441CBA71522;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				401B6C0F399E505AA42191B3 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
+				8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				2D186A7C93F9A0252E9BB126 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FBF5B06C048BC69014B81DC9 /* SiyahambaClient */,
+				C2E047E732535EEC362A5FFC /* SiyahambaClientTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0D2550364CD4C83E149E65 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2405A83E9CC9D68473B957 /* AuthViewModelTests.swift in Sources */,
+				EEE23CC8A08160B46EA782FE /* ImportViewModelTests.swift in Sources */,
+				2FFE119B179855EB74CDDF18 /* KeychainServiceTests.swift in Sources */,
+				50A4FFC81E7743DBD797CDCF /* MockAPIClient.swift in Sources */,
+				64C5B37C1185B0913309601F /* NetworkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9493A18FC4647EB51A208F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BF06BE6764B44CA2A836FAB /* APIClient.swift in Sources */,
+				EEEDFC1681168A94B5916CC8 /* APIEndpoint.swift in Sources */,
+				4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */,
+				A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */,
+				8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */,
+				E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */,
+				656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */,
+				E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */,
+				FAA70805A8D0B80C83F49742 /* ContentView.swift in Sources */,
+				CE223056CE8D7105A39CED39 /* ImportPhase.swift in Sources */,
+				03DD6E718F1BC468B27CBE92 /* ImportView.swift in Sources */,
+				56F658BB9DF5A7838C7E71B9 /* ImportViewModel.swift in Sources */,
+				D1119654F0AC3C2368C17D02 /* KeychainService.swift in Sources */,
+				F0D12DADF24C633AE653792D /* LibraryStore.swift in Sources */,
+				6761DBEC4D7662FC420CC909 /* LibraryView.swift in Sources */,
+				4D6CC45B6B1899D96330E4E9 /* LoginView.swift in Sources */,
+				BE1691AF0717F7B44E91E8F0 /* LyricsModels.swift in Sources */,
+				A778C7CFC64E86D6C30F8140 /* LyricsView.swift in Sources */,
+				F6BB3A17737DA2AD4B7090B7 /* PitchPopover.swift in Sources */,
+				82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */,
+				82D4295391062302669E3B28 /* PlayerView.swift in Sources */,
+				A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */,
+				1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */,
+				97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */,
+				063A46ECEB2ECACFA9F90BAD /* SongMetadata.swift in Sources */,
+				2FA19E1C0849E0D948E8291B /* StemControlsView.swift in Sources */,
+				BBF9D7F38619420E4E003491 /* TransportBarView.swift in Sources */,
+				859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */,
+				F55C1193482B4C2EB7F20E18 /* WaveformsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		47107EB951F3EAAD6188F019 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FBF5B06C048BC69014B81DC9 /* SiyahambaClient */;
+			targetProxy = 0A0C7402D8F0E1F9911C1ABA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		43A2D816FB3EDB3B6DA9FA69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SiyahambaClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SiyahambaClient.app/Contents/MacOS/SiyahambaClient";
+			};
+			name = Debug;
+		};
+		5E3C2191DB1833E5ACFFD900 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = SiyahambaClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		618E16D6DB08C35D3D1CCF59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SiyahambaClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SiyahambaClient.app/Contents/MacOS/SiyahambaClient";
+			};
+			name = Release;
+		};
+		6258E2F8B2486F05A7DF1429 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		776385D9FF114B8DFF33776F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = SiyahambaClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		F7357E9C49FE9D86858C2D0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		273B45248F9ED2ED390247FE /* Build configuration list for PBXNativeTarget "SiyahambaClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				776385D9FF114B8DFF33776F /* Debug */,
+				5E3C2191DB1833E5ACFFD900 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		919B4138735DD61C8E811FFA /* Build configuration list for PBXNativeTarget "SiyahambaClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43A2D816FB3EDB3B6DA9FA69 /* Debug */,
+				618E16D6DB08C35D3D1CCF59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E8ED047F6CF80856A4AA7CE7 /* Build configuration list for PBXProject "SiyahambaClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6258E2F8B2486F05A7DF1429 /* Debug */,
+				F7357E9C49FE9D86858C2D0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2D186A7C93F9A0252E9BB126 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		401B6C0F399E505AA42191B3 /* XCRemoteSwiftPackageReference "DSWaveformImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmrschmidt/DSWaveformImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.0.0;
+			};
+		};
+		8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5CAD719FF1B40EFF778D64B6 /* DSWaveformImageViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 401B6C0F399E505AA42191B3 /* XCRemoteSwiftPackageReference "DSWaveformImage" */;
+			productName = DSWaveformImageViews;
+		};
+		998BC93CD52AA9C6DAF56B92 /* JWTDecode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			productName = JWTDecode;
+		};
+		FD861707765DFE48A0ABC096 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2D186A7C93F9A0252E9BB126 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 5B3AC798AE976B801382245C /* Project object */;
+}

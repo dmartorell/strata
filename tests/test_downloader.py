@@ -2,7 +2,7 @@
 
 Todos los tests requieren:
 - Modal token configurado (MODAL_TOKEN_ID + MODAL_TOKEN_SECRET)
-- App "strata" deployada: `modal deploy server/app.py`
+- App "siyahamba" deployada: `modal deploy server/app.py`
 - Secret "youtube-cookies" configurado en Modal con YT_COOKIES_TXT
 
 Los tests verifican:

@@ -1,5 +1,5 @@
 """
-Endpoints HTTP de procesamiento de audio para Strata.
+Endpoints HTTP de procesamiento de audio para Siyahamba.
 
 FastAPI router con:
   - POST /process-file: acepta archivo de audio, valida tamano, lanza pipeline real
@@ -23,13 +23,13 @@ _MAX_UPLOAD_BYTES = _MAX_UPLOAD_MB * 1024 * 1024
 def _get_job_dict():
     """Obtiene el modal.Dict de progreso de jobs."""
     import modal
-    return modal.Dict.from_name("strata-job-progress", create_if_missing=True)
+    return modal.Dict.from_name("siyahamba-job-progress", create_if_missing=True)
 
 
 def _get_pipeline():
     """Obtiene una instancia remota de AudioPipeline."""
     import modal
-    return modal.Cls.from_name("strata", "AudioPipeline")()
+    return modal.Cls.from_name("siyahamba", "AudioPipeline")()
 
 
 @router.post("/process-file")

@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import StrataClient
+@testable import SiyahambaClient
 
 @MainActor
 struct ImportViewModelTests {

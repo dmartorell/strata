@@ -82,7 +82,7 @@ def audio_pipeline():
     import modal
 
     try:
-        cls = modal.Cls.from_name("strata", "AudioPipeline")
+        cls = modal.Cls.from_name("siyahamba", "AudioPipeline")
         return cls()
     except Exception as exc:
         pytest.skip(f"AudioPipeline not deployed — run `modal deploy server/app.py` first: {exc}")

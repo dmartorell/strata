@@ -1,5 +1,5 @@
 import Foundation
-@testable import StrataClient
+@testable import SiyahambaClient
 
 // MARK: - MockAuthTokenProvider
 
