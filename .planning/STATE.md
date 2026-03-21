@@ -166,11 +166,12 @@ None yet.
 | 6 | A/B loop visual en waveform con Option+drag y bordes arrastrables | 2026-03-05 | 9b84ad1 | [6-implementar-a-b-loop-visual-en-waveform](./quick/6-implementar-a-b-loop-visual-en-waveform/) |
 | 7 | Cambio de look pantalla de letras: background oscuro, fuente mayor, partir frases, color gris a blanco | 2026-03-06 | 4b10407 | [7-cambio-de-look-pantalla-de-letras-backgr](./quick/7-cambio-de-look-pantalla-de-letras-backgr/) |
 | 8 | Reemplazar yt-dlp por Cobalt Tools API para descarga de YouTube | 2026-03-21 | 6d535ef | [8-replace-yt-dlp-with-cobalt-tools-api-for](./quick/8-replace-yt-dlp-with-cobalt-tools-api-for/) |
+| 9 | Fix UsageView mostrando datos stale: instancia duplicada de Modal Volume en tracker.py + re-fetch al reaparecer en cliente | 2026-03-21 | 639fd63 | [9-fix-usageview-always-showing-stale-song-](./quick/9-fix-usageview-always-showing-stale-song-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-21
-Stopped at: Completed quick task 8 — Reemplazar yt-dlp por Cobalt Tools API, eliminar youtube-cookies secret
+Stopped at: Completed quick task 9 — Fix UsageView datos stale (Modal Volume instancia compartida + task(id:) refresh)
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
