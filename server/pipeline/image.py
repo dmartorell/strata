@@ -1,6 +1,6 @@
 """Modal GPU image definition for the audio pipeline.
 
-Esta imagen es exclusiva para el pipeline GPU (Demucs, WhisperX, chord-extractor, yt-dlp).
+Esta imagen es exclusiva para el pipeline GPU (Demucs, WhisperX, chord-extractor).
 La imagen web (sin GPU) sigue sirviendo los endpoints FastAPI de forma independiente.
 
 Los pesos de htdemucs (~330MB) y WhisperX large-v2 (~1.5GB) se bake-an en la imagen
@@ -35,7 +35,6 @@ gpu_image = (
         "chord-extractor",
         "faster-whisper",
         "whisperx",
-        "yt-dlp",
     )
     .run_commands(_DOWNLOAD_WEIGHTS_CMD, gpu="T4")
     .add_local_dir("pipeline", remote_path="/root/pipeline")
