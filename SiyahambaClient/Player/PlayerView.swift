@@ -20,6 +20,7 @@ struct PlayerView: View {
     @Environment(PlaybackEngine.self) private var engine
     @Environment(\.cacheManager) private var cacheManager
     @Environment(LibraryStore.self) private var libraryStore
+    @Environment(AuthViewModel.self) private var authViewModel
 
     var body: some View {
         Group {
@@ -36,7 +37,8 @@ struct PlayerView: View {
                 song: song,
                 engine: engine,
                 cacheManager: cacheManager!,
-                libraryStore: libraryStore
+                libraryStore: libraryStore,
+                authViewModel: authViewModel
             )
             do {
                 try await vm.load()
