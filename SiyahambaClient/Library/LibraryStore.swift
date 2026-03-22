@@ -21,10 +21,33 @@ final class LibraryStore {
                 let dir = root.appendingPathComponent(entry.id.uuidString, isDirectory: true)
                 return FileManager.default.fileExists(atPath: dir.path)
             }
-            if filtered.count != original.count {
-                try? await cacheManager.writeLibraryIndex(filtered)
+            var needsWrite = filtered.count != original.count
+            let migrated = filtered.map { entry -> SongEntry in
+                guard entry.artist == nil,
+                      let fn = entry.fileName,
+                      let parsed = Optional(SongEntry.parseArtistAndTitle(from: fn)),
+                      let artist = parsed.artist
+                else { return entry }
+                needsWrite = true
+                return SongEntry(
+                    id: entry.id,
+                    title: parsed.title,
+                    artist: artist,
+                    duration: entry.duration,
+                    sourceURL: entry.sourceURL,
+                    fileName: entry.fileName,
+                    sourceHash: entry.sourceHash,
+                    addedAt: entry.addedAt,
+                    pitchOffset: entry.pitchOffset,
+                    key: entry.key,
+                    displayMode: entry.displayMode,
+                    isPlaceholder: entry.isPlaceholder
+                )
             }
-            songs = filtered.sorted { $0.addedAt > $1.addedAt }
+            if needsWrite {
+                try? await cacheManager.writeLibraryIndex(migrated)
+            }
+            songs = migrated.sorted { $0.addedAt > $1.addedAt }
             loadError = nil
         } catch {
             songs = []

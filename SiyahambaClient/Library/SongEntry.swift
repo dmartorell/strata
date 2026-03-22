@@ -49,12 +49,26 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.isPlaceholder = isPlaceholder
     }
 
-    static func placeholder(fileName: String, sourceHash: String) -> SongEntry {
+    static func parseArtistAndTitle(from fileName: String) -> (artist: String?, title: String) {
         let nameWithoutExtension = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
+        let parts = nameWithoutExtension.split(separator: "-", maxSplits: 1)
+        guard parts.count == 2 else {
+            return (nil, nameWithoutExtension)
+        }
+        let artist = parts[0].trimmingCharacters(in: .whitespaces)
+        let title = parts[1].trimmingCharacters(in: .whitespaces)
+        guard !artist.isEmpty, !title.isEmpty else {
+            return (nil, nameWithoutExtension)
+        }
+        return (artist, title)
+    }
+
+    static func placeholder(fileName: String, sourceHash: String) -> SongEntry {
+        let parsed = parseArtistAndTitle(from: fileName)
         return SongEntry(
             id: UUID(),
-            title: nameWithoutExtension,
-            artist: nil,
+            title: parsed.title,
+            artist: parsed.artist,
             duration: 0,
             sourceURL: nil,
             fileName: fileName,
