@@ -143,7 +143,6 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - **Import queue with pending indicator** (ui) — queued imports shown as disabled rows with "En cola" tag
-- **Add lyrics sync offset control** (ui) — ajustar ±ms el timing del highlight de letras en tiempo real
 - **Upload plain text lyrics and force-align with WhisperX** (ui) — importar .txt y sincronizar con audio via whisperx.align()
 - Analyze adding lyrics editing to LyricsView (ui)
 - Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
@@ -175,11 +174,12 @@ Recent decisions affecting current work:
 | 10 | Mostrar canción en procesamiento inmediatamente en biblioteca con fila placeholder y spinner | 2026-03-22 | 60d5a4b | [10-show-processing-song-immediately-in-libr](./quick/10-show-processing-song-immediately-in-libr/) |
 | 11 | Análisis de viabilidad para añadir edición de letras a LyricsView | 2026-03-22 | — | [11-analyze-adding-lyrics-editing-to-lyricsv](./quick/11-analyze-adding-lyrics-editing-to-lyricsv/) |
 | 12 | Forced alignment endpoint con WhisperX para re-sincronizar lyrics de LRCLib | 2026-03-22 | a223be8 | [12-implement-forced-alignment-endpoint-for-](./quick/12-implement-forced-alignment-endpoint-for-/) |
+| 13 | Add lyrics sync offset control (±ms, persisted per song) | 2026-03-22 | 9ff17dd | [13-add-lyrics-sync-offset-control](./quick/13-add-lyrics-sync-offset-control/) |
 
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Completed quick task 12 — Forced alignment endpoint con WhisperX (POST /align-lyrics + integración en PlayerViewModel)
+Stopped at: Completed quick task 13 — Lyrics sync offset control (±ms, persisted per song, applied to highlight and linePassed)
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
