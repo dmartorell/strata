@@ -92,8 +92,7 @@ class ProcessingService:
           queued -> downloading -> separating -> transcribing ->
           detecting_chords -> packaging -> completed
 
-        Los modelos estan pre-cargados en self.demucs_model, self.whisper_model
-        (Phase 2 los usara para procesamiento real, + chord-extractor para acordes).
+        Los modelos estan pre-cargados en self.demucs_model.
         """
         import asyncio
         import sys
@@ -183,9 +182,6 @@ from pipeline.image import gpu_image  # noqa: E402
 )
 class AudioPipeline:
     """Pipeline end-to-end de audio: Demucs + chord-extractor.
-
-    Los modelos se cargan una sola vez por contenedor en @modal.enter y se
-    reutilizan entre requests, garantizando cold starts predecibles.
 
     Flujo principal (process):
         validate -> separate_stems -> detect_chords -> package_results

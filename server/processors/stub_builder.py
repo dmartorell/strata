@@ -17,7 +17,7 @@ def build_stub_zip(source_type: str, source_name: str) -> bytes:
     Contenido:
     - vocals.wav, drums.wav, bass.wav, other.wav: 1s de silencio (44100Hz, 16-bit, stereo)
     - metadata.json: metadatos de la cancion
-    - lyrics.json: letras con timestamps por palabra
+    - lyrics.json: letras stub con timestamps por palabra (solo para tests)
     - chords.json: 4 acordes con timestamps
 
     Formato JSON segun base-documentation.md.

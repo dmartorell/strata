@@ -144,6 +144,7 @@ Recent decisions affecting current work:
 
 - **Import queue with pending indicator** (ui) — queued imports shown as disabled rows with "En cola" tag
 - **Add lyrics sync offset control** (ui) — ajustar ±ms el timing del highlight de letras en tiempo real
+- **Upload plain text lyrics and force-align with WhisperX** (ui) — importar .txt y sincronizar con audio via whisperx.align()
 - Analyze adding lyrics editing to LyricsView (ui)
 - Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
 - Remove all Python dependencies once the app is fully built (tooling)
