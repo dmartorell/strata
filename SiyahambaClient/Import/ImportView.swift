@@ -5,6 +5,7 @@ import AppKit
 struct ImportView: View {
     @Environment(ImportViewModel.self) private var importViewModel
     @State private var isDragTargeted = false
+    @State private var spinnerRotation: Double = 0
 
     var body: some View {
         VStack(spacing: 12) {
@@ -44,18 +45,33 @@ struct ImportView: View {
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
             guard let provider = providers.first else { return false }
 
-            _ = provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
-                guard let url else { return }
+            Task {
+                let originalURL: URL? = await withCheckedContinuation { cont in
+                    provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { data, _ in
+                        if let data = data as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) {
+                            cont.resume(returning: url)
+                        } else {
+                            cont.resume(returning: nil)
+                        }
+                    }
+                }
 
-                let resolvedOriginal = (try? URL(resolvingAliasFileAt: url, options: [.withoutMounting]))
+                let tempURL: URL? = await withCheckedContinuation { cont in
+                    provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
+                        guard let url else { cont.resume(returning: nil); return }
+                        let uniqueDir = FileManager.default.temporaryDirectory
+                            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+                        try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
+                        let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
+                        try? FileManager.default.copyItem(at: url, to: tempCopy)
+                        cont.resume(returning: tempCopy)
+                    }
+                }
 
-                let uniqueDir = FileManager.default.temporaryDirectory
-                    .appendingPathComponent(UUID().uuidString, isDirectory: true)
-                try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
-                let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
-                try? FileManager.default.copyItem(at: url, to: tempCopy)
-                Task { @MainActor in
-                    importViewModel.startFileImport(from: tempCopy, originalURL: resolvedOriginal ?? url)
+                if let tempCopy = tempURL {
+                    await MainActor.run {
+                        importViewModel.startFileImport(from: tempCopy, originalURL: originalURL)
+                    }
                 }
             }
             return true
@@ -66,17 +82,7 @@ struct ImportView: View {
 
     private var progressSection: some View {
         HStack(spacing: 10) {
-            if importViewModel.phase.isActive {
-                ProgressView()
-                    .controlSize(.small)
-            } else {
-                statusIcon
-            }
-
-            Text(importViewModel.phase.displayLabel)
-                .font(.subheadline)
-                .foregroundStyle(isErrorPhase ? .red : .primary)
-                .lineLimit(2)
+            statusBadge
 
             Spacer()
 
@@ -91,18 +97,50 @@ struct ImportView: View {
         .padding(.horizontal, 4)
     }
 
-    private var statusIcon: some View {
-        Group {
+    private var statusBadge: some View {
+        HStack(spacing: 6) {
             switch importViewModel.phase {
             case .ready:
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                Image(systemName: "checkmark.circle")
+                    .font(.subheadline.weight(.semibold))
+                Text(importViewModel.phase.displayLabel)
+                    .font(.subheadline.weight(.medium))
             case .error:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundStyle(.red)
+                Image(systemName: "exclamationmark.circle")
+                    .font(.subheadline.weight(.semibold))
+                Text(importViewModel.phase.displayLabel)
+                    .font(.subheadline.weight(.medium))
             default:
-                EmptyView()
+                Image(systemName: "arrow.trianglehead.2.counterclockwise")
+                    .font(.subheadline.weight(.semibold))
+                    .rotationEffect(.degrees(spinnerRotation))
+                    .onAppear {
+                        withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
+                            spinnerRotation = 360
+                        }
+                    }
+                Text(importViewModel.phase.displayLabel)
+                    .font(.subheadline.weight(.medium))
             }
+        }
+        .foregroundStyle(badgeColor)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(
+            Capsule()
+                .fill(badgeColor.opacity(0.15))
+        )
+        .overlay(
+            Capsule()
+                .strokeBorder(badgeColor.opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    private var badgeColor: Color {
+        switch importViewModel.phase {
+        case .ready: .green
+        case .error: .red
+        default: .purple
         }
     }
 

@@ -14,8 +14,7 @@ enum ImportPhase: Equatable {
         case .validating:        return "Validando..."
         case .uploading:         return "Subiendo archivo..."
         case .processing(let s): return stageLabel(s)
-        case .ready(true):       return "Cargado del caché"
-        case .ready(false):      return "Listo"
+        case .ready:             return "Finalizado"
         case .error(let msg):    return "Error: \(msg)"
         }
     }

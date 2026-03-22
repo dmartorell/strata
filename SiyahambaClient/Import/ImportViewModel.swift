@@ -28,6 +28,11 @@ final class ImportViewModel {
         }
     }
 
+    func dismissStatus() {
+        if case .ready = phase { phase = .idle }
+        if case .error = phase { phase = .idle }
+    }
+
     func cancel() {
         cancelCurrentTask()
         if let pid = placeholderID {

@@ -38,7 +38,13 @@ def align_lyrics(
         os.unlink(tmp.name)
 
     lines = [l.strip() for l in lyrics_text.strip().split("\n") if l.strip()]
-    transcript_segments = [{"text": line} for line in lines]
+    duration = len(audio_np) / 16000.0
+    n = len(lines)
+    seg_dur = duration / n if n > 0 else duration
+    transcript_segments = [
+        {"text": line, "start": round(i * seg_dur, 3), "end": round((i + 1) * seg_dur, 3)}
+        for i, line in enumerate(lines)
+    ]
 
     model_a, metadata = whisperx.load_align_model(
         language_code=language,
