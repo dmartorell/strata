@@ -91,11 +91,30 @@ struct LibraryView: View {
                 }
                 .width(80)
             }
+            .onDeleteCommand {
+                let nonPlaceholders = selection.filter { id in
+                    libraryStore.songs.first(where: { $0.id == id })?.isPlaceholder != true
+                }
+                guard !nonPlaceholders.isEmpty else { return }
+                idsToDelete = nonPlaceholders
+                showDeleteConfirmation = true
+            }
             .contextMenu(forSelectionType: UUID.self) { ids in
                 let allPlaceholders = ids.allSatisfy { id in
                     libraryStore.songs.first(where: { $0.id == id })?.isPlaceholder == true
                 }
                 if !allPlaceholders {
+                    if ids.count == 1,
+                       let id = ids.first,
+                       let song = libraryStore.songs.first(where: { $0.id == id }),
+                       let path = song.sourceURL,
+                       FileManager.default.fileExists(atPath: path) {
+                        Button {
+                            NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)])
+                        } label: {
+                            Label("Mostrar en Finder", systemImage: "folder")
+                        }
+                    }
                     Button(role: .destructive) {
                         idsToDelete = ids
                         showDeleteConfirmation = true
