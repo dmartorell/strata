@@ -43,15 +43,16 @@ struct ImportView: View {
         }
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
             guard let provider = providers.first else { return false }
-            _ = provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
+            _ = provider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, isInPlace, _ in
                 guard let url else { return }
+                let originalURL = isInPlace ? url : nil
                 let uniqueDir = FileManager.default.temporaryDirectory
                     .appendingPathComponent(UUID().uuidString, isDirectory: true)
                 try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
                 let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
                 try? FileManager.default.copyItem(at: url, to: tempCopy)
                 Task { @MainActor in
-                    importViewModel.startFileImport(from: tempCopy)
+                    importViewModel.startFileImport(from: tempCopy, originalURL: originalURL)
                 }
             }
             return true

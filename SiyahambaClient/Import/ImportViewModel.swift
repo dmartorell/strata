@@ -21,10 +21,10 @@ final class ImportViewModel {
         self.authViewModel = authViewModel
     }
 
-    func startFileImport(from fileURL: URL) {
+    func startFileImport(from fileURL: URL, originalURL: URL? = nil) {
         cancelCurrentTask()
         currentTask = Task {
-            await runFileImport(fileURL: fileURL)
+            await runFileImport(fileURL: fileURL, originalURL: originalURL)
         }
     }
 
@@ -44,7 +44,7 @@ final class ImportViewModel {
         currentTask = nil
     }
 
-    private func runFileImport(fileURL: URL) async {
+    private func runFileImport(fileURL: URL, originalURL: URL? = nil) async {
         do {
             phase = .validating
             try Task.checkCancellation()
@@ -81,7 +81,7 @@ final class ImportViewModel {
                 jobId: jobId,
                 sourceHash: hash,
                 displayName: fileURL.lastPathComponent,
-                sourceURL: nil,
+                sourceURL: originalURL?.path,
                 fileName: fileURL.lastPathComponent
             )
         } catch let error as APIError where error == .httpError(429) {
@@ -183,11 +183,12 @@ private func extractToTemp(
         inferredKey = ChordTransposer.inferKey(from: chords)
     }
 
+    let parsed = fileName.map(SongEntry.parseArtistAndTitle)
     let songID = UUID()
     let entry = SongEntry(
         id: songID,
-        title: fileName ?? metadata.title,
-        artist: metadata.artist,
+        title: parsed?.title ?? metadata.title,
+        artist: metadata.artist ?? parsed?.artist,
         duration: metadata.durationSeconds ?? 0,
         sourceURL: sourceURL,
         fileName: fileName,
