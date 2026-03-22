@@ -19,7 +19,7 @@ struct LyricsView: View {
                                 LyricLineView(
                                     line: line,
                                     isActive: line.id == vm.currentLine?.id,
-                                    linePassed: line.end <= vm.engine.currentTime
+                                    linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset
                                 )
                                 .id(line.id)
                             }
