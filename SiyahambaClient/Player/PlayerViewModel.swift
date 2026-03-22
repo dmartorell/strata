@@ -8,6 +8,7 @@ final class PlayerViewModel {
     private(set) var lyrics: [LyricLine] = []
     private(set) var chords: [ChordEntry] = []
     var showTransposed: Bool = false
+    var lyricsOffset: Double = 0
 
     let engine: PlaybackEngine
     private let cacheManager: CacheManager
@@ -40,6 +41,7 @@ final class PlayerViewModel {
         }
         try engine.load(stemURLs: stemURLs)
         engine.setPitch(semitones: song.pitchOffset ?? 0)
+        lyricsOffset = song.lyricsOffset ?? 0
 
         let lyricsURL = await cacheManager.lyricsURL(songID: song.id)
         if FileManager.default.fileExists(atPath: lyricsURL.path) {
@@ -125,7 +127,7 @@ final class PlayerViewModel {
     }
 
     var currentLine: LyricLine? {
-        let t = engine.currentTime
+        let t = engine.currentTime + lyricsOffset
         if lastLineIndex < lyrics.count {
             let line = lyrics[lastLineIndex]
             if t >= line.start && t < line.end {
@@ -205,6 +207,17 @@ final class PlayerViewModel {
             return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
         }
         return raw
+    }
+
+    func saveLyricsOffset() async {
+        var updated = song
+        updated.lyricsOffset = lyricsOffset
+        var songs = libraryStore.songs
+        if let idx = songs.firstIndex(where: { $0.id == song.id }) {
+            songs[idx] = updated
+            try? await cacheManager.writeLibraryIndex(songs)
+            await libraryStore.loadFromDisk()
+        }
     }
 
     func savePitchOffset() async {

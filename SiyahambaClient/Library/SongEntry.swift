@@ -10,6 +10,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
     let sourceHash: String
     let addedAt: Date
     var pitchOffset: Int?
+    var lyricsOffset: Double?
     var key: String?
     var displayMode: DisplayMode?
     var isPlaceholder: Bool?
@@ -31,6 +32,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         sourceHash: String,
         addedAt: Date,
         pitchOffset: Int? = nil,
+        lyricsOffset: Double? = nil,
         key: String? = nil,
         displayMode: DisplayMode? = nil,
         isPlaceholder: Bool? = nil
@@ -44,6 +46,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.sourceHash = sourceHash
         self.addedAt = addedAt
         self.pitchOffset = pitchOffset
+        self.lyricsOffset = lyricsOffset
         self.key = key
         self.displayMode = displayMode
         self.isPlaceholder = isPlaceholder
@@ -89,12 +92,13 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.sourceHash = try container.decode(String.self, forKey: .sourceHash)
         self.addedAt = try container.decode(Date.self, forKey: .addedAt)
         self.pitchOffset = try container.decodeIfPresent(Int.self, forKey: .pitchOffset)
+        self.lyricsOffset = try container.decodeIfPresent(Double.self, forKey: .lyricsOffset)
         self.key = try container.decodeIfPresent(String.self, forKey: .key)
         self.displayMode = try container.decodeIfPresent(DisplayMode.self, forKey: .displayMode)
         self.isPlaceholder = try container.decodeIfPresent(Bool.self, forKey: .isPlaceholder)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, key, displayMode, isPlaceholder
+        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, lyricsOffset, key, displayMode, isPlaceholder
     }
 }
