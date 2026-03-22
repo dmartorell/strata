@@ -5,10 +5,10 @@ to produce word-level timestamps. Only uses alignment (not transcription).
 """
 
 import gc
-import io
+import os
+import tempfile
 import torch
 import whisperx
-import soundfile as sf
 
 
 def align_lyrics(
@@ -29,11 +29,13 @@ def align_lyrics(
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    with io.BytesIO(vocals_bytes) as buf:
-        audio_np, sample_rate = sf.read(buf, dtype="float32")
-
-    if audio_np.ndim > 1:
-        audio_np = audio_np.mean(axis=1)
+    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    try:
+        tmp.write(vocals_bytes)
+        tmp.close()
+        audio_np = whisperx.load_audio(tmp.name)
+    finally:
+        os.unlink(tmp.name)
 
     lines = [l.strip() for l in lyrics_text.strip().split("\n") if l.strip()]
     transcript_segments = [{"text": line} for line in lines]

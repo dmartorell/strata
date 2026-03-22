@@ -23,6 +23,16 @@ actor LRCLibService {
             if let result = await getExact(title: cleanArtist, artist: cleanTitle, duration: duration) {
                 return result
             }
+            let strippedTitle = Self.stripDiacritics(cleanTitle)
+            let strippedArtist = Self.stripDiacritics(cleanArtist)
+            if strippedTitle != cleanTitle || strippedArtist != cleanArtist {
+                if let result = await getExact(title: strippedTitle, artist: strippedArtist, duration: duration) {
+                    return result
+                }
+                if let result = await getExact(title: strippedArtist, artist: strippedTitle, duration: duration) {
+                    return result
+                }
+            }
         }
 
         if let result = await search(title: cleanTitle, artist: cleanArtist, duration: duration) {
@@ -30,7 +40,15 @@ actor LRCLibService {
         }
 
         if let cleanArtist, !cleanArtist.isEmpty {
-            return await search(title: cleanArtist, artist: cleanTitle, duration: duration)
+            if let result = await search(title: cleanArtist, artist: cleanTitle, duration: duration) {
+                return result
+            }
+        }
+
+        let strippedTitle = Self.stripDiacritics(cleanTitle)
+        let strippedArtist = cleanArtist.map { Self.stripDiacritics($0) }
+        if strippedTitle != cleanTitle || strippedArtist != cleanArtist {
+            return await search(title: strippedTitle, artist: strippedArtist, duration: duration)
         }
 
         return nil
@@ -38,16 +56,25 @@ actor LRCLibService {
 
     private static func cleanQuery(_ text: String) -> String {
         var result = text
-        let noise = try! NSRegularExpression(
-            pattern: "\\((?:con letra|official(?:\\s+music)?\\s+video|video oficial|lyric(?:s)?\\s*(?:video)?|audio|live|en vivo|hd|hq|remaster(?:ed)?)\\)",
+        let parenthetical = try! NSRegularExpression(
+            pattern: "\\([^)]*\\)",
             options: .caseInsensitive
         )
-        result = noise.stringByReplacingMatches(in: result, range: NSRange(result.startIndex..., in: result), withTemplate: "")
-        result = result.trimmingCharacters(in: .whitespaces)
+        result = parenthetical.stringByReplacingMatches(in: result, range: NSRange(result.startIndex..., in: result), withTemplate: "")
+        let dashSuffix = try! NSRegularExpression(
+            pattern: "\\s+-\\s+(?:remaster(?:ed)?|version|versi[oó]n|audio|live|en (?:vivo|directo)).*$",
+            options: .caseInsensitive
+        )
+        result = dashSuffix.stringByReplacingMatches(in: result, range: NSRange(result.startIndex..., in: result), withTemplate: "")
+        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
         while result.contains("  ") {
             result = result.replacingOccurrences(of: "  ", with: " ")
         }
         return result
+    }
+
+    private static func stripDiacritics(_ text: String) -> String {
+        text.folding(options: .diacriticInsensitive, locale: .current)
     }
 
     private func getExact(title: String, artist: String, duration: Double) async -> LyricsFile? {

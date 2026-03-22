@@ -93,11 +93,16 @@ final class PlayerViewModel {
     }
 
     private func lyricsNeedAlignment(_ lines: [LyricLine]) -> Bool {
-        lines.contains { line in
-            guard line.words.count > 1 else { return false }
-            let firstStart = line.words.first?.start ?? 0
-            return line.words.allSatisfy { abs($0.start - firstStart) < 0.01 }
-        }
+        let linesWithWords = lines.filter { $0.words.count > 1 }
+        guard !linesWithWords.isEmpty else { return false }
+        let evenlySpacedCount = linesWithWords.filter { line in
+            let gap = (line.end - line.start) / Double(line.words.count)
+            return line.words.enumerated().allSatisfy { i, w in
+                let expected = line.start + gap * Double(i)
+                return abs(w.start - expected) < 0.02
+            }
+        }.count
+        return evenlySpacedCount > linesWithWords.count / 2
     }
 
     private func attemptForcedAlignment() async {
