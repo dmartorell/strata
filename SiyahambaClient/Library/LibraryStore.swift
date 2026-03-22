@@ -75,6 +75,11 @@ final class LibraryStore {
         songs.removeAll { $0.id == id }
     }
 
+    func updatePlaceholderStatus(id: UUID, status: ImportStatus) {
+        guard let index = songs.firstIndex(where: { $0.id == id }) else { return }
+        songs[index].importStatus = status
+    }
+
     func isCached(sourceHash: String) -> Bool {
         songs.contains { $0.sourceHash == sourceHash }
     }

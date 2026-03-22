@@ -6,6 +6,9 @@ import ZIPFoundation
 @MainActor
 final class ImportViewModel {
     private(set) var phase: ImportPhase = .idle
+    private(set) var isProcessing: Bool = false
+
+    var queueCount: Int { queue.count }
 
     private let apiClient: any ImportAPIClientProtocol
     private let cacheManager: CacheManager
@@ -13,6 +16,7 @@ final class ImportViewModel {
     private var authViewModel: any AuthTokenProviderProtocol
     private var currentTask: Task<Void, Never>?
     private var placeholderID: UUID?
+    private var queue: [QueueItem] = []
 
     init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: any AuthTokenProviderProtocol) {
         self.apiClient = apiClient
@@ -22,9 +26,8 @@ final class ImportViewModel {
     }
 
     func startFileImport(from fileURL: URL, originalURL: URL? = nil) {
-        cancelCurrentTask()
         currentTask = Task {
-            await runFileImport(fileURL: fileURL, originalURL: originalURL)
+            await enqueueFileImport(fileURL: fileURL, originalURL: originalURL)
         }
     }
 
@@ -34,60 +37,97 @@ final class ImportViewModel {
     }
 
     func cancel() {
-        cancelCurrentTask()
+        currentTask?.cancel()
+        currentTask = nil
+
         if let pid = placeholderID {
             libraryStore.removePlaceholder(id: pid)
             placeholderID = nil
         }
+        for item in queue {
+            libraryStore.removePlaceholder(id: item.placeholderID)
+        }
+        queue.removeAll()
+        isProcessing = false
         phase = .idle
     }
 
     // MARK: - Private
 
-    private func cancelCurrentTask() {
-        currentTask?.cancel()
-        currentTask = nil
+    private func enqueueFileImport(fileURL: URL, originalURL: URL?) async {
+        do {
+            let hash = try await cacheManager.sha256(of: fileURL)
+
+            if libraryStore.isCached(sourceHash: hash) {
+                if !isProcessing {
+                    phase = .ready(cached: true)
+                }
+                return
+            }
+
+            let status: ImportStatus = isProcessing ? .queued : .active
+            let placeholder = SongEntry.placeholder(fileName: fileURL.lastPathComponent, sourceHash: hash, importStatus: status)
+            libraryStore.addPlaceholder(placeholder)
+
+            let item = QueueItem(fileURL: fileURL, originalURL: originalURL, placeholderID: placeholder.id, sourceHash: hash)
+            queue.append(item)
+
+            if !isProcessing {
+                processNextInQueue()
+            }
+        } catch {
+            phase = .error(error.localizedDescription)
+        }
     }
 
-    private func runFileImport(fileURL: URL, originalURL: URL? = nil) async {
+    private func processNextInQueue() {
+        guard !queue.isEmpty else {
+            isProcessing = false
+            phase = .idle
+            return
+        }
+
+        isProcessing = true
+        let item = queue.removeFirst()
+
+        libraryStore.updatePlaceholderStatus(id: item.placeholderID, status: .active)
+        placeholderID = item.placeholderID
+
+        currentTask = Task {
+            await runFileImport(item: item)
+            processNextInQueue()
+        }
+    }
+
+    private func runFileImport(item: QueueItem) async {
         do {
             phase = .validating
             try Task.checkCancellation()
 
-            let hash = try await cacheManager.sha256(of: fileURL)
-
-            if libraryStore.isCached(sourceHash: hash) {
-                phase = .ready(cached: true)
-                return
-            }
-
             guard let token = authViewModel.token else {
+                if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
                 phase = .error("No hay sesión activa")
                 return
             }
 
-            let placeholder = SongEntry.placeholder(fileName: fileURL.lastPathComponent, sourceHash: hash)
-            placeholderID = placeholder.id
-            libraryStore.addPlaceholder(placeholder)
-
             phase = .uploading
             try Task.checkCancellation()
 
-            let fileData = try Data(contentsOf: fileURL)
-            let mimeType = audioMimeType(for: fileURL)
+            let fileData = try Data(contentsOf: item.fileURL)
+            let mimeType = audioMimeType(for: item.fileURL)
             let jobId = try await apiClient.uploadAudio(
                 fileData: fileData,
-                fileName: fileURL.lastPathComponent,
+                fileName: item.fileURL.lastPathComponent,
                 mimeType: mimeType,
                 token: token
             )
 
             try await pollAndFinalize(
                 jobId: jobId,
-                sourceHash: hash,
-                displayName: fileURL.lastPathComponent,
-                sourceURL: originalURL?.path,
-                fileName: fileURL.lastPathComponent
+                sourceHash: item.sourceHash,
+                displayName: item.fileURL.lastPathComponent,
+                sourceURL: item.originalURL?.path,
+                fileName: item.fileURL.lastPathComponent
             )
         } catch let error as APIError where error == .httpError(429) {
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
@@ -150,6 +190,15 @@ final class ImportViewModel {
         default:     return "audio/mpeg"
         }
     }
+}
+
+// MARK: - QueueItem
+
+private struct QueueItem {
+    let fileURL: URL
+    let originalURL: URL?
+    let placeholderID: UUID
+    let sourceHash: String
 }
 
 // MARK: - ZIP Extraction (nonisolated helper)

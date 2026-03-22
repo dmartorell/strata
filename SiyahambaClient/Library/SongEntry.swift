@@ -1,5 +1,10 @@
 import Foundation
 
+enum ImportStatus: String, Codable, Sendable {
+    case active
+    case queued
+}
+
 struct SongEntry: Codable, Identifiable, Sendable {
     let id: UUID
     let title: String
@@ -14,6 +19,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
     var key: String?
     var displayMode: DisplayMode?
     var isPlaceholder: Bool?
+    var importStatus: ImportStatus?
 
     enum DisplayMode: String, Codable, Sendable {
         case waveforms
@@ -35,7 +41,8 @@ struct SongEntry: Codable, Identifiable, Sendable {
         lyricsOffset: Double? = nil,
         key: String? = nil,
         displayMode: DisplayMode? = nil,
-        isPlaceholder: Bool? = nil
+        isPlaceholder: Bool? = nil,
+        importStatus: ImportStatus? = nil
     ) {
         self.id = id
         self.title = title
@@ -50,6 +57,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.key = key
         self.displayMode = displayMode
         self.isPlaceholder = isPlaceholder
+        self.importStatus = importStatus
     }
 
     static func parseArtistAndTitle(from fileName: String) -> (artist: String?, title: String) {
@@ -66,7 +74,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         return (artist, title)
     }
 
-    static func placeholder(fileName: String, sourceHash: String) -> SongEntry {
+    static func placeholder(fileName: String, sourceHash: String, importStatus: ImportStatus = .active) -> SongEntry {
         let parsed = parseArtistAndTitle(from: fileName)
         return SongEntry(
             id: UUID(),
@@ -77,7 +85,8 @@ struct SongEntry: Codable, Identifiable, Sendable {
             fileName: fileName,
             sourceHash: sourceHash,
             addedAt: Date(),
-            isPlaceholder: true
+            isPlaceholder: true,
+            importStatus: importStatus
         )
     }
 
@@ -96,9 +105,10 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.key = try container.decodeIfPresent(String.self, forKey: .key)
         self.displayMode = try container.decodeIfPresent(DisplayMode.self, forKey: .displayMode)
         self.isPlaceholder = try container.decodeIfPresent(Bool.self, forKey: .isPlaceholder)
+        self.importStatus = try container.decodeIfPresent(ImportStatus.self, forKey: .importStatus)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, lyricsOffset, key, displayMode, isPlaceholder
+        case id, title, artist, duration, sourceURL, fileName, sourceHash, addedAt, pitchOffset, lyricsOffset, key, displayMode, isPlaceholder, importStatus
     }
 }
