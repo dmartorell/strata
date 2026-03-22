@@ -16,8 +16,7 @@ usage_vol = modal.Volume.from_name("siyahamba-usage", create_if_missing=True)
 # (which needs the pipeline module) inside the build container.
 _DOWNLOAD_WEIGHTS = (
     "python -c \""
-    "from demucs.pretrained import get_model; get_model('htdemucs'); "
-    "import whisperx; whisperx.load_model('large-v2', device='cpu', compute_type='int8')"
+    "from demucs.pretrained import get_model; get_model('htdemucs')"
     "\""
 )
 
@@ -29,8 +28,6 @@ image = (
         "torch<2.9",
         "torchaudio<2.9",
         "demucs==4.0.1",
-        "faster-whisper",
-        "whisperx",
         "fastapi[standard]",
         "pyjwt",
         "bcrypt",
@@ -68,32 +65,8 @@ class ProcessingService:
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
-        # Demucs htdemucs
         from demucs.pretrained import get_model
         self.demucs_model = get_model("htdemucs")
-
-        # WhisperX large-v2 — transcripcion con word-level timestamps
-        import whisperx
-        self.whisper_model = whisperx.load_model(
-            "large-v2", device="cuda", compute_type="float16"
-        )
-
-    @modal.method()
-    def transcribe(self, vocals_bytes: bytes) -> dict:
-        """Transcribe el stem vocal con WhisperX large-v2.
-
-        Args:
-            vocals_bytes: Bytes WAV del stem vocals (output de separacion Demucs).
-
-        Returns:
-            Dict con language y segments con word-level timestamps.
-            Fallback a timestamps por segmento si idioma no soportado.
-        """
-        import sys
-        if "/root" not in sys.path:
-            sys.path.insert(0, "/root")
-        from pipeline.transcription import transcribe_vocals
-        return transcribe_vocals(self.whisper_model, vocals_bytes)
 
     @modal.method()
     def detect_chords(self, other_stem_bytes: bytes) -> list:
@@ -139,7 +112,6 @@ class ProcessingService:
         stages = [
             "downloading",
             "separating",
-            "transcribing",
             "detecting_chords",
             "packaging",
         ]
@@ -210,32 +182,25 @@ from pipeline.image import gpu_image  # noqa: E402
     volumes={"/data": usage_vol},
 )
 class AudioPipeline:
-    """Pipeline end-to-end de audio: Demucs + WhisperX + chord-extractor.
+    """Pipeline end-to-end de audio: Demucs + chord-extractor.
 
     Los modelos se cargan una sola vez por contenedor en @modal.enter y se
     reutilizan entre requests, garantizando cold starts predecibles.
 
     Flujo principal (process):
-        validate -> separate_stems -> transcribe_vocals -> detect_chords -> package_results
+        validate -> separate_stems -> detect_chords -> package_results
     """
 
     @modal.enter()
     def load_models(self):
-        """Carga Demucs y WhisperX al arrancar el contenedor."""
+        """Carga Demucs al arrancar el contenedor."""
         import sys
         if "/root" not in sys.path:
             sys.path.insert(0, "/root")
 
-        # Demucs htdemucs — separacion de stems (pretrained API, no demucs.api)
         from demucs.pretrained import get_model
         self.demucs_model = get_model("htdemucs")
         self.demucs_model.cuda()
-
-        # WhisperX large-v2 — transcripcion con word-level timestamps
-        import whisperx
-        self.whisper_model = whisperx.load_model(
-            "large-v2", device="cuda", compute_type="float16"
-        )
 
     @modal.method()
     def process(
@@ -254,7 +219,7 @@ class AudioPipeline:
             username: Usuario que solicita el procesamiento (para usage).
 
         Returns:
-            Bytes del ZIP con 4 stems WAV + lyrics.json + chords.json + metadata.json.
+            Bytes del ZIP con 4 stems WAV + chords.json + metadata.json.
         """
         import sys
         import time
@@ -285,10 +250,6 @@ class AudioPipeline:
             except Exception:
                 pass
 
-            progress[job_id] = "transcribing"
-            from pipeline.transcription import transcribe_vocals
-            lyrics = transcribe_vocals(self.whisper_model, stems.get("vocals", b""))
-
             progress[job_id] = "detecting_chords"
             from pipeline.chords import detect_chords
             chords = detect_chords(stems.get("other", b""))
@@ -309,7 +270,7 @@ class AudioPipeline:
             }
             record_usage(username=username, source_type=source_type, source_name=source_name, gpu_seconds=gpu_seconds)
 
-            result = package_results(stems, lyrics, chords, metadata)
+            result = package_results(stems, chords, metadata)
 
             progress[job_id] = "completed"
             return result

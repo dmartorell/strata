@@ -142,7 +142,11 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- **Import queue with pending indicator** (ui) — queued imports shown as disabled rows with "En cola" tag
+- **Add lyrics sync offset control** (ui) — ajustar ±ms el timing del highlight de letras en tiempo real
+- Analyze adding lyrics editing to LyricsView (ui)
+- Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
+- Remove all Python dependencies once the app is fully built (tooling)
 
 ### Roadmap Evolution
 

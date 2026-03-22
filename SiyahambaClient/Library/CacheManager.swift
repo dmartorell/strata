@@ -11,6 +11,7 @@ protocol CacheManagerProtocol: Actor {
     func stemURL(songID: UUID, stem: String) -> URL
     func lyricsURL(songID: UUID) -> URL
     func chordsURL(songID: UUID) -> URL
+    func writeLyrics(songID: UUID, lyricsFile: LyricsFile) throws
     func sha256(of fileURL: URL) throws -> String
     func materializeSong(id: UUID, from tempDir: URL) throws
 }
@@ -80,6 +81,13 @@ extension CacheManager {
     func chordsURL(songID: UUID) -> URL {
         songDirectory(for: songID).appendingPathComponent("chords.json")
     }
+
+    func writeLyrics(songID: UUID, lyricsFile: LyricsFile) throws {
+        let dir = songDirectory(for: songID)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let data = try JSONEncoder().encode(lyricsFile)
+        try data.write(to: lyricsURL(songID: songID), options: .atomic)
+    }
 }
 
 // MARK: - SHA256 incremental para archivos locales
@@ -109,10 +117,20 @@ extension CacheManager {
             withIntermediateDirectories: true,
             attributes: nil
         )
-        let files = ["vocals.wav", "drums.wav", "bass.wav", "other.wav",
-                     "lyrics.json", "chords.json", "metadata.json"]
-        for filename in files {
+        let requiredFiles = ["vocals.wav", "drums.wav", "bass.wav", "other.wav",
+                              "chords.json", "metadata.json"]
+        for filename in requiredFiles {
             let src = tempDir.appendingPathComponent(filename)
+            let dest = destDir.appendingPathComponent(filename)
+            if FileManager.default.fileExists(atPath: dest.path) {
+                try FileManager.default.removeItem(at: dest)
+            }
+            try FileManager.default.moveItem(at: src, to: dest)
+        }
+        let optionalFiles = ["lyrics.json"]
+        for filename in optionalFiles {
+            let src = tempDir.appendingPathComponent(filename)
+            guard FileManager.default.fileExists(atPath: src.path) else { continue }
             let dest = destDir.appendingPathComponent(filename)
             if FileManager.default.fileExists(atPath: dest.path) {
                 try FileManager.default.removeItem(at: dest)

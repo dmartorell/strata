@@ -24,7 +24,6 @@ enum ImportPhase: Equatable {
         switch stage {
         case "queued":           return "En cola..."
         case "separating":       return "Separando stems..."
-        case "transcribing":     return "Transcribiendo letras..."
         case "detecting_chords": return "Detectando acordes..."
         case "packaging":        return "Empaquetando..."
         default:                 return "Procesando..."

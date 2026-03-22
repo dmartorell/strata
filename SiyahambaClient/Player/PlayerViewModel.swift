@@ -41,6 +41,17 @@ final class PlayerViewModel {
             } catch {}
         }
 
+        if lyrics.isEmpty {
+            if let lyricsFile = await LRCLibService.shared.fetchLyrics(
+                title: song.title,
+                artist: song.artist,
+                duration: song.duration
+            ) {
+                lyrics = lyricsFile.segments
+                try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
+            }
+        }
+
         let chordsURL = await cacheManager.chordsURL(songID: song.id)
         if FileManager.default.fileExists(atPath: chordsURL.path) {
             do {
@@ -92,12 +103,6 @@ final class PlayerViewModel {
             }
         }
         return nil
-    }
-
-    var currentWord: LyricWord? {
-        guard let line = currentLine else { return nil }
-        let t = engine.currentTime
-        return line.words.first { t >= $0.start && t < $0.end }
     }
 
     var currentChord: ChordEntry? {

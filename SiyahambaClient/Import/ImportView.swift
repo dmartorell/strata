@@ -43,12 +43,12 @@ struct ImportView: View {
         }
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
             guard let provider = providers.first else { return false }
-            print("[Drop] registeredTypeIdentifiers: \(provider.registeredTypeIdentifiers)")
+
             _ = provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
                 guard let url else { return }
-                print("[Drop] loadFileRepresentation url: \(url.path)")
+
                 let resolvedOriginal = (try? URL(resolvingAliasFileAt: url, options: [.withoutMounting]))
-                print("[Drop] resolvedAlias: \(resolvedOriginal?.path ?? "nil")")
+
                 let uniqueDir = FileManager.default.temporaryDirectory
                     .appendingPathComponent(UUID().uuidString, isDirectory: true)
                 try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)

@@ -24,6 +24,7 @@
 		82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */; };
 		859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */; };
 		8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */; };
+		8C1A2B3D4E5F6A7B8C9D0E1F /* LRCLibService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */; };
 		97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */; };
 		9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 998BC93CD52AA9C6DAF56B92 /* JWTDecode */; };
 		A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */; };
@@ -61,6 +62,7 @@
 		17B145FC49F2014C0A488EE6 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
 		1A2A90DB53108F2F44B06771 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLibService.swift; sourceTree = "<group>"; };
 		2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		2D6FBA82D14CB8BB61E70466 /* SiyahambaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SiyahambaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -258,6 +260,7 @@
 			isa = PBXGroup;
 			children = (
 				2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */,
+				1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */,
 				E879470A8827FE5CB27E646E /* LibraryStore.swift */,
 				4856064F0C509BF472143336 /* LibraryView.swift */,
 				17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */,
@@ -373,6 +376,7 @@
 				4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */,
 				A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */,
 				8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */,
+				8C1A2B3D4E5F6A7B8C9D0E1F /* LRCLibService.swift in Sources */,
 				E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */,
 				656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */,
 				E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */,
