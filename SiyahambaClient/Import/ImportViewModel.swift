@@ -26,7 +26,7 @@ final class ImportViewModel {
     }
 
     func startFileImport(from fileURL: URL, originalURL: URL? = nil) {
-        currentTask = Task {
+        Task {
             await enqueueFileImport(fileURL: fileURL, originalURL: originalURL)
         }
     }

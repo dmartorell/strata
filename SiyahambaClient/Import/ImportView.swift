@@ -43,34 +43,36 @@ struct ImportView: View {
             }
         }
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
-            guard let provider = providers.first else { return false }
+            guard !providers.isEmpty else { return false }
 
-            Task {
-                let originalURL: URL? = await withCheckedContinuation { cont in
-                    provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { data, _ in
-                        if let data = data as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) {
-                            cont.resume(returning: url)
-                        } else {
-                            cont.resume(returning: nil)
+            for provider in providers {
+                Task {
+                    let originalURL: URL? = await withCheckedContinuation { cont in
+                        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { data, _ in
+                            if let data = data as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) {
+                                cont.resume(returning: url)
+                            } else {
+                                cont.resume(returning: nil)
+                            }
                         }
                     }
-                }
 
-                let tempURL: URL? = await withCheckedContinuation { cont in
-                    provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _ in
-                        guard let url else { cont.resume(returning: nil); return }
-                        let uniqueDir = FileManager.default.temporaryDirectory
-                            .appendingPathComponent(UUID().uuidString, isDirectory: true)
-                        try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
-                        let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
-                        try? FileManager.default.copyItem(at: url, to: tempCopy)
-                        cont.resume(returning: tempCopy)
+                    let tempURL: URL? = await withCheckedContinuation { cont in
+                        provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, error in
+                            guard let url else { cont.resume(returning: nil); return }
+                            let uniqueDir = FileManager.default.temporaryDirectory
+                                .appendingPathComponent(UUID().uuidString, isDirectory: true)
+                            try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
+                            let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
+                            try? FileManager.default.copyItem(at: url, to: tempCopy)
+                            cont.resume(returning: tempCopy)
+                        }
                     }
-                }
 
-                if let tempCopy = tempURL {
-                    await MainActor.run {
-                        importViewModel.startFileImport(from: tempCopy, originalURL: originalURL)
+                    if let tempCopy = tempURL {
+                        await MainActor.run {
+                            importViewModel.startFileImport(from: tempCopy, originalURL: originalURL)
+                        }
                     }
                 }
             }
