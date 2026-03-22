@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-21 - Completed quick task 11: Analyze adding lyrics editing to LyricsView
+Last activity: 2026-03-22 - Completed quick task 12: Forced alignment endpoint with WhisperX
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -174,11 +174,12 @@ Recent decisions affecting current work:
 | 9 | Fix UsageView mostrando datos stale: instancia duplicada de Modal Volume en tracker.py + re-fetch al reaparecer en cliente | 2026-03-21 | 639fd63 | [9-fix-usageview-always-showing-stale-song-](./quick/9-fix-usageview-always-showing-stale-song-/) |
 | 10 | Mostrar canción en procesamiento inmediatamente en biblioteca con fila placeholder y spinner | 2026-03-22 | 60d5a4b | [10-show-processing-song-immediately-in-libr](./quick/10-show-processing-song-immediately-in-libr/) |
 | 11 | Análisis de viabilidad para añadir edición de letras a LyricsView | 2026-03-22 | — | [11-analyze-adding-lyrics-editing-to-lyricsv](./quick/11-analyze-adding-lyrics-editing-to-lyricsv/) |
+| 12 | Forced alignment endpoint con WhisperX para re-sincronizar lyrics de LRCLib | 2026-03-22 | a223be8 | [12-implement-forced-alignment-endpoint-for-](./quick/12-implement-forced-alignment-endpoint-for-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Completed quick task 10 — Placeholder row en biblioteca durante importación (spinner + reemplazo en éxito, eliminación en error/cancel)
+Stopped at: Completed quick task 12 — Forced alignment endpoint con WhisperX (POST /align-lyrics + integración en PlayerViewModel)
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
