@@ -66,11 +66,24 @@ struct LibraryView: View {
             Table(libraryStore.songs, selection: $selection) {
                 TableColumn("Título") { song in
                     if song.isPlaceholder == true {
-                        HStack(spacing: 6) {
-                            ProgressView()
-                                .controlSize(.mini)
-                            Text(song.title)
-                                .foregroundStyle(.secondary)
+                        if song.importStatus == .queued {
+                            HStack(spacing: 6) {
+                                Text(song.title)
+                                    .foregroundStyle(.secondary)
+                                Text("En cola")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Capsule().fill(Color.secondary.opacity(0.2)))
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else {
+                            HStack(spacing: 6) {
+                                ProgressView()
+                                    .controlSize(.mini)
+                                Text(song.title)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     } else {
                         Text(song.title)

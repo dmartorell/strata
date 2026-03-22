@@ -82,12 +82,19 @@ struct ImportView: View {
 
     private var progressSection: some View {
         HStack(spacing: 10) {
-            statusBadge
+            VStack(alignment: .leading, spacing: 4) {
+                statusBadge
+                if importViewModel.queueCount > 0 {
+                    Text("\(importViewModel.queueCount) en cola")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             Spacer()
 
             if importViewModel.phase.isActive {
-                Button("Cancelar") {
+                Button(importViewModel.queueCount > 0 ? "Cancelar todo" : "Cancelar") {
                     importViewModel.cancel()
                 }
                 .buttonStyle(.borderless)
