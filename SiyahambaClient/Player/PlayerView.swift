@@ -42,10 +42,9 @@ struct PlayerView: View {
             )
             do {
                 try await vm.load()
-            } catch {
-                // Continuar incluso si falla la carga de metadatos
-            }
+            } catch {}
             playerVM = vm
+            await vm.loadRemoteMetadata()
         }
     }
 

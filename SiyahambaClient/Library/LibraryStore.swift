@@ -39,6 +39,7 @@ final class LibraryStore {
                     sourceHash: entry.sourceHash,
                     addedAt: entry.addedAt,
                     pitchOffset: entry.pitchOffset,
+                    lyricsOffset: entry.lyricsOffset,
                     key: entry.key,
                     displayMode: entry.displayMode,
                     isPlaceholder: entry.isPlaceholder

@@ -12,9 +12,11 @@
 		1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */; };
 		2FA19E1C0849E0D948E8291B /* StemControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22C041447298177A06284C /* StemControlsView.swift */; };
 		2FFE119B179855EB74CDDF18 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */; };
+		33A2A5CB79EE45A27F2F9E90 /* LRCLibService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F51B6F81A2E8698C3AD2A /* LRCLibService.swift */; };
 		3BF06BE6764B44CA2A836FAB /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FA9116C73430A0C786D478 /* APIClient.swift */; };
 		4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */; };
 		4D6CC45B6B1899D96330E4E9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B145FC49F2014C0A488EE6 /* LoginView.swift */; };
+		4D78563EF40B4E317D6FD8DA /* LyricsOffsetPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464228819D5CDBEAB9AAA3A /* LyricsOffsetPopover.swift */; };
 		50A4FFC81E7743DBD797CDCF /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD0B1AA4918EC908B1B692E /* MockAPIClient.swift */; };
 		56F658BB9DF5A7838C7E71B9 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */; };
 		64C5B37C1185B0913309601F /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */; };
@@ -24,7 +26,6 @@
 		82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */; };
 		859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */; };
 		8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */; };
-		8C1A2B3D4E5F6A7B8C9D0E1F /* LRCLibService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */; };
 		97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */; };
 		9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 998BC93CD52AA9C6DAF56B92 /* JWTDecode */; };
 		A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */; };
@@ -62,7 +63,6 @@
 		17B145FC49F2014C0A488EE6 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEntry.swift; sourceTree = "<group>"; };
 		1A2A90DB53108F2F44B06771 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLibService.swift; sourceTree = "<group>"; };
 		2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		2D4A09DCF791E8BFD23B8BF0 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		2D6FBA82D14CB8BB61E70466 /* SiyahambaClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SiyahambaClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,8 +76,10 @@
 		4DE358B2A83AF471474630C7 /* WaveformsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformsView.swift; sourceTree = "<group>"; };
 		4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
 		4FA47CF4B211B6945DC34DFC /* ChordModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordModels.swift; sourceTree = "<group>"; };
+		5B8F51B6F81A2E8698C3AD2A /* LRCLibService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLibService.swift; sourceTree = "<group>"; };
 		5C7634123E16218DC5A1AA8E /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		8464228819D5CDBEAB9AAA3A /* LyricsOffsetPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsOffsetPopover.swift; sourceTree = "<group>"; };
 		867B6A9669043A3975DEADC2 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordTransposer.swift; sourceTree = "<group>"; };
 		93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetadata.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		C557904D56CED1338249CB78 /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				8464228819D5CDBEAB9AAA3A /* LyricsOffsetPopover.swift */,
 				C7573503C00F1262463D56C3 /* PitchPopover.swift */,
 				A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */,
 				61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */,
@@ -260,9 +263,9 @@
 			isa = PBXGroup;
 			children = (
 				2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */,
-				1F0E9D8C7B6A5F4E3D2B1A8C /* LRCLibService.swift */,
 				E879470A8827FE5CB27E646E /* LibraryStore.swift */,
 				4856064F0C509BF472143336 /* LibraryView.swift */,
+				5B8F51B6F81A2E8698C3AD2A /* LRCLibService.swift */,
 				17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */,
 				93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */,
 				9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */,
@@ -376,7 +379,6 @@
 				4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */,
 				A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */,
 				8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */,
-				8C1A2B3D4E5F6A7B8C9D0E1F /* LRCLibService.swift in Sources */,
 				E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */,
 				656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */,
 				E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */,
@@ -385,10 +387,12 @@
 				03DD6E718F1BC468B27CBE92 /* ImportView.swift in Sources */,
 				56F658BB9DF5A7838C7E71B9 /* ImportViewModel.swift in Sources */,
 				D1119654F0AC3C2368C17D02 /* KeychainService.swift in Sources */,
+				33A2A5CB79EE45A27F2F9E90 /* LRCLibService.swift in Sources */,
 				F0D12DADF24C633AE653792D /* LibraryStore.swift in Sources */,
 				6761DBEC4D7662FC420CC909 /* LibraryView.swift in Sources */,
 				4D6CC45B6B1899D96330E4E9 /* LoginView.swift in Sources */,
 				BE1691AF0717F7B44E91E8F0 /* LyricsModels.swift in Sources */,
+				4D78563EF40B4E317D6FD8DA /* LyricsOffsetPopover.swift in Sources */,
 				A778C7CFC64E86D6C30F8140 /* LyricsView.swift in Sources */,
 				F6BB3A17737DA2AD4B7090B7 /* PitchPopover.swift in Sources */,
 				82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */,

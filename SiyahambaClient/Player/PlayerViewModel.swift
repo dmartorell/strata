@@ -52,19 +52,6 @@ final class PlayerViewModel {
             } catch {}
         }
 
-        if lyrics.isEmpty {
-            if let lyricsFile = await LRCLibService.shared.fetchLyrics(
-                title: song.title,
-                artist: song.artist,
-                duration: song.duration
-            ) {
-                lyrics = lyricsFile.segments
-                try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
-            }
-        }
-
-        await attemptForcedAlignment()
-
         let chordsURL = await cacheManager.chordsURL(songID: song.id)
         if FileManager.default.fileExists(atPath: chordsURL.path) {
             do {
@@ -82,16 +69,29 @@ final class PlayerViewModel {
 
         if song.key == nil {
             if let inferredKey = ChordTransposer.inferKey(from: chords) {
-                var updated = song
-                updated.key = inferredKey
                 var songs = libraryStore.songs
                 if let idx = songs.firstIndex(where: { $0.id == song.id }) {
-                    songs[idx] = updated
+                    songs[idx].key = inferredKey
                     try? await cacheManager.writeLibraryIndex(songs)
                     await libraryStore.loadFromDisk()
                 }
             }
         }
+    }
+
+    func loadRemoteMetadata() async {
+        if lyrics.isEmpty {
+            if let lyricsFile = await LRCLibService.shared.fetchLyrics(
+                title: song.title,
+                artist: song.artist,
+                duration: song.duration
+            ) {
+                lyrics = lyricsFile.segments
+                try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
+            }
+        }
+
+        await attemptForcedAlignment()
     }
 
     private func lyricsNeedAlignment(_ lines: [LyricLine]) -> Bool {
@@ -210,22 +210,18 @@ final class PlayerViewModel {
     }
 
     func saveLyricsOffset() async {
-        var updated = song
-        updated.lyricsOffset = lyricsOffset
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {
-            songs[idx] = updated
+            songs[idx].lyricsOffset = lyricsOffset
             try? await cacheManager.writeLibraryIndex(songs)
             await libraryStore.loadFromDisk()
         }
     }
 
     func savePitchOffset() async {
-        var updated = song
-        updated.pitchOffset = engine.pitchSemitones
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {
-            songs[idx] = updated
+            songs[idx].pitchOffset = engine.pitchSemitones
             try? await cacheManager.writeLibraryIndex(songs)
             await libraryStore.loadFromDisk()
         }
@@ -238,11 +234,9 @@ final class PlayerViewModel {
         case (false, true): .chords
         default: .waveforms
         }
-        var updated = song
-        updated.displayMode = mode
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {
-            songs[idx] = updated
+            songs[idx].displayMode = mode
             try? await cacheManager.writeLibraryIndex(songs)
             await libraryStore.loadFromDisk()
         }

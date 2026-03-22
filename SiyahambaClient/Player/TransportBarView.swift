@@ -68,7 +68,6 @@ struct TransportBarView: View {
 
     @State private var wasPlayingBeforeDrag = false
     @State private var showPitchPopover = false
-    @State private var showLyricsOffsetPopover = false
 
     var body: some View {
         VStack(spacing: 10) {
@@ -162,24 +161,6 @@ struct TransportBarView: View {
                             showChords.toggle()
                         }
 
-                        if showLyrics {
-                            Button {
-                                showLyricsOffsetPopover.toggle()
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "timer")
-                                    Text(lyricsOffsetLabel)
-                                        .monospacedDigit()
-                                }
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                            }
-                            .buttonStyle(.bordered)
-                            .popover(isPresented: $showLyricsOffsetPopover) {
-                                LyricsOffsetPopover()
-                            }
-                        }
-
                         Button {
                             showPitchPopover.toggle()
                         } label: {
@@ -188,6 +169,7 @@ struct TransportBarView: View {
                                 Text(pitchLabel)
                                     .monospacedDigit()
                             }
+                            .frame(width: 50)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                         }
@@ -226,12 +208,6 @@ struct TransportBarView: View {
 
     private var hasLoop: Bool {
         engine.loopStart != nil && engine.loopEnd != nil
-    }
-
-    private var lyricsOffsetLabel: String {
-        let ms = Int(vm.lyricsOffset * 1000)
-        if ms == 0 { return "0ms" }
-        return ms > 0 ? "+\(ms)ms" : "\(ms)ms"
     }
 
     private var pitchLabel: String {
