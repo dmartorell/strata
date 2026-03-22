@@ -18,6 +18,16 @@ _DOWNLOAD_WEIGHTS_CMD = (
     "\""
 )
 
+_DOWNLOAD_ALIGNMENT_MODEL = (
+    "python -c \""
+    "from whisperx.alignment import DEFAULT_ALIGN_MODELS_HF; "
+    "from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor; "
+    "model_name = DEFAULT_ALIGN_MODELS_HF.get('en', 'jonatasgrosman/wav2vec2-large-xlsr-53-english'); "
+    "Wav2Vec2ForCTC.from_pretrained(model_name); "
+    "Wav2Vec2Processor.from_pretrained(model_name)"
+    "\""
+)
+
 gpu_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("ffmpeg", "libsndfile1", "curl", "unzip")
@@ -31,8 +41,10 @@ gpu_image = (
         "demucs==4.0.1",
         "soundfile",
         "chord-extractor",
+        "whisperx",
     )
     .run_commands(_DOWNLOAD_WEIGHTS_CMD, gpu="T4")
+    .run_commands(_DOWNLOAD_ALIGNMENT_MODEL, gpu="T4")
     .add_local_dir("pipeline", remote_path="/root/pipeline")
     .add_local_dir("auth", remote_path="/root/auth")
     .add_local_dir("usage", remote_path="/root/usage")

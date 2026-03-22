@@ -301,3 +301,21 @@ class AudioPipeline:
             sys.path.insert(0, "/root")
         from pipeline.chords import detect_chords
         return detect_chords(other_stem_bytes)
+
+    @modal.method()
+    def align_lyrics(self, vocals_bytes: bytes, lyrics_text: str, language: str = "en") -> list:
+        """Forced alignment of lyrics text against vocals audio.
+
+        Args:
+            vocals_bytes: WAV bytes of the vocals stem.
+            lyrics_text: Plain text lyrics (newline-separated lines).
+            language: Language code for alignment model selection.
+
+        Returns:
+            List of segment dicts with word-level timestamps.
+        """
+        import sys
+        if "/root" not in sys.path:
+            sys.path.insert(0, "/root")
+        from pipeline.alignment import align_lyrics
+        return align_lyrics(vocals_bytes, lyrics_text, language)

@@ -9,6 +9,8 @@ El procesamiento real se ejecuta en AudioPipeline (GPU Modal) via .spawn.
 Los endpoints son solo el HTTP handler (ASGI web container, CPU).
 """
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, Response
 from auth.auth import require_auth
@@ -118,3 +120,36 @@ async def get_result(
         if "expired" in str(e).lower():
             raise HTTPException(status_code=404, detail="Resultado expirado")
         raise HTTPException(status_code=500, detail=f"Pipeline error: {e}")
+
+
+@router.post("/align-lyrics")
+async def align_lyrics_endpoint(
+    request: dict[str, Any],
+    username: str = Depends(require_auth),
+):
+    """Acepta vocals_base64 + lyrics_text, ejecuta forced alignment con WhisperX.
+
+    Request body: {"vocals_base64": str, "lyrics_text": str, "language": str (optional, default "en")}
+    Response: {"segments": [...aligned segments with word timestamps...]}
+    """
+    import base64
+
+    lyrics_text = request.get("lyrics_text", "")
+    language = request.get("language", "en")
+    vocals_base64 = request.get("vocals_base64")
+
+    if not lyrics_text:
+        raise HTTPException(status_code=400, detail="lyrics_text is required")
+    if not vocals_base64:
+        raise HTTPException(status_code=400, detail="vocals_base64 is required")
+
+    vocals_data = base64.b64decode(vocals_base64)
+
+    pipeline = _get_pipeline()
+    segments = await pipeline.align_lyrics.remote.aio(
+        vocals_bytes=vocals_data,
+        lyrics_text=lyrics_text,
+        language=language,
+    )
+
+    return {"segments": segments}
