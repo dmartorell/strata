@@ -25,6 +25,7 @@ def detect_chords(other_stem_bytes: bytes) -> list[dict]:
     """
     try:
         from chord_extractor.extractors import Chordino
+        from pipeline.fingerings import get_fingerings
 
         # Escribir bytes a archivo temporal WAV
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
@@ -43,6 +44,7 @@ def detect_chords(other_stem_bytes: bytes) -> list[dict]:
                     "chord": chord_change.chord,
                     "start": chord_change.timestamp,
                     "end": end,
+                    "fingerings": get_fingerings(chord_change.chord),
                 })
             return result
         finally:
