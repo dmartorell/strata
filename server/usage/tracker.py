@@ -1,15 +1,16 @@
 """
 Usage tracker para Siyahamba
 
-Registra canciones procesadas en Modal Volume (siyahamba-usage) y estima el
-coste real incluyendo overhead de contenedor GPU (cold start + scaledown).
+Registra canciones procesadas en Modal Volume (siyahamba-usage) para rate limiting.
+El credito restante se calcula via modal.billing.workspace_billing_report() con datos
+reales del workspace (plan Starter: $30/mes).
 
 Proporciona:
   - record_usage(username, source_type, source_name, gpu_seconds): registra procesamiento
-  - get_usage(username): devuelve resumen del mes actual
+  - get_usage(username): devuelve credito restante via Modal billing API
   - FastAPI router con GET /usage (protegido por JWT)
 
-Estructura de usage.json:
+Estructura de usage.json (para rate limiting interno):
 {
   "YYYY-MM": {
     "songs_processed": N,
@@ -31,6 +32,7 @@ MODAL_T4_RATE_PER_SECOND = 0.000164
 CONTAINER_OVERHEAD_USD = 0.08
 GPU_SECONDS_PER_SONG = 45
 SPENDING_LIMIT_USD = 10.00
+MONTHLY_CREDIT_USD = 30.0
 
 USAGE_FILE = Path("/data/usage.json")
 
@@ -106,19 +108,43 @@ def check_limit(username: str) -> bool:
 
 
 def get_usage(username: str) -> dict:
-    """Devuelve el resumen de uso del mes actual."""
+    """Devuelve credito restante del mes actual via Modal billing API.
+
+    Usa workspace_billing_report() para obtener datos reales de coste.
+    Fallback: estimacion local si la API de billing no esta disponible.
+    """
+    from datetime import timedelta
+
     now = datetime.now(timezone.utc)
     month_key = now.strftime("%Y-%m")
+    start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    end = now
 
-    data = _read_usage()
-    month = data.get(month_key, {})
-
-    return {
-        "month": month_key,
-        "songs_processed": month.get("songs_processed", 0),
-        "estimated_cost_usd": month.get("estimated_cost_usd", 0.0),
-        "spending_limit_usd": SPENDING_LIMIT_USD,
-    }
+    try:
+        from modal.billing import workspace_billing_report
+        report = workspace_billing_report(start=start, end=end)
+        total_spent = sum(
+            item.cost if hasattr(item, "cost") else item.get("cost", 0.0)
+            for item in report
+        )
+        credit_remaining = max(0.0, MONTHLY_CREDIT_USD - total_spent)
+        return {
+            "month": month_key,
+            "credit_remaining_usd": round(credit_remaining, 2),
+            "monthly_credit_usd": MONTHLY_CREDIT_USD,
+            "total_spent_usd": round(total_spent, 2),
+        }
+    except Exception:
+        data = _read_usage()
+        month = data.get(month_key, {})
+        estimated = month.get("estimated_cost_usd", 0.0)
+        credit_remaining = max(0.0, MONTHLY_CREDIT_USD - estimated)
+        return {
+            "month": month_key,
+            "credit_remaining_usd": round(credit_remaining, 2),
+            "monthly_credit_usd": MONTHLY_CREDIT_USD,
+            "total_spent_usd": round(estimated, 2),
+        }
 
 
 # ---------------------------------------------------------------------------
