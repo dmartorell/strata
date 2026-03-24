@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-24T22:53:27.897Z"
+last_updated: "2026-03-24T22:54:54.291Z"
 progress:
   total_phases: 9
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 27
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-24 - Completed quick task 15: Metadata confirmation sheet before batch processing
+Last activity: 2026-03-24 - Completed 09-02: Guitar chord finger position diagrams in ChordView
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -72,6 +72,7 @@ Progress: [██████████] 100% (v1.0 milestone complete)
 | Phase 07-player-ui-display-usage P03 | 3 | 2 tasks | 7 files |
 | Phase 07-player-ui-display-usage P04 | 2 | 2 tasks | 5 files |
 | Phase 09 P01 | 8 | 2 tasks | 3 files |
+| Phase 09-show-chord-finger-position-diagram-alongside-chord-name P02 | 12 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,9 @@ Recent decisions affecting current work:
 - [Phase 07-player-ui-display-usage]: ABLoopButton como struct privado con LoopPhase enum en PlayerView — encapsula lógica de 3 fases A/B sin contaminar PlayerView
 - [Phase 07-player-ui-display-usage]: isSoloed inferido heurísticamente en StemControlsView — evita añadir API pública a PlaybackEngine para exponer soloedStem
 - [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: tombatossals DB uses Csharp/Fsharp as key names — _DB_KEY_MAP translates C#/F# to DB format in fingerings.py
+- [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: ChordDiagramView uses GraphicsContext.Shading.color() with colorScheme env for dark/light mode — .foregroundStyle not valid in Canvas context
+- [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: fingeringsMap lookup: build [chordName: positions] from all chords for transposition support; fall back to original entry if transposed name absent
+- [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: Legacy songs: hasFingerings guards both toggle and diagram display — no fingering data means no diagram and no toggle button
 
 ### Pending Todos
 
