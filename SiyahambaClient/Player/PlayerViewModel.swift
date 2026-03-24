@@ -112,7 +112,6 @@ final class PlayerViewModel {
     }
 
     var currentChord: ChordEntry? {
-        guard engine.isPlaying else { return nil }
         let t = engine.currentTime
         var bestIdx: Int? = nil
 

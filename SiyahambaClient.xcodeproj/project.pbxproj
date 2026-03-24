@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,7 @@
 		4D6CC45B6B1899D96330E4E9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B145FC49F2014C0A488EE6 /* LoginView.swift */; };
 		4D78563EF40B4E317D6FD8DA /* LyricsOffsetPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464228819D5CDBEAB9AAA3A /* LyricsOffsetPopover.swift */; };
 		50A4FFC81E7743DBD797CDCF /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD0B1AA4918EC908B1B692E /* MockAPIClient.swift */; };
+		553545451809D9F532BF429C /* guitar.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A88A4B5C36491E5E0FD28A5 /* guitar.json */; };
 		56F658BB9DF5A7838C7E71B9 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */; };
 		64C5B37C1185B0913309601F /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */; };
 		656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */; };
@@ -27,6 +28,7 @@
 		82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA2EDEE137AAF515DD81C98 /* PlaybackEngine.swift */; };
 		859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */; };
 		8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */; };
+		8E99B2EBC4CF2A4D5D47C469 /* ChordFingerings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFE8D2E979FAEBA0BE7107A /* ChordFingerings.swift */; };
 		97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */; };
 		9C0BF7D1DA8CAC164B661488 /* PendingImportItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818F6CB81FE602F38699FBE /* PendingImportItem.swift */; };
 		9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 998BC93CD52AA9C6DAF56B92 /* JWTDecode */; };
@@ -34,6 +36,7 @@
 		A6C44866323DCFD139B0164A /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = FD861707765DFE48A0ABC096 /* ZIPFoundation */; };
 		A778C7CFC64E86D6C30F8140 /* LyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4781FA5205CE9A1FBCC674 /* LyricsView.swift */; };
 		A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867B6A9669043A3975DEADC2 /* AuthViewModel.swift */; };
+		AA3697C61BACD138FA11D871 /* ChordDiagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750FEB50C293B5C374F4372 /* ChordDiagramView.swift */; };
 		BBF9D7F38619420E4E003491 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36F265EBBA1D2995D21F1958 /* TransportBarView.swift */; };
 		BE1691AF0717F7B44E91E8F0 /* LyricsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D270581D830D515699977095 /* LyricsModels.swift */; };
 		BE2405A83E9CC9D68473B957 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */; };
@@ -42,6 +45,7 @@
 		D1119654F0AC3C2368C17D02 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D989ACF83FE053F49B3E8B3B /* KeychainService.swift */; };
 		E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7FDDF133EFE4572F04205 /* ChordView.swift */; };
 		E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA47CF4B211B6945DC34DFC /* ChordModels.swift */; };
+		E9727F4BA070589811294BB6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCA514BE720020AA8A3780AD /* Assets.xcassets */; };
 		EEE23CC8A08160B46EA782FE /* ImportViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */; };
 		EEEDFC1681168A94B5916CC8 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0921C3549CA25165EA23171 /* APIEndpoint.swift */; };
 		F0D12DADF24C633AE653792D /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E879470A8827FE5CB27E646E /* LibraryStore.swift */; };
@@ -84,11 +88,13 @@
 		8464228819D5CDBEAB9AAA3A /* LyricsOffsetPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsOffsetPopover.swift; sourceTree = "<group>"; };
 		867B6A9669043A3975DEADC2 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordTransposer.swift; sourceTree = "<group>"; };
+		8A88A4B5C36491E5E0FD28A5 /* guitar.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = guitar.json; sourceTree = "<group>"; };
 		93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongMetadata.swift; sourceTree = "<group>"; };
 		9C0FCDA75701C2634240AC54 /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
 		9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		A0F7FDDF133EFE4572F04205 /* ChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordView.swift; sourceTree = "<group>"; };
 		A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		BCFE8D2E979FAEBA0BE7107A /* ChordFingerings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordFingerings.swift; sourceTree = "<group>"; };
 		C4D0CD5B5C32D1AEF4F71526 /* MetadataConfirmationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataConfirmationSheet.swift; sourceTree = "<group>"; };
 		C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModelTests.swift; sourceTree = "<group>"; };
 		C7573503C00F1262463D56C3 /* PitchPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchPopover.swift; sourceTree = "<group>"; };
@@ -99,9 +105,11 @@
 		D6FA9116C73430A0C786D478 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D989ACF83FE053F49B3E8B3B /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
+		DCA514BE720020AA8A3780AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		E879470A8827FE5CB27E646E /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
 		EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
+		F750FEB50C293B5C374F4372 /* ChordDiagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordDiagramView.swift; sourceTree = "<group>"; };
 		FFE9BB6B652033BA14FED8CD /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -143,6 +151,14 @@
 				AC84FE0D8B7E835AD52B3F6A /* SiyahambaClientTests */,
 				25EF2FEBEC08681E835579B1 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		2EC6FAC7ABA9A96C3B84395A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8A88A4B5C36491E5E0FD28A5 /* guitar.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		2FA450C00D1C1DCE8EBFD035 /* Import */ = {
@@ -216,6 +232,8 @@
 		BD81D523DDCDEB4C67CBB7AD /* Chords */ = {
 			isa = PBXGroup;
 			children = (
+				F750FEB50C293B5C374F4372 /* ChordDiagramView.swift */,
+				BCFE8D2E979FAEBA0BE7107A /* ChordFingerings.swift */,
 				4FA47CF4B211B6945DC34DFC /* ChordModels.swift */,
 				8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */,
 				A0F7FDDF133EFE4572F04205 /* ChordView.swift */,
@@ -226,6 +244,7 @@
 		BDD0210611B945CEB15B09A7 /* SiyahambaClient */ = {
 			isa = PBXGroup;
 			children = (
+				DCA514BE720020AA8A3780AD /* Assets.xcassets */,
 				1A2A90DB53108F2F44B06771 /* ContentView.swift */,
 				33135A203A13ECEF95735C45 /* Info.plist */,
 				A724A6F428D487B88AC927B9 /* App */,
@@ -235,6 +254,7 @@
 				D95C260D078182D989C1C535 /* Library */,
 				9BC01A8CF4D74589AAAF0630 /* Network */,
 				C557904D56CED1338249CB78 /* Player */,
+				2EC6FAC7ABA9A96C3B84395A /* Resources */,
 			);
 			path = SiyahambaClient;
 			sourceTree = "<group>";
@@ -305,6 +325,7 @@
 			buildConfigurationList = 273B45248F9ED2ED390247FE /* Build configuration list for PBXNativeTarget "SiyahambaClient" */;
 			buildPhases = (
 				F9493A18FC4647EB51A208F1 /* Sources */,
+				F35AFCDB6DE2BE80793AEA25 /* Resources */,
 				F4FCBA650DBBCB95A890D296 /* Frameworks */,
 			);
 			buildRules = (
@@ -335,6 +356,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					FBF5B06C048BC69014B81DC9 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -351,9 +373,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				401B6C0F399E505AA42191B3 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */,
+				8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
 				2D186A7C93F9A0252E9BB126 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -362,6 +385,18 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F35AFCDB6DE2BE80793AEA25 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9727F4BA070589811294BB6 /* Assets.xcassets in Resources */,
+				553545451809D9F532BF429C /* guitar.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AA0D2550364CD4C83E149E65 /* Sources */ = {
@@ -385,6 +420,8 @@
 				4A8042745CB738582CE9ECF9 /* APIError.swift in Sources */,
 				A98DBD4C68A77040BB00901D /* AuthViewModel.swift in Sources */,
 				8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */,
+				AA3697C61BACD138FA11D871 /* ChordDiagramView.swift in Sources */,
+				8E99B2EBC4CF2A4D5D47C469 /* ChordFingerings.swift in Sources */,
 				E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */,
 				656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */,
 				E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */,
@@ -456,7 +493,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SiyahambaClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -562,7 +599,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SiyahambaClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -681,7 +718,7 @@
 				minimumVersion = 14.0.0;
 			};
 		};
-		8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
+		8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -699,7 +736,7 @@
 		};
 		998BC93CD52AA9C6DAF56B92 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */;
+			package = 8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
 			productName = JWTDecode;
 		};
 		FD861707765DFE48A0ABC096 /* ZIPFoundation */ = {
