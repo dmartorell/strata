@@ -58,6 +58,7 @@ final class ImportViewModel {
 
     func dismissStatus() {
         if case .ready = phase { phase = .idle }
+        if case .cancelled = phase { phase = .idle }
         if case .error = phase { phase = .idle }
     }
 
@@ -74,7 +75,11 @@ final class ImportViewModel {
         }
         queue.removeAll()
         isProcessing = false
-        phase = .idle
+        phase = .cancelled
+        Task {
+            try? await Task.sleep(for: .seconds(5))
+            if case .cancelled = phase { phase = .idle }
+        }
     }
 
     // MARK: - Private
@@ -177,7 +182,10 @@ final class ImportViewModel {
             phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
-            phase = .idle
+            if case .cancelled = phase { } else { phase = .idle }
+        } catch where Task.isCancelled {
+            if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
+            if case .cancelled = phase { } else { phase = .idle }
         } catch {
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .error(error.localizedDescription)

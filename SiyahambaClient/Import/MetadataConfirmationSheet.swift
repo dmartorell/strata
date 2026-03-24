@@ -4,6 +4,16 @@ struct MetadataConfirmationSheet: View {
     @Environment(ImportViewModel.self) private var importViewModel
     @Environment(\.dismiss) private var dismiss
 
+    private var canSubmit: Bool {
+        !importViewModel.pendingItems.allSatisfy { $0.title.trimmingCharacters(in: .whitespaces).isEmpty }
+    }
+
+    private func submitForm() {
+        guard canSubmit else { return }
+        importViewModel.confirmImport()
+        dismiss()
+    }
+
     var body: some View {
         @Bindable var vm = importViewModel
 
@@ -66,12 +76,10 @@ struct MetadataConfirmationSheet: View {
 
                 Spacer()
 
-                Button("Procesar todo") {
-                    importViewModel.confirmImport()
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(importViewModel.pendingItems.allSatisfy { $0.title.trimmingCharacters(in: .whitespaces).isEmpty })
+                Button("Procesar todo", action: submitForm)
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(!canSubmit)
             }
             .padding()
         }

@@ -10,9 +10,9 @@ struct ImportView: View {
     var body: some View {
         VStack(spacing: 12) {
             dropZone
-            if importViewModel.phase.isActive || isErrorOrReady {
-                progressSection
-            }
+            progressSection
+                .opacity(importViewModel.phase == .idle ? 0 : 1)
+                .animation(.easeInOut(duration: 0.2), value: importViewModel.phase == .idle)
         }
         .padding()
         .sheet(isPresented: Binding(
@@ -123,30 +123,29 @@ struct ImportView: View {
 
     private var statusBadge: some View {
         HStack(spacing: 6) {
-            switch importViewModel.phase {
-            case .ready:
-                Image(systemName: "checkmark.circle")
-                    .font(.subheadline.weight(.semibold))
-                Text(importViewModel.phase.displayLabel)
-                    .font(.subheadline.weight(.medium))
-            case .error:
-                Image(systemName: "exclamationmark.circle")
-                    .font(.subheadline.weight(.semibold))
-                Text(importViewModel.phase.displayLabel)
-                    .font(.subheadline.weight(.medium))
-            default:
-                Image(systemName: "arrow.trianglehead.2.counterclockwise")
-                    .font(.subheadline.weight(.semibold))
-                    .rotationEffect(.degrees(spinnerRotation))
-                    .onAppear {
+            Image(systemName: badgeIcon)
+                .font(.subheadline.weight(.semibold))
+                .contentTransition(.symbolEffect(.replace))
+                .rotationEffect(.degrees(importViewModel.phase.isActive ? spinnerRotation : 0))
+                .onAppear {
+                    if importViewModel.phase.isActive {
                         spinnerRotation = 0
                         withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
                             spinnerRotation = 360
                         }
                     }
-                Text(importViewModel.phase.displayLabel)
-                    .font(.subheadline.weight(.medium))
-            }
+                }
+                .onChange(of: importViewModel.phase.isActive) { _, active in
+                    if active {
+                        spinnerRotation = 0
+                        withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
+                            spinnerRotation = 360
+                        }
+                    }
+                }
+            Text(importViewModel.phase.displayLabel)
+                .font(.subheadline.weight(.medium))
+                .contentTransition(.numericText())
         }
         .foregroundStyle(badgeColor)
         .padding(.horizontal, 12)
@@ -159,11 +158,22 @@ struct ImportView: View {
             Capsule()
                 .strokeBorder(badgeColor.opacity(0.3), lineWidth: 1)
         )
+        .animation(.easeInOut(duration: 0.15), value: badgeColor)
+    }
+
+    private var badgeIcon: String {
+        switch importViewModel.phase {
+        case .ready: "checkmark.circle"
+        case .cancelled: "xmark.circle"
+        case .error: "exclamationmark.circle"
+        default: "arrow.trianglehead.2.counterclockwise"
+        }
     }
 
     private var badgeColor: Color {
         switch importViewModel.phase {
         case .ready: .green
+        case .cancelled: .orange
         case .error: .red
         default: .purple
         }
@@ -176,7 +186,7 @@ struct ImportView: View {
 
     private var isErrorOrReady: Bool {
         switch importViewModel.phase {
-        case .ready, .error: return true
+        case .ready, .cancelled, .error: return true
         default: return false
         }
     }

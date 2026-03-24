@@ -6,6 +6,7 @@ enum ImportPhase: Equatable {
     case uploading
     case processing(stage: String)
     case ready(cached: Bool)
+    case cancelled
     case error(String)
 
     var displayLabel: String {
@@ -15,6 +16,7 @@ enum ImportPhase: Equatable {
         case .uploading:         return "Subiendo archivo..."
         case .processing(let s): return stageLabel(s)
         case .ready:             return "Finalizado"
+        case .cancelled:         return "Cancelada"
         case .error(let msg):    return "Error: \(msg)"
         }
     }
@@ -31,7 +33,7 @@ enum ImportPhase: Equatable {
 
     var isActive: Bool {
         switch self {
-        case .idle, .ready, .error: return false
+        case .idle, .ready, .cancelled, .error: return false
         default: return true
         }
     }
