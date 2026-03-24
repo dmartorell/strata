@@ -179,11 +179,12 @@ Recent decisions affecting current work:
 | 13 | Add lyrics sync offset control (±ms, persisted per song) | 2026-03-22 | 9ff17dd | [13-add-lyrics-sync-offset-control](./quick/13-add-lyrics-sync-offset-control/) |
 | 14 | Import queue with pending indicator ("En cola" tag, sequential processing) | 2026-03-22 | bba262b | [14-import-queue-with-pending-indicator](./quick/14-import-queue-with-pending-indicator/) |
 | 15 | Metadata confirmation sheet before batch processing | 2026-03-24 | fcfa380 | [15-metadata-confirmation-sheet-before-batch](./quick/15-metadata-confirmation-sheet-before-batch/) |
+| 16 | Modal billing API para credito real en UsageView (reemplaza estimacion local) | 2026-03-24 | ca2af1f | [16-investigar-api-modal-para-cr-dito-dispon](./quick/16-investigar-api-modal-para-cr-dito-dispon/) |
 
 ## Session Continuity
 
-Last session: 2026-03-22
-Stopped at: Completed quick task 14 — Import queue with pending indicator (En cola tag, sequential processing)
+Last session: 2026-03-24
+Stopped at: Completed quick task 16 — Modal billing API para credito real en UsageView
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
