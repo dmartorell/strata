@@ -15,6 +15,13 @@ struct ImportView: View {
             }
         }
         .padding()
+        .sheet(isPresented: Binding(
+            get: { !importViewModel.pendingItems.isEmpty },
+            set: { if !$0 { importViewModel.cancelPending() } }
+        )) {
+            MetadataConfirmationSheet()
+                .environment(importViewModel)
+        }
     }
 
     // MARK: - Drop Zone
@@ -45,8 +52,10 @@ struct ImportView: View {
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
             guard !providers.isEmpty else { return false }
 
-            for provider in providers {
-                Task {
+            Task {
+                var files: [(fileURL: URL, originalURL: URL?)] = []
+
+                for provider in providers {
                     let originalURL: URL? = await withCheckedContinuation { cont in
                         provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { data, _ in
                             if let data = data as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) {
@@ -70,9 +79,13 @@ struct ImportView: View {
                     }
 
                     if let tempCopy = tempURL {
-                        await MainActor.run {
-                            importViewModel.startFileImport(from: tempCopy, originalURL: originalURL)
-                        }
+                        files.append((fileURL: tempCopy, originalURL: originalURL))
+                    }
+                }
+
+                if !files.isEmpty {
+                    await MainActor.run {
+                        importViewModel.collectPendingFiles(files)
                     }
                 }
             }
