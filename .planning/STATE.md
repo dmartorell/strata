@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-24T22:54:54.291Z"
+last_updated: "2026-03-24T22:58:53.189Z"
 progress:
   total_phases: 9
   completed_phases: 8
@@ -186,11 +186,12 @@ Recent decisions affecting current work:
 | 14 | Import queue with pending indicator ("En cola" tag, sequential processing) | 2026-03-22 | bba262b | [14-import-queue-with-pending-indicator](./quick/14-import-queue-with-pending-indicator/) |
 | 15 | Metadata confirmation sheet before batch processing | 2026-03-24 | fcfa380 | [15-metadata-confirmation-sheet-before-batch](./quick/15-metadata-confirmation-sheet-before-batch/) |
 | 16 | Modal billing API para credito real en UsageView (reemplaza estimacion local) | 2026-03-24 | ca2af1f | [16-investigar-api-modal-para-cr-dito-dispon](./quick/16-investigar-api-modal-para-cr-dito-dispon/) |
+| 17 | Diagramas de acordes persistentes en pausa + fallback guitar.json + legibilidad mejorada | 2026-03-25 | b7aa6d5 | [17-refinar-diagramas-de-acordes-visibilidad](./quick/17-refinar-diagramas-de-acordes-visibilidad/) |
 
 ## Session Continuity
 
-Last session: 2026-03-24
-Stopped at: Completed quick task 16 — Modal billing API para credito real en UsageView
+Last session: 2026-03-25
+Stopped at: Completed quick task 17 — Diagramas de acordes persistentes en pausa + fallback bundled DB
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
