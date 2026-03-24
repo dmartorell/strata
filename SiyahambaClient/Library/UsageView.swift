@@ -9,11 +9,11 @@ struct UsageView: View {
     var body: some View {
         VStack(spacing: 4) {
             if let u = usage {
-                let costText = String(format: "%.2f", u.estimatedCostEur)
-                let songWord = u.songsProcessed == 1 ? "canción" : "canciones"
-                Text("\(u.songsProcessed) \(songWord) este mes · €\(costText)")
+                let remaining = String(format: "%.2f", u.creditRemainingEur)
+                let total = String(format: "%.2f", u.monthlyCreditEur)
+                Text("Crédito: €\(remaining) de €\(total)")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(creditColor(for: u))
             } else if !loadError {
                 ProgressView()
                     .controlSize(.small)
@@ -24,6 +24,14 @@ struct UsageView: View {
         .padding(.vertical, 8)
         .task(id: refreshID) { await fetchUsage() }
         .onAppear { refreshID = UUID() }
+    }
+
+    private func creditColor(for u: UsageData) -> Color {
+        guard u.monthlyCreditUsd > 0 else { return .secondary }
+        let ratio = u.creditRemainingUsd / u.monthlyCreditUsd
+        if ratio > 0.5 { return .green }
+        if ratio > 0.2 { return .yellow }
+        return .red
     }
 
     private func fetchUsage() async {

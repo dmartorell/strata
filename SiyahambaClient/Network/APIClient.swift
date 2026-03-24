@@ -21,17 +21,19 @@ struct JobResult: Sendable {
 
 struct UsageData: Decodable, Sendable {
     let month: String
-    let songsProcessed: Int
-    let estimatedCostUsd: Double
-    let spendingLimitUsd: Double
+    let creditRemainingUsd: Double
+    let monthlyCreditUsd: Double
+    let totalSpentUsd: Double
 
-    var estimatedCostEur: Double { estimatedCostUsd * 0.92 }
+    var creditRemainingEur: Double { creditRemainingUsd * 0.92 }
+    var totalSpentEur: Double { totalSpentUsd * 0.92 }
+    var monthlyCreditEur: Double { monthlyCreditUsd * 0.92 }
 
     private enum CodingKeys: String, CodingKey {
         case month
-        case songsProcessed = "songs_processed"
-        case estimatedCostUsd = "estimated_cost_usd"
-        case spendingLimitUsd = "spending_limit_usd"
+        case creditRemainingUsd = "credit_remaining_usd"
+        case monthlyCreditUsd = "monthly_credit_usd"
+        case totalSpentUsd = "total_spent_usd"
     }
 }
 
