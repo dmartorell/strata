@@ -5,7 +5,7 @@ struct ChordView: View {
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
     private var hasFingerings: Bool {
-        vm.chords.first?.fingerings != nil
+        !vm.chords.isEmpty
     }
 
     private var fingeringsMap: [String: [ChordPosition]] {
@@ -21,7 +21,7 @@ struct ChordView: View {
     private func fingerings(for chordName: String, fallbackEntry: ChordEntry?) -> [ChordPosition] {
         if let f = fingeringsMap[chordName], !f.isEmpty { return f }
         if let f = fallbackEntry?.fingerings, !f.isEmpty { return f }
-        return []
+        return ChordFingerings.lookup(chordName)
     }
 
     var body: some View {
@@ -68,7 +68,7 @@ struct ChordView: View {
                 let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
                     ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
-                        .frame(width: 100, height: 120)
+                        .frame(width: 130, height: 150)
                 }
             }
         }
@@ -87,7 +87,7 @@ struct ChordView: View {
                 let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
                     ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord)
-                        .frame(width: 70, height: 84)
+                        .frame(width: 90, height: 108)
                         .opacity(0.5)
                 }
             }

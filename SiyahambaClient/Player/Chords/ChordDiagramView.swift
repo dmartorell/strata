@@ -44,13 +44,13 @@ struct ChordDiagramView: View {
             let stringSpacing = gridWidth / CGFloat(stringCount - 1)
             let fretSpacing = gridHeight / CGFloat(fretCount)
 
-            let dotRadius = min(stringSpacing, fretSpacing) * 0.35
+            let dotRadius = min(stringSpacing, fretSpacing) * 0.38
             let shading = GraphicsContext.Shading.color(drawColor)
 
             // Draw fret lines
             for f in 0...fretCount {
                 let y = gridY + CGFloat(f) * fretSpacing
-                let lineWidth: CGFloat = (f == 0 && position.baseFret == 1) ? 3 : 1
+                let lineWidth: CGFloat = (f == 0 && position.baseFret == 1) ? 4 : 1
                 context.stroke(
                     Path { p in
                         p.move(to: CGPoint(x: gridX, y: y))
@@ -75,7 +75,7 @@ struct ChordDiagramView: View {
             }
 
             // Draw O/X indicators above grid
-            let oxFont = Font.system(size: 11)
+            let oxFont = Font.system(size: 13)
             for s in 0..<min(stringCount, position.frets.count) {
                 let fretValue = position.frets[s]
                 let label: String
@@ -136,7 +136,7 @@ struct ChordDiagramView: View {
                 let labelX = gridX + gridWidth + 4
                 let labelY = gridY + fretSpacing * 0.5
                 context.draw(
-                    Text("\(position.baseFret)fr").font(.caption2).foregroundStyle(drawColor),
+                    Text("\(position.baseFret)fr").font(.caption).foregroundStyle(drawColor),
                     at: CGPoint(x: labelX, y: labelY),
                     anchor: .leading
                 )
@@ -150,22 +150,26 @@ struct ChordDiagramView: View {
                 variationIndex = max(0, variationIndex - 1)
             } label: {
                 Image(systemName: "chevron.left")
+                    .frame(width: 24, height: 24)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(variationIndex == 0)
 
             Text("\(variationIndex + 1)/\(fingerings.count)")
-                .font(.caption2)
+                .font(.caption)
                 .monospacedDigit()
 
             Button {
                 variationIndex = min(fingerings.count - 1, variationIndex + 1)
             } label: {
                 Image(systemName: "chevron.right")
+                    .frame(width: 24, height: 24)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(variationIndex == fingerings.count - 1)
         }
-        .font(.caption2)
+        .font(.caption)
     }
 }
