@@ -127,7 +127,8 @@ async def align_lyrics_endpoint(
     request: dict[str, Any],
     username: str = Depends(require_auth),
 ):
-    """Acepta vocals_base64 + lyrics_text, ejecuta forced alignment con WhisperX.
+    """Forced alignment con WhisperX. No se usa desde el cliente (LRCLib line-level sync es suficiente).
+    Disponible para uso futuro o herramientas externas.
 
     Request body: {"vocals_base64": str, "lyrics_text": str, "language": str (optional, default "en")}
     Response: {"segments": [...aligned segments with word timestamps...]}

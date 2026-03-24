@@ -304,7 +304,8 @@ class AudioPipeline:
 
     @modal.method()
     def align_lyrics(self, vocals_bytes: bytes, lyrics_text: str, language: str = "en") -> list:
-        """Forced alignment of lyrics text against vocals audio.
+        """Forced alignment con WhisperX. No se usa desde el cliente (LRCLib line-level sync es suficiente).
+        Disponible para uso futuro o herramientas externas.
 
         Args:
             vocals_bytes: WAV bytes of the vocals stem.

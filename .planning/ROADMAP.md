@@ -155,6 +155,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 6. Import + End-to-End Flow | 3/3 | Complete   | 2026-03-03 |
 | 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
 | 8. YouTube Download Client-Side | 0/? | Not Started|  |
+| 9. Chord Finger Position Diagrams | 0/2 | Not Started|  |
 
 ### Phase 8: YouTube Download Client-Side
 **Goal**: La descarga de audio de YouTube ocurre en el Mac del usuario usando yt-dlp local con `--cookies-from-browser`, eliminando la dependencia de cookies en Modal Secret. El audio descargado se sube al servidor por `/process-file` para procesamiento GPU.
@@ -170,11 +171,17 @@ Plans:
 - [ ] TBD (run /gsd:plan-phase 8 to break down)
 
 ### Phase 9: Show chord finger position diagram alongside chord name
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 8
-**Plans:** 0 plans
+**Goal**: El usuario ve diagramas de posicion de dedos para guitarra junto a los nombres de acordes en ChordView, con datos generados en el pipeline del servidor y renderizados via Canvas en el cliente
+**Requirements**: CHRD-01, CHRD-02, CHRD-03, CHRD-04, CHRD-05
+**Depends on**: Phase 7
+**Success Criteria** (what must be TRUE):
+  1. Cada acorde detectado incluye datos de fingering (hasta 3 variaciones) en chords.json
+  2. El diagrama muestra posiciones de dedos, cuerdas abiertas/silenciadas, cejilla y numero de traste
+  3. Los diagramas se muestran para el acorde actual y el siguiente con jerarquia visual clara
+  4. El toggle de visibilidad persiste globalmente y los diagramas estan activados por defecto
+  5. La transposicion actualiza los diagramas al acorde transpuesto
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 9 to break down)
+- [ ] 09-01-PLAN.md — Server: guitar.json bundle, fingerings.py lookup, chords.py extension con fingerings
+- [ ] 09-02-PLAN.md — Client: ChordPosition model, ChordDiagramView Canvas, ChordView integration + toggle + layout

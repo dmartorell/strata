@@ -35,22 +35,6 @@ struct UsageData: Decodable, Sendable {
     }
 }
 
-struct AlignLyricsResponse: Decodable {
-    let segments: [AlignedSegment]
-}
-
-struct AlignedSegment: Decodable {
-    let start: Double
-    let end: Double
-    let text: String
-    let words: [AlignedWord]
-}
-
-struct AlignedWord: Decodable {
-    let word: String
-    let start: Double
-    let end: Double
-}
 
 // MARK: - HTTP Transport Protocol (testable)
 
@@ -223,37 +207,6 @@ struct APIClient: Sendable {
         }
 
         throw APIError.timeout
-    }
-
-    /// POST /align-lyrics — forced alignment de lyrics contra vocals stem
-    func alignLyrics(vocalsData: Data, lyricsText: String, language: String = "en", token: String) async throws -> LyricsFile {
-        let endpoint = APIEndpoint.alignLyrics
-        var request = makeRequest(endpoint: endpoint, token: token)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: String] = [
-            "vocals_base64": vocalsData.base64EncodedString(),
-            "lyrics_text": lyricsText,
-            "language": language,
-        ]
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        let decoded = try decode(AlignLyricsResponse.self, from: data)
-
-        let segments = decoded.segments.map { seg in
-            LyricLine(
-                start: seg.start,
-                end: seg.end,
-                text: seg.text,
-                words: seg.words.map { w in
-                    LyricWord(word: w.word, start: w.start, end: w.end)
-                }
-            )
-        }
-        return LyricsFile(language: language, segments: segments)
     }
 
     /// GET /usage — consulta de uso mensual (UsageData con camelCase y EUR)

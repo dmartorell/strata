@@ -13,24 +13,19 @@ final class PlayerViewModel {
     let engine: PlaybackEngine
     private let cacheManager: CacheManager
     private let libraryStore: LibraryStore
-    private let authViewModel: (any AuthTokenProviderProtocol)?
-    private let apiClient = APIClient()
-
-    private var lastLineIndex: Int = 0
-    private var lastChordIndex: Int = 0
+    @ObservationIgnored private var lastLineIndex: Int = 0
+    @ObservationIgnored private var lastChordIndex: Int = 0
 
     init(
         song: SongEntry,
         engine: PlaybackEngine,
         cacheManager: CacheManager,
-        libraryStore: LibraryStore,
-        authViewModel: (any AuthTokenProviderProtocol)? = nil
+        libraryStore: LibraryStore
     ) {
         self.song = song
         self.engine = engine
         self.cacheManager = cacheManager
         self.libraryStore = libraryStore
-        self.authViewModel = authViewModel
     }
 
     func load() async throws {
@@ -90,40 +85,6 @@ final class PlayerViewModel {
                 try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
             }
         }
-
-        await attemptForcedAlignment()
-    }
-
-    private func lyricsNeedAlignment(_ lines: [LyricLine]) -> Bool {
-        let linesWithWords = lines.filter { $0.words.count > 1 }
-        guard !linesWithWords.isEmpty else { return false }
-        let evenlySpacedCount = linesWithWords.filter { line in
-            let gap = (line.end - line.start) / Double(line.words.count)
-            return line.words.enumerated().allSatisfy { i, w in
-                let expected = line.start + gap * Double(i)
-                return abs(w.start - expected) < 0.02
-            }
-        }.count
-        return evenlySpacedCount > linesWithWords.count / 2
-    }
-
-    private func attemptForcedAlignment() async {
-        guard !lyrics.isEmpty else { return }
-        guard lyricsNeedAlignment(lyrics) else { return }
-        guard let token = authViewModel?.token else { return }
-
-        let vocalsURL = await cacheManager.stemURL(songID: song.id, stem: "vocals")
-        guard let vocalsData = try? Data(contentsOf: vocalsURL) else { return }
-
-        let plainText = lyrics.map(\.text).filter { !$0.isEmpty }.joined(separator: "\n")
-        guard let aligned = try? await apiClient.alignLyrics(
-            vocalsData: vocalsData,
-            lyricsText: plainText,
-            token: token
-        ) else { return }
-
-        lyrics = aligned.segments
-        try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: aligned)
     }
 
     var currentLine: LyricLine? {

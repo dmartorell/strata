@@ -1,7 +1,7 @@
 # Requirements: Strata
 
 **Defined:** 2026-03-02
-**Core Value:** El flujo completo debe funcionar sin fricciones: importar una canción → esperar ~1 minuto → reproducción interactiva con stems, letras y acordes.
+**Core Value:** El flujo completo debe funcionar sin fricciones: importar una cancion → esperar ~1 minuto → reproduccion interactiva con stems, letras y acordes.
 
 ## v1 Requirements
 
@@ -46,6 +46,14 @@
 - [x] **DISP-03**: App shows current chord prominently with next chord visible
 - [x] **DISP-04**: Lyrics and chords update correctly when user seeks or changes pitch
 - [x] **DISP-05**: App shows waveform visualization per stem
+
+### Chord Diagrams
+
+- [ ] **CHRD-01**: Server generates guitar fingering data (frets, fingers, baseFret, barres) for each detected chord using tombatossals/chords-db
+- [ ] **CHRD-02**: Server normalizes Chordino chord names and handles enharmonic equivalents for fingering lookup
+- [ ] **CHRD-03**: App shows guitar chord finger position diagram below chord name via SwiftUI Canvas
+- [ ] **CHRD-04**: App shows diagrams for both current and next chord with visual hierarchy (current full-size, next smaller/dimmer)
+- [ ] **CHRD-05**: App provides toggle for diagram visibility (persisted in UserDefaults, enabled by default) with variation navigation
 
 ### Library
 
@@ -130,6 +138,11 @@
 | DISP-03 | Phase 7 | Complete |
 | DISP-04 | Phase 7 | Complete |
 | DISP-05 | Phase 7 | Complete |
+| CHRD-01 | Phase 9 | Pending |
+| CHRD-02 | Phase 9 | Pending |
+| CHRD-03 | Phase 9 | Pending |
+| CHRD-04 | Phase 9 | Pending |
+| CHRD-05 | Phase 9 | Pending |
 | LIBR-01 | Phase 4 | Complete |
 | LIBR-02 | Phase 4 | Complete |
 | USGR-01 | Phase 7 | Complete |
@@ -142,10 +155,10 @@
 | INFR-04 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 37 total
-- Mapped to phases: 37
+- v1 requirements: 42 total
+- Mapped to phases: 42
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-02 after roadmap creation*
+*Last updated: 2026-03-24 after Phase 9 planning*

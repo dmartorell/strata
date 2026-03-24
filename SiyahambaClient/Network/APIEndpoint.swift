@@ -15,7 +15,6 @@ enum APIEndpoint {
     case processFile
     case result(jobId: String)
     case usage
-    case alignLyrics
 
     var url: URL {
         switch self {
@@ -29,14 +28,12 @@ enum APIEndpoint {
             return APIEndpoint.baseURL.appendingPathComponent("result/\(jobId)")
         case .usage:
             return APIEndpoint.baseURL.appendingPathComponent("usage")
-        case .alignLyrics:
-            return APIEndpoint.baseURL.appendingPathComponent("align-lyrics")
         }
     }
 
     var method: String {
         switch self {
-        case .login, .renew, .processFile, .alignLyrics:
+        case .login, .renew, .processFile:
             return "POST"
         case .result, .usage:
             return "GET"
