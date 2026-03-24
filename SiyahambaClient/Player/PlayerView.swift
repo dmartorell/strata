@@ -7,6 +7,7 @@ struct PlayerView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var showLyrics: Bool
     @State private var showChords: Bool
+    @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
     init(song: SongEntry, onBack: @escaping () -> Void) {
         self.song = song
@@ -126,7 +127,7 @@ struct PlayerView: View {
                 }
                 if showChords {
                     ChordView()
-                        .frame(maxHeight: showLyrics ? 220 : .infinity)
+                        .frame(maxHeight: showLyrics ? (showDiagrams ? 360 : 220) : .infinity)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
