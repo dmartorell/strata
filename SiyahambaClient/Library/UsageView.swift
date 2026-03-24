@@ -10,8 +10,7 @@ struct UsageView: View {
         VStack(spacing: 4) {
             if let u = usage {
                 let remaining = String(format: "%.2f", u.creditRemainingEur)
-                let total = String(format: "%.2f", u.monthlyCreditEur)
-                Text("Crédito: €\(remaining) de €\(total)")
+                Text("Crédito: €\(remaining)")
                     .font(.caption)
                     .foregroundStyle(creditColor(for: u))
             } else if !loadError {

@@ -7,7 +7,7 @@ reales del workspace (plan Starter: $30/mes).
 
 Proporciona:
   - record_usage(username, source_type, source_name, gpu_seconds): registra procesamiento
-  - get_usage(username): devuelve credito restante via Modal billing API
+  - get_usage(): devuelve credito restante via Modal billing API
   - FastAPI router con GET /usage (protegido por JWT)
 
 Estructura de usage.json (para rate limiting interno):
@@ -107,14 +107,12 @@ def check_limit(username: str) -> bool:
     return estimated_cost >= SPENDING_LIMIT_USD
 
 
-def get_usage(username: str) -> dict:
+def get_usage() -> dict:
     """Devuelve credito restante del mes actual via Modal billing API.
 
     Usa workspace_billing_report() para obtener datos reales de coste.
     Fallback: estimacion local si la API de billing no esta disponible.
     """
-    from datetime import timedelta
-
     now = datetime.now(timezone.utc)
     month_key = now.strftime("%Y-%m")
     start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -161,6 +159,6 @@ def build_router():
     @router.get("/usage")
     def usage_endpoint(username: str = Depends(require_auth)):
         usage_vol.reload()
-        return get_usage(username)
+        return get_usage()
 
     return router

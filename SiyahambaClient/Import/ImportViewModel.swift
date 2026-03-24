@@ -121,7 +121,10 @@ final class ImportViewModel {
     private func processNextInQueue() {
         guard !queue.isEmpty else {
             isProcessing = false
-            phase = .idle
+            Task {
+                try? await Task.sleep(for: .seconds(5))
+                if case .ready = phase { phase = .idle }
+            }
             return
         }
 

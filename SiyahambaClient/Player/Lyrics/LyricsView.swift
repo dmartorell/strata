@@ -68,7 +68,7 @@ struct LyricsView: View {
     }
 
     private var offsetLabel: String {
-        let ms = Int(vm.lyricsOffset * 1000)
+        let ms = Int((vm.lyricsOffset * 1000).rounded())
         if ms == 0 { return "0ms" }
         return ms > 0 ? "+\(ms)ms" : "\(ms)ms"
     }
