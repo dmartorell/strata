@@ -62,7 +62,12 @@ final class LibraryStore {
     }
 
     func addPlaceholder(_ entry: SongEntry) {
-        songs.insert(entry, at: 0)
+        if entry.importStatus == .queued {
+            let insertIndex = songs.firstIndex(where: { $0.isPlaceholder != true }) ?? songs.count
+            songs.insert(entry, at: insertIndex)
+        } else {
+            songs.insert(entry, at: 0)
+        }
     }
 
     func replacePlaceholder(id: UUID, with entry: SongEntry) async {
@@ -78,6 +83,10 @@ final class LibraryStore {
     func updatePlaceholderStatus(id: UUID, status: ImportStatus) {
         guard let index = songs.firstIndex(where: { $0.id == id }) else { return }
         songs[index].importStatus = status
+        if status == .active, index != 0 {
+            let entry = songs.remove(at: index)
+            songs.insert(entry, at: 0)
+        }
     }
 
     func isCached(sourceHash: String) -> Bool {

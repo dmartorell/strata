@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-22 - Completed quick task 13: Add lyrics sync offset control
+Last activity: 2026-03-24 - Completed quick task 15: Metadata confirmation sheet before batch processing
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -144,12 +144,15 @@ Recent decisions affecting current work:
 
 - **Upload plain text lyrics and force-align with WhisperX** (ui) — importar .txt y sincronizar con audio via whisperx.align()
 - Analyze adding lyrics editing to LyricsView (ui)
+- Show chord finger position diagram alongside chord name (ui)
+- Add user registration with invitation code and per-user quota (auth)
 - Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
 - Remove all Python dependencies once the app is fully built (tooling)
 
 ### Roadmap Evolution
 
 - Phase 8 added: YouTube Download Client-Side — descarga local con yt-dlp y upload por /process-file (elimina dependencia de cookies en Modal)
+- Phase 9 added: Show chord finger position diagram alongside chord name
 
 ### Blockers/Concerns
 
@@ -175,6 +178,7 @@ Recent decisions affecting current work:
 | 12 | Forced alignment endpoint con WhisperX para re-sincronizar lyrics de LRCLib | 2026-03-22 | a223be8 | [12-implement-forced-alignment-endpoint-for-](./quick/12-implement-forced-alignment-endpoint-for-/) |
 | 13 | Add lyrics sync offset control (±ms, persisted per song) | 2026-03-22 | 9ff17dd | [13-add-lyrics-sync-offset-control](./quick/13-add-lyrics-sync-offset-control/) |
 | 14 | Import queue with pending indicator ("En cola" tag, sequential processing) | 2026-03-22 | bba262b | [14-import-queue-with-pending-indicator](./quick/14-import-queue-with-pending-indicator/) |
+| 15 | Metadata confirmation sheet before batch processing | 2026-03-24 | fcfa380 | [15-metadata-confirmation-sheet-before-batch](./quick/15-metadata-confirmation-sheet-before-batch/) |
 
 ## Session Continuity
 

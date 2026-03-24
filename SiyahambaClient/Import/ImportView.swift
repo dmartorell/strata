@@ -52,6 +52,8 @@ struct ImportView: View {
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
             guard !providers.isEmpty else { return false }
 
+            NSApplication.shared.activate(ignoringOtherApps: true)
+
             Task {
                 var files: [(fileURL: URL, originalURL: URL?)] = []
 
@@ -137,6 +139,7 @@ struct ImportView: View {
                     .font(.subheadline.weight(.semibold))
                     .rotationEffect(.degrees(spinnerRotation))
                     .onAppear {
+                        spinnerRotation = 0
                         withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
                             spinnerRotation = 360
                         }

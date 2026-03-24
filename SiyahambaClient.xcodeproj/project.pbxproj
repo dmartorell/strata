@@ -10,6 +10,7 @@
 		03DD6E718F1BC468B27CBE92 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7634123E16218DC5A1AA8E /* ImportView.swift */; };
 		063A46ECEB2ECACFA9F90BAD /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */; };
 		1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */; };
+		191FEB38C974463A6A78D0D9 /* MetadataConfirmationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D0CD5B5C32D1AEF4F71526 /* MetadataConfirmationSheet.swift */; };
 		2FA19E1C0849E0D948E8291B /* StemControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D22C041447298177A06284C /* StemControlsView.swift */; };
 		2FFE119B179855EB74CDDF18 /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */; };
 		33A2A5CB79EE45A27F2F9E90 /* LRCLibService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F51B6F81A2E8698C3AD2A /* LRCLibService.swift */; };
@@ -27,6 +28,7 @@
 		859920CB07C5D9A410A8F885 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */; };
 		8B550AAC6AB60C6294EAA79F /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2398F1CA47DB26C7D83E40B8 /* CacheManager.swift */; };
 		97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6E6CAFD3ECFF6565F6AC1 /* SongEntry.swift */; };
+		9C0BF7D1DA8CAC164B661488 /* PendingImportItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818F6CB81FE602F38699FBE /* PendingImportItem.swift */; };
 		9C487BFCF800EBCC40A70ABD /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 998BC93CD52AA9C6DAF56B92 /* JWTDecode */; };
 		A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E14EBD8E9FE6088893F61C /* PlayerViewModel.swift */; };
 		A6C44866323DCFD139B0164A /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = FD861707765DFE48A0ABC096 /* ZIPFoundation */; };
@@ -87,8 +89,10 @@
 		9D3FF4DC942EAE7AA9E956CD /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		A0F7FDDF133EFE4572F04205 /* ChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordView.swift; sourceTree = "<group>"; };
 		A99A78FCF6E6F49BE7A350E0 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		C4D0CD5B5C32D1AEF4F71526 /* MetadataConfirmationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataConfirmationSheet.swift; sourceTree = "<group>"; };
 		C5EF665AD5E39377BB25C03A /* ImportViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModelTests.swift; sourceTree = "<group>"; };
 		C7573503C00F1262463D56C3 /* PitchPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchPopover.swift; sourceTree = "<group>"; };
+		C818F6CB81FE602F38699FBE /* PendingImportItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingImportItem.swift; sourceTree = "<group>"; };
 		CCF55A56A46012FD930FE20E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D0921C3549CA25165EA23171 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		D270581D830D515699977095 /* LyricsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsModels.swift; sourceTree = "<group>"; };
@@ -147,6 +151,8 @@
 				9C0FCDA75701C2634240AC54 /* ImportPhase.swift */,
 				5C7634123E16218DC5A1AA8E /* ImportView.swift */,
 				EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */,
+				C4D0CD5B5C32D1AEF4F71526 /* MetadataConfirmationSheet.swift */,
+				C818F6CB81FE602F38699FBE /* PendingImportItem.swift */,
 			);
 			path = Import;
 			sourceTree = "<group>";
@@ -394,6 +400,8 @@
 				BE1691AF0717F7B44E91E8F0 /* LyricsModels.swift in Sources */,
 				4D78563EF40B4E317D6FD8DA /* LyricsOffsetPopover.swift in Sources */,
 				A778C7CFC64E86D6C30F8140 /* LyricsView.swift in Sources */,
+				191FEB38C974463A6A78D0D9 /* MetadataConfirmationSheet.swift in Sources */,
+				9C0BF7D1DA8CAC164B661488 /* PendingImportItem.swift in Sources */,
 				F6BB3A17737DA2AD4B7090B7 /* PitchPopover.swift in Sources */,
 				82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */,
 				82D4295391062302669E3B28 /* PlayerView.swift in Sources */,
