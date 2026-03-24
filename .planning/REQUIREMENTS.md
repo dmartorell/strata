@@ -49,8 +49,8 @@
 
 ### Chord Diagrams
 
-- [ ] **CHRD-01**: Server generates guitar fingering data (frets, fingers, baseFret, barres) for each detected chord using tombatossals/chords-db
-- [ ] **CHRD-02**: Server normalizes Chordino chord names and handles enharmonic equivalents for fingering lookup
+- [x] **CHRD-01**: Server generates guitar fingering data (frets, fingers, baseFret, barres) for each detected chord using tombatossals/chords-db
+- [x] **CHRD-02**: Server normalizes Chordino chord names and handles enharmonic equivalents for fingering lookup
 - [ ] **CHRD-03**: App shows guitar chord finger position diagram below chord name via SwiftUI Canvas
 - [ ] **CHRD-04**: App shows diagrams for both current and next chord with visual hierarchy (current full-size, next smaller/dimmer)
 - [ ] **CHRD-05**: App provides toggle for diagram visibility (persisted in UserDefaults, enabled by default) with variation navigation
@@ -138,8 +138,8 @@
 | DISP-03 | Phase 7 | Complete |
 | DISP-04 | Phase 7 | Complete |
 | DISP-05 | Phase 7 | Complete |
-| CHRD-01 | Phase 9 | Pending |
-| CHRD-02 | Phase 9 | Pending |
+| CHRD-01 | Phase 9 | Complete |
+| CHRD-02 | Phase 9 | Complete |
 | CHRD-03 | Phase 9 | Pending |
 | CHRD-04 | Phase 9 | Pending |
 | CHRD-05 | Phase 9 | Pending |

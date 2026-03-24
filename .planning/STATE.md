@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T23:36:02.899Z"
+last_updated: "2026-03-24T22:53:27.897Z"
 progress:
-  total_phases: 7
-  completed_phases: 6
-  total_plans: 25
-  completed_plans: 24
+  total_phases: 9
+  completed_phases: 7
+  total_plans: 27
+  completed_plans: 26
 ---
 
 # Project State
@@ -71,6 +71,7 @@ Progress: [██████████] 100% (v1.0 milestone complete)
 | Phase 07-player-ui-display-usage P02 | 15 | 2 tasks | 3 files |
 | Phase 07-player-ui-display-usage P03 | 3 | 2 tasks | 7 files |
 | Phase 07-player-ui-display-usage P04 | 2 | 2 tasks | 5 files |
+| Phase 09 P01 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,7 @@ Recent decisions affecting current work:
 - [Phase 07-player-ui-display-usage]: CacheManagerKey EnvironmentKey para pasar actor CacheManager via SwiftUI environment sin hacks de Sendable
 - [Phase 07-player-ui-display-usage]: ABLoopButton como struct privado con LoopPhase enum en PlayerView — encapsula lógica de 3 fases A/B sin contaminar PlayerView
 - [Phase 07-player-ui-display-usage]: isSoloed inferido heurísticamente en StemControlsView — evita añadir API pública a PlaybackEngine para exponer soloedStem
+- [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: tombatossals DB uses Csharp/Fsharp as key names — _DB_KEY_MAP translates C#/F# to DB format in fingerings.py
 
 ### Pending Todos
 
