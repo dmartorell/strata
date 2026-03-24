@@ -74,12 +74,14 @@ struct SongEntry: Codable, Identifiable, Sendable {
         return (artist, title)
     }
 
-    static func placeholder(fileName: String, sourceHash: String, importStatus: ImportStatus = .active) -> SongEntry {
+    static func placeholder(fileName: String, sourceHash: String, importStatus: ImportStatus = .active, overrideArtist: String? = nil, overrideTitle: String? = nil) -> SongEntry {
         let parsed = parseArtistAndTitle(from: fileName)
+        let resolvedTitle = (overrideTitle.map { $0.isEmpty ? nil : $0 } ?? nil) ?? parsed.title
+        let resolvedArtist = (overrideArtist.map { $0.isEmpty ? nil : $0 } ?? nil) ?? parsed.artist
         return SongEntry(
             id: UUID(),
-            title: parsed.title,
-            artist: parsed.artist,
+            title: resolvedTitle,
+            artist: resolvedArtist,
             duration: 0,
             sourceURL: nil,
             fileName: fileName,

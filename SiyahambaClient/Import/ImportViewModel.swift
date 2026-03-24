@@ -9,6 +9,7 @@ final class ImportViewModel {
     private(set) var isProcessing: Bool = false
 
     var queueCount: Int { queue.count }
+    var pendingItems: [PendingImportItem] = []
 
     private let apiClient: any ImportAPIClientProtocol
     private let cacheManager: CacheManager
@@ -25,10 +26,34 @@ final class ImportViewModel {
         self.authViewModel = authViewModel
     }
 
-    func startFileImport(from fileURL: URL, originalURL: URL? = nil) {
+    func startFileImport(from fileURL: URL, originalURL: URL? = nil, artist: String? = nil, title: String? = nil) {
         Task {
-            await enqueueFileImport(fileURL: fileURL, originalURL: originalURL)
+            await enqueueFileImport(fileURL: fileURL, originalURL: originalURL, artist: artist, title: title)
         }
+    }
+
+    func collectPendingFiles(_ files: [(fileURL: URL, originalURL: URL?)]) {
+        pendingItems = files.map { file in
+            let parsed = SongEntry.parseArtistAndTitle(from: file.fileURL.lastPathComponent)
+            return PendingImportItem(
+                fileURL: file.fileURL,
+                originalURL: file.originalURL,
+                artist: parsed.artist ?? "",
+                title: parsed.title
+            )
+        }
+    }
+
+    func confirmImport() {
+        let items = pendingItems
+        pendingItems = []
+        for item in items {
+            startFileImport(from: item.fileURL, originalURL: item.originalURL, artist: item.artist, title: item.title)
+        }
+    }
+
+    func cancelPending() {
+        pendingItems = []
     }
 
     func dismissStatus() {
@@ -54,7 +79,7 @@ final class ImportViewModel {
 
     // MARK: - Private
 
-    private func enqueueFileImport(fileURL: URL, originalURL: URL?) async {
+    private func enqueueFileImport(fileURL: URL, originalURL: URL?, artist: String?, title: String?) async {
         do {
             let hash = try await cacheManager.sha256(of: fileURL)
 
@@ -66,10 +91,23 @@ final class ImportViewModel {
             }
 
             let status: ImportStatus = isProcessing ? .queued : .active
-            let placeholder = SongEntry.placeholder(fileName: fileURL.lastPathComponent, sourceHash: hash, importStatus: status)
+            let placeholder = SongEntry.placeholder(
+                fileName: fileURL.lastPathComponent,
+                sourceHash: hash,
+                importStatus: status,
+                overrideArtist: artist,
+                overrideTitle: title
+            )
             libraryStore.addPlaceholder(placeholder)
 
-            let item = QueueItem(fileURL: fileURL, originalURL: originalURL, placeholderID: placeholder.id, sourceHash: hash)
+            let item = QueueItem(
+                fileURL: fileURL,
+                originalURL: originalURL,
+                placeholderID: placeholder.id,
+                sourceHash: hash,
+                artist: artist,
+                title: title
+            )
             queue.append(item)
 
             if !isProcessing {
@@ -127,7 +165,9 @@ final class ImportViewModel {
                 sourceHash: item.sourceHash,
                 displayName: item.fileURL.lastPathComponent,
                 sourceURL: item.originalURL?.path,
-                fileName: item.fileURL.lastPathComponent
+                fileName: item.fileURL.lastPathComponent,
+                overrideArtist: item.artist,
+                overrideTitle: item.title
             )
         } catch let error as APIError where error == .httpError(429) {
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
@@ -146,7 +186,9 @@ final class ImportViewModel {
         sourceHash: String,
         displayName: String,
         sourceURL: String?,
-        fileName: String?
+        fileName: String?,
+        overrideArtist: String?,
+        overrideTitle: String?
     ) async throws {
         phase = .processing(stage: "queued")
         try Task.checkCancellation()
@@ -167,7 +209,9 @@ final class ImportViewModel {
                 zipData: zipData,
                 sourceHash: sourceHash,
                 sourceURL: sourceURL,
-                fileName: fileName
+                fileName: fileName,
+                overrideArtist: overrideArtist,
+                overrideTitle: overrideTitle
             )
         }.value
 
@@ -199,6 +243,8 @@ private struct QueueItem {
     let originalURL: URL?
     let placeholderID: UUID
     let sourceHash: String
+    let artist: String?
+    let title: String?
 }
 
 // MARK: - ZIP Extraction (nonisolated helper)
@@ -207,7 +253,9 @@ private func extractToTemp(
     zipData: Data,
     sourceHash: String,
     sourceURL: String?,
-    fileName: String?
+    fileName: String?,
+    overrideArtist: String?,
+    overrideTitle: String?
 ) throws -> (SongEntry, URL) {
     let tempDir = FileManager.default.temporaryDirectory
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -238,11 +286,26 @@ private func extractToTemp(
     }
 
     let parsed = fileName.map(SongEntry.parseArtistAndTitle)
+
+    let resolvedTitle: String
+    if let override = overrideTitle, !override.isEmpty {
+        resolvedTitle = override
+    } else {
+        resolvedTitle = parsed?.title ?? metadata.title
+    }
+
+    let resolvedArtist: String?
+    if let override = overrideArtist, !override.isEmpty {
+        resolvedArtist = override
+    } else {
+        resolvedArtist = metadata.artist ?? parsed?.artist
+    }
+
     let songID = UUID()
     let entry = SongEntry(
         id: songID,
-        title: parsed?.title ?? metadata.title,
-        artist: metadata.artist ?? parsed?.artist,
+        title: resolvedTitle,
+        artist: resolvedArtist,
         duration: metadata.durationSeconds ?? 0,
         sourceURL: sourceURL,
         fileName: fileName,
