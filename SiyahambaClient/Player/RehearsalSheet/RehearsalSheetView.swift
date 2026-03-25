@@ -10,20 +10,62 @@ private struct ScrollOffsetKey: PreferenceKey {
 struct RehearsalSheetView: View {
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("rehearsalSheet.fontSize") private var fontSize: Double = 22
+    @AppStorage("rehearsalSheet.showReferencePanel") private var showReferencePanel: Bool = true
+    @AppStorage("chordView.difficultyLevel") private var difficultyLevelRaw: String = DifficultyLevel.avanzado.rawValue
+
     @State private var isFollowingPlayback: Bool = true
     @State private var lastAutoScrollOffset: CGFloat = 0
     @State private var scrollOffset: CGFloat = 0
+    @State private var showFontSizePopover: Bool = false
+    @State private var showOffsetPopover: Bool = false
 
     private static let background = Color(red: 0.10, green: 0.16, blue: 0.27)
     private static let chordColor = Color(red: 0.47, green: 0.66, blue: 0.84)
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
 
+    private func simplified(_ chord: String) -> String {
+        let level = DifficultyLevel(rawValue: difficultyLevelRaw) ?? .avanzado
+        return ChordSimplifier.simplify(chord, level: level)
+    }
+
+    private var uniqueChords: [String] {
+        let placeholders: Set<String> = ["N", "-", ""]
+        var seen = Set<String>()
+        var result: [String] = []
+        for entry in vm.chords {
+            guard !placeholders.contains(entry.chord) else { continue }
+            let transposed: String
+            if vm.showTransposed && vm.engine.pitchSemitones != 0 {
+                transposed = ChordTransposer.transpose(entry.chord, semitones: vm.engine.pitchSemitones)
+            } else {
+                transposed = entry.chord
+            }
+            let name = simplified(transposed)
+            if seen.insert(name).inserted {
+                result.append(name)
+            }
+        }
+        return result
+    }
+
+    private var currentSimplifiedChord: String {
+        simplified(vm.displayChord)
+    }
+
     var body: some View {
         if vm.rehearsalLines.isEmpty && vm.chords.isEmpty {
             emptyState
         } else {
-            scrollContent
+            VStack(spacing: 0) {
+                scrollContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if showReferencePanel {
+                    Divider()
+                    referencePanel
+                }
+            }
+            .background(Self.background)
         }
     }
 
@@ -39,7 +81,8 @@ struct RehearsalSheetView: View {
                                 line: line,
                                 isActive: line.id == vm.currentLine?.id,
                                 linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
-                                fontSize: fontSize
+                                fontSize: fontSize,
+                                simplify: simplified
                             )
                             .id(line.id)
                             .onTapGesture {
@@ -72,7 +115,6 @@ struct RehearsalSheetView: View {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     proxy.scrollTo(id, anchor: .center)
                 }
-                // Record scroll position after auto-scroll so we don't mis-detect it as manual
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                     lastAutoScrollOffset = scrollOffset
                 }
@@ -100,7 +142,81 @@ struct RehearsalSheetView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: isFollowingPlayback)
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    showOffsetPopover.toggle()
+                } label: {
+                    Image(systemName: "timer")
+                        .font(.system(size: 16))
+                        .padding(10)
+                        .background(.ultraThinMaterial, in: Circle())
+                }
+                .buttonStyle(.plain)
+                .padding(12)
+                .popover(isPresented: $showOffsetPopover) {
+                    LyricsOffsetPopover()
+                        .environment(vm)
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Button {
+                    showFontSizePopover.toggle()
+                } label: {
+                    Text("Aa")
+                        .font(.system(size: 14, weight: .semibold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+                .padding(12)
+                .popover(isPresented: $showFontSizePopover) {
+                    RehearsalFontSizePopover(fontSize: $fontSize)
+                }
+            }
+            .overlay(alignment: .bottomLeading) {
+                Button {
+                    withAnimation { showReferencePanel.toggle() }
+                } label: {
+                    Image(systemName: showReferencePanel ? "rectangle.bottomthird.inset.filled" : "rectangle.bottomthird.inset.filled")
+                        .font(.system(size: 14))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+                .padding(12)
+            }
         }
+    }
+
+    private var referencePanel: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 16) {
+                ForEach(uniqueChords, id: \.self) { chordName in
+                    let isCurrent = chordName == currentSimplifiedChord && !currentSimplifiedChord.isEmpty
+                    VStack(spacing: 4) {
+                        Text(chordName)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(Self.chordColor)
+                        ChordDiagramView(
+                            fingerings: ChordFingerings.lookup(chordName),
+                            chord: chordName,
+                            interactive: true
+                        )
+                        .frame(width: 80, height: 80)
+                    }
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(isCurrent ? Color.white.opacity(0.1) : Color.clear)
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+        }
+        .frame(height: 120)
         .background(Self.background)
     }
 
@@ -110,7 +226,7 @@ struct RehearsalSheetView: View {
                 Text(String(format: "%.1fs", entry.start))
                     .font(.system(size: CGFloat(fontSize) * 0.6, design: .monospaced))
                     .foregroundStyle(Self.passedColor)
-                Text(entry.chord)
+                Text(simplified(entry.chord))
                     .font(.system(size: CGFloat(fontSize), weight: .bold))
                     .foregroundStyle(Self.chordColor)
             }
@@ -130,11 +246,56 @@ struct RehearsalSheetView: View {
     }
 }
 
+private struct RehearsalFontSizePopover: View {
+    @Binding var fontSize: Double
+
+    private let minSize: Double = 14
+    private let maxSize: Double = 40
+    private let step: Double = 2
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("Tamaño letra")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text("\(Int(fontSize))pt")
+                .font(.title2)
+                .monospacedDigit()
+
+            HStack(spacing: 16) {
+                Button("A−") {
+                    fontSize = max(minSize, fontSize - step)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(fontSize <= minSize)
+
+                Button("A+") {
+                    fontSize = min(maxSize, fontSize + step)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(fontSize >= maxSize)
+            }
+
+            Button("Restablecer") {
+                fontSize = 22
+            }
+            .buttonStyle(.bordered)
+            .disabled(fontSize == 22)
+        }
+        .padding(20)
+        .frame(minWidth: 200)
+    }
+}
+
 private struct RehearsalLineView: View {
     let line: RehearsalLine
     let isActive: Bool
     let linePassed: Bool
     let fontSize: Double
+    let simplify: (String) -> String
 
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
@@ -147,7 +308,7 @@ private struct RehearsalLineView: View {
     }
 
     var body: some View {
-        RehearsalWordFlow(words: line.words, fontSize: fontSize, lyricColor: lyricColor, chordColor: Self.chordColor)
+        RehearsalWordFlow(words: line.words, fontSize: fontSize, lyricColor: lyricColor, chordColor: Self.chordColor, simplify: simplify)
     }
 }
 
@@ -156,15 +317,17 @@ private struct RehearsalWordFlow: View {
     let fontSize: Double
     let lyricColor: Color
     let chordColor: Color
+    let simplify: (String) -> String
 
     var body: some View {
         FlowLayout(spacing: CGSize(width: 4, height: 8)) {
             ForEach(words.indices, id: \.self) { index in
                 let word = words[index]
+                let displayChord = word.chord.map { simplify($0) }
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(word.chord ?? " ")
+                    Text(displayChord ?? " ")
                         .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
-                        .foregroundStyle(word.chord != nil ? chordColor : Color.clear)
+                        .foregroundStyle(displayChord != nil ? chordColor : Color.clear)
                     Text(word.word)
                         .font(.system(size: CGFloat(fontSize), weight: .bold))
                         .foregroundStyle(lyricColor)
