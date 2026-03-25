@@ -40,6 +40,7 @@ struct StemControlsView: View {
                 }
             }
             Spacer()
+            TunerView()
         }
         .background(SidebarVisualEffect())
     }

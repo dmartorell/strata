@@ -35,6 +35,7 @@ targets:
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
+        NSMicrophoneUsageDescription: "Siyahamba necesita acceso al micrófono para el afinador de guitarra"
         CFBundleExecutable: $(EXECUTABLE_NAME)
         CFBundlePackageType: APPL
     settings:
@@ -48,6 +49,7 @@ targets:
         ENABLE_HARDENED_RUNTIME: YES
         INFOPLIST_FILE: SiyahambaClient/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: SiyahambaClient/SiyahambaClient.entitlements
     dependencies:
       - package: JWTDecode
       - package: ZIPFoundation

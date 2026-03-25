@@ -16,16 +16,20 @@ struct SiyahambaApp: App {
     @State private var authViewModel: AuthViewModel
     @State private var libraryStore: LibraryStore
     @State private var importViewModel: ImportViewModel
-    @State private var playbackEngine = PlaybackEngine()
+    @State private var playbackEngine: PlaybackEngine
+    @State private var tunerEngine: TunerEngine
     @State private var cacheManager: CacheManager
 
     init() {
         let cm = try! CacheManager()
         let auth = AuthViewModel()
         let store = LibraryStore(cacheManager: cm)
+        let pe = PlaybackEngine()
         _authViewModel = State(initialValue: auth)
         _libraryStore = State(initialValue: store)
         _cacheManager = State(initialValue: cm)
+        _playbackEngine = State(initialValue: pe)
+        _tunerEngine = State(initialValue: TunerEngine(playbackEngine: pe))
         _importViewModel = State(initialValue: ImportViewModel(
             apiClient: APIClient(),
             cacheManager: cm,
@@ -42,6 +46,7 @@ struct SiyahambaApp: App {
                         .environment(libraryStore)
                         .environment(importViewModel)
                         .environment(playbackEngine)
+                        .environment(tunerEngine)
                         .environment(\.cacheManager, cacheManager)
                 } else {
                     LoginView()

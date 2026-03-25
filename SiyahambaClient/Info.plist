@@ -22,6 +22,8 @@
 	<string>14.0</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Siyahamba necesita acceso al micrófono para el afinador de guitarra</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
