@@ -49,6 +49,7 @@
 		CE223056CE8D7105A39CED39 /* ImportPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C0FCDA75701C2634240AC54 /* ImportPhase.swift */; };
 		D07DF5C26010BCF599547909 /* DSWaveformImageViews in Frameworks */ = {isa = PBXBuildFile; productRef = 5CAD719FF1B40EFF778D64B6 /* DSWaveformImageViews */; };
 		D1119654F0AC3C2368C17D02 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D989ACF83FE053F49B3E8B3B /* KeychainService.swift */; };
+		DBB84703E0BFB9BC67E52E1A /* RehearsalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8BBC870DAA647CAD80EA3B2 /* RehearsalSheetView.swift */; };
 		E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7FDDF133EFE4572F04205 /* ChordView.swift */; };
 		E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA47CF4B211B6945DC34DFC /* ChordModels.swift */; };
 		E9727F4BA070589811294BB6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCA514BE720020AA8A3780AD /* Assets.xcassets */; };
@@ -120,6 +121,7 @@
 		DCA514BE720020AA8A3780AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E735D3BBA3BA381647729037 /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		E879470A8827FE5CB27E646E /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		E8BBC870DAA647CAD80EA3B2 /* RehearsalSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalSheetView.swift; sourceTree = "<group>"; };
 		EDDD460153411F3FF9EA2F2B /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		F729366AA15A8178D5023676 /* GuitarTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuitarTuning.swift; sourceTree = "<group>"; };
 		F750FEB50C293B5C374F4372 /* ChordDiagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordDiagramView.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 				5AD682D7DE41E5D30F5F13EC /* TunerView.swift */,
 				BD81D523DDCDEB4C67CBB7AD /* Chords */,
 				770A89910BF18FFB40CE2D5C /* Lyrics */,
+				D71C081F0C146ED3DEE5CB75 /* RehearsalSheet */,
 				A78DBBA745F424F4F2C031EA /* Waveforms */,
 			);
 			path = Player;
@@ -303,6 +306,14 @@
 				17B145FC49F2014C0A488EE6 /* LoginView.swift */,
 			);
 			path = Auth;
+			sourceTree = "<group>";
+		};
+		D71C081F0C146ED3DEE5CB75 /* RehearsalSheet */ = {
+			isa = PBXGroup;
+			children = (
+				E8BBC870DAA647CAD80EA3B2 /* RehearsalSheetView.swift */,
+			);
+			path = RehearsalSheet;
 			sourceTree = "<group>";
 		};
 		D95C260D078182D989C1C535 /* Library */ = {
@@ -467,6 +478,7 @@
 				82F79D561AE3CC2668E55B46 /* PlaybackEngine.swift in Sources */,
 				82D4295391062302669E3B28 /* PlayerView.swift in Sources */,
 				A5A5FFFDB07E0251405B03D6 /* PlayerViewModel.swift in Sources */,
+				DBB84703E0BFB9BC67E52E1A /* RehearsalSheetView.swift in Sources */,
 				1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */,
 				97E2CE2DCD11F96A1200BF1A /* SongEntry.swift in Sources */,
 				063A46ECEB2ECACFA9F90BAD /* SongMetadata.swift in Sources */,
