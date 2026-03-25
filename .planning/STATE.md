@@ -188,11 +188,12 @@ Recent decisions affecting current work:
 | 16 | Modal billing API para credito real en UsageView (reemplaza estimacion local) | 2026-03-24 | ca2af1f | [16-investigar-api-modal-para-cr-dito-dispon](./quick/16-investigar-api-modal-para-cr-dito-dispon/) |
 | 17 | Diagramas de acordes persistentes en pausa + fallback guitar.json + legibilidad mejorada | 2026-03-25 | b7aa6d5 | [17-refinar-diagramas-de-acordes-visibilidad](./quick/17-refinar-diagramas-de-acordes-visibilidad/) |
 | 18 | Refinar chord diagrams: padding O/X, spacing, centrado, variaciones por traste | 2026-03-25 | pending | [18-refinar-chord-diagrams-padding-lateral-o](./quick/18-refinar-chord-diagrams-padding-lateral-o/) |
+| 19 | Indicar número de dedo en cada posición del diagrama de acordes | 2026-03-25 | 85e7026 | [19-indicar-n-mero-de-dedo-en-cada-posici-n-](./quick/19-indicar-n-mero-de-dedo-en-cada-posici-n-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed quick task 17 — Diagramas de acordes persistentes en pausa + fallback bundled DB
+Stopped at: Completed quick task 19 — Finger numbers inside chord diagram dots and barres
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
