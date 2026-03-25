@@ -154,10 +154,10 @@ struct TransportBarView: View {
                 HStack {
                     Spacer()
                     HStack(spacing: 16) {
-                        panelToggle("Letras", icon: "text.quote", isActive: showLyrics) {
+                        panelToggle("Letras", icon: "text.quote", isActive: showLyrics, enabled: hasLyrics && (showChords || !showLyrics)) {
                             showLyrics.toggle()
                         }
-                        panelToggle("Acordes", icon: "music.quarternote.3", isActive: showChords) {
+                        panelToggle("Acordes", icon: "music.quarternote.3", isActive: showChords, enabled: showLyrics || !showChords) {
                             showChords.toggle()
                         }
 
@@ -172,8 +172,12 @@ struct TransportBarView: View {
                             .frame(width: 50)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.gray.opacity(0.15))
+                            )
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.plain)
                         .popover(isPresented: $showPitchPopover) {
                             PitchPopover()
                         }
@@ -186,24 +190,24 @@ struct TransportBarView: View {
         .background(SidebarVisualEffect())
     }
 
-    @ViewBuilder
-    private func panelToggle(_ label: String, icon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
-        if isActive {
-            Button(action: action) {
-                Label(label, systemImage: icon)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-            }
-            .buttonStyle(.borderedProminent)
-        } else {
-            Button(action: action) {
-                Label(label, systemImage: icon)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-            }
-            .buttonStyle(.bordered)
-            .tint(.gray)
+    private var hasLyrics: Bool {
+        !vm.lyrics.isEmpty
+    }
+
+    private func panelToggle(_ label: String, icon: String, isActive: Bool, enabled: Bool = true, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(label, systemImage: icon)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isActive ? Color.accentColor : Color.gray.opacity(0.15))
+                )
+                .foregroundStyle(isActive ? .white : .primary)
         }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.4)
     }
 
     private var hasLoop: Bool {

@@ -1,10 +1,10 @@
 [
   {
     "username": "papa",
-    "password_hash": "$2b$12$r2AgcJE8Rlc3g6InQoXP.uqhutKlP4JRjBpeNvt5h3Yc2oQ858HoW"
+    "password_hash": "$2b$12$V5krtaxl8cn5fXjtj4vHq.6nXpR6muiu2XsHQ37OvMtX15OMfr6VO"
   },
   {
     "username": "hijo",
-    "password_hash": "$2b$12$r2AgcJE8Rlc3g6InQoXP.uqhutKlP4JRjBpeNvt5h3Yc2oQ858HoW"
+    "password_hash": "$2b$12$V5krtaxl8cn5fXjtj4vHq.6nXpR6muiu2XsHQ37OvMtX15OMfr6VO"
   }
 ]

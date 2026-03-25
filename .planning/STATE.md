@@ -150,10 +150,10 @@ Recent decisions affecting current work:
 
 - **Upload plain text lyrics and force-align with WhisperX** (ui) — importar .txt y sincronizar con audio via whisperx.align()
 - Analyze adding lyrics editing to LyricsView (ui)
-- Show chord finger position diagram alongside chord name (ui)
-- Add user registration with invitation code and per-user quota (auth)
 - Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
 - Remove all Python dependencies once the app is fully built (tooling)
+- Handle app termination with import queue in progress (import)
+- Implement chord difficulty level filtering (ui)
 
 ### Roadmap Evolution
 

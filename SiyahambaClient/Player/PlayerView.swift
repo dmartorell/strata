@@ -12,7 +12,7 @@ struct PlayerView: View {
     init(song: SongEntry, onBack: @escaping () -> Void) {
         self.song = song
         self.onBack = onBack
-        let mode = song.displayMode ?? .waveforms
+        let mode = song.displayMode ?? .lyrics
         _showLyrics = State(initialValue: mode == .lyrics || mode == .lyricsAndChords)
         _showChords = State(initialValue: mode == .chords || mode == .lyricsAndChords)
     }
@@ -42,8 +42,15 @@ struct PlayerView: View {
             do {
                 try await vm.load()
             } catch {}
+            if vm.lyrics.isEmpty {
+                showLyrics = false
+                showChords = true
+            }
             playerVM = vm
             await vm.loadRemoteMetadata()
+            if !vm.lyrics.isEmpty && !showLyrics && !showChords {
+                showLyrics = true
+            }
         }
     }
 
@@ -114,24 +121,20 @@ struct PlayerView: View {
 
     @ViewBuilder
     private func mainZone(vm: PlayerViewModel) -> some View {
-        if !showLyrics && !showChords {
-            WaveformsView(songID: song.id)
-        } else {
-            VStack(spacing: 0) {
-                if showLyrics {
-                    LyricsView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                if showLyrics && showChords {
-                    Divider()
-                }
-                if showChords {
-                    ChordView(enlarged: !showLyrics)
-                        .frame(maxHeight: showLyrics ? (showDiagrams ? 300 : 180) : .infinity)
-                }
+        VStack(spacing: 0) {
+            if showLyrics {
+                LyricsView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if showLyrics && showChords {
+                Divider()
+            }
+            if showChords {
+                ChordView(enlarged: !showLyrics)
+                    .frame(maxHeight: showLyrics ? (showDiagrams ? 300 : 180) : .infinity)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
 }

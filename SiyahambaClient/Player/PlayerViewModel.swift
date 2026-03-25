@@ -190,9 +190,8 @@ final class PlayerViewModel {
     func saveDisplayMode(showLyrics: Bool, showChords: Bool) async {
         let mode: SongEntry.DisplayMode = switch (showLyrics, showChords) {
         case (true, true): .lyricsAndChords
-        case (true, false): .lyrics
         case (false, true): .chords
-        default: .waveforms
+        default: .lyrics
         }
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {

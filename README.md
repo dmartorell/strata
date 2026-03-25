@@ -144,13 +144,38 @@ export SIYAHAMBA_API_URL="https://tu-url.modal.run"
 
 O modificar `SiyahambaClient/Network/APIEndpoint.swift`.
 
-## Usuarios
+## Distribución
 
-Usuarios definidos en `server/auth/users.json`. Para añadir uno nuevo:
+La app se distribuye como `.app` firmado ad-hoc (sin cuenta de Apple Developer de pago).
+
+### Exportar el .app
+
+1. Abrir el proyecto en Xcode (`open SiyahambaClient.xcodeproj`)
+2. `Product → Archive`
+3. En el Organizer: `Distribute App → Copy App`
+4. Comprimir el `.app` resultante en un `.zip`
+
+### Enviar al usuario
+
+Enviar el `.zip` por AirDrop, iCloud Drive o cualquier medio.
+
+### Instalación (instrucciones para el usuario)
+
+1. Descomprimir el `.zip`
+2. Arrastrar `SiyahambaClient.app` a la carpeta **Aplicaciones**
+3. **Primera vez**: click derecho sobre la app → **Abrir** → confirmar en el diálogo de Gatekeeper
+4. Las siguientes ejecuciones se abren con doble click normal
+
+> Tras cada actualización hay que repetir el paso 3 (click derecho → Abrir) la primera vez.
+
+## Acceso
+
+Contraseña compartida para todos los usuarios. La app solo pide la contraseña al abrir (sin username).
+
+Para cambiar la contraseña:
 
 ```bash
-# Generar hash bcrypt
-python3 -c "import bcrypt; print(bcrypt.hashpw(b'tu-password', bcrypt.gensalt()).decode())"
+python3 -c "import bcrypt; print(bcrypt.hashpw(b'nueva-password', bcrypt.gensalt()).decode())"
 ```
 
-Añadir al JSON y redesplegar (`modal deploy server/app.py`).
+Actualizar el hash en `server/auth/users.json` y redesplegar (`modal deploy server/app.py`).
