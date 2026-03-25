@@ -48,7 +48,12 @@ final class LibraryStore {
             if needsWrite {
                 try? await cacheManager.writeLibraryIndex(migrated)
             }
-            songs = migrated.sorted { $0.addedAt > $1.addedAt }
+            let placeholders = songs.filter { $0.isPlaceholder == true }
+            var merged = placeholders + migrated.sorted { $0.addedAt > $1.addedAt }
+            for ph in placeholders {
+                merged.removeAll { $0.id == ph.id && $0.isPlaceholder != true }
+            }
+            songs = merged
             loadError = nil
         } catch {
             songs = []

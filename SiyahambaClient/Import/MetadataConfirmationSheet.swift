@@ -76,7 +76,7 @@ struct MetadataConfirmationSheet: View {
 
                 Spacer()
 
-                Button("Procesar todo", action: submitForm)
+                Button("Procesar", action: submitForm)
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)
                     .disabled(!canSubmit)

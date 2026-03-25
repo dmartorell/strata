@@ -1,4 +1,6 @@
 import SwiftUI
+import UniformTypeIdentifiers
+import AppKit
 
 struct PlayerView: View {
     let song: SongEntry
@@ -7,6 +9,7 @@ struct PlayerView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var showLyrics: Bool
     @State private var showChords: Bool
+    @State private var isDragTargeted = false
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
     init(song: SongEntry, onBack: @escaping () -> Void) {
@@ -21,16 +24,59 @@ struct PlayerView: View {
     @Environment(PlaybackEngine.self) private var engine
     @Environment(\.cacheManager) private var cacheManager
     @Environment(LibraryStore.self) private var libraryStore
+    @Environment(ImportViewModel.self) private var importViewModel
 
     var body: some View {
-        Group {
-            if let vm = playerVM {
-                mainContent(vm: vm)
-                    .environment(vm)
-            } else {
-                ProgressView("Cargando...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            Group {
+                if let vm = playerVM {
+                    mainContent(vm: vm)
+                        .environment(vm)
+                } else {
+                    ProgressView("Cargando...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
+
+            GlobalDropOverlay(isTargeted: isDragTargeted)
+        }
+        .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
+            guard !providers.isEmpty else { return false }
+            NSApplication.shared.activate(ignoringOtherApps: true)
+            Task {
+                var files: [(fileURL: URL, originalURL: URL?)] = []
+                for provider in providers {
+                    let originalURL: URL? = await withCheckedContinuation { cont in
+                        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { data, _ in
+                            if let data = data as? Data, let url = URL(dataRepresentation: data, relativeTo: nil) {
+                                cont.resume(returning: url)
+                            } else {
+                                cont.resume(returning: nil)
+                            }
+                        }
+                    }
+                    let tempURL: URL? = await withCheckedContinuation { cont in
+                        provider.loadFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, error in
+                            guard let url else { cont.resume(returning: nil); return }
+                            let uniqueDir = FileManager.default.temporaryDirectory
+                                .appendingPathComponent(UUID().uuidString, isDirectory: true)
+                            try? FileManager.default.createDirectory(at: uniqueDir, withIntermediateDirectories: true)
+                            let tempCopy = uniqueDir.appendingPathComponent(url.lastPathComponent)
+                            try? FileManager.default.copyItem(at: url, to: tempCopy)
+                            cont.resume(returning: tempCopy)
+                        }
+                    }
+                    if let tempCopy = tempURL {
+                        files.append((fileURL: tempCopy, originalURL: originalURL))
+                    }
+                }
+                if !files.isEmpty {
+                    await MainActor.run {
+                        importViewModel.collectPendingFiles(files)
+                    }
+                }
+            }
+            return true
         }
         .task {
             let vm = PlayerViewModel(
@@ -42,15 +88,8 @@ struct PlayerView: View {
             do {
                 try await vm.load()
             } catch {}
-            if vm.lyrics.isEmpty {
-                showLyrics = false
-                showChords = true
-            }
             playerVM = vm
             await vm.loadRemoteMetadata()
-            if !vm.lyrics.isEmpty && !showLyrics && !showChords {
-                showLyrics = true
-            }
         }
     }
 
