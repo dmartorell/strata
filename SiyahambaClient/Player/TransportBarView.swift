@@ -139,16 +139,6 @@ struct TransportBarView: View {
                         Image(systemName: "backward.end.fill")
                     }
                     .buttonStyle(.plain)
-
-                    Button {
-                        engine.clearLoop()
-                    } label: {
-                        Image(systemName: "repeat")
-                            .fontWeight(.bold)
-                            .foregroundStyle(hasLoop ? Color.accentColor : .primary)
-                    }
-                    .buttonStyle(.plain)
-                    .opacity(hasLoop ? 1 : 0.4)
                 }
 
                 HStack {
@@ -210,11 +200,7 @@ struct TransportBarView: View {
         .opacity(enabled ? 1 : 0.4)
     }
 
-    private var hasLoop: Bool {
-        engine.loopStart != nil && engine.loopEnd != nil
-    }
-
-    private var pitchLabel: String {
+private var pitchLabel: String {
         let semitones = engine.pitchSemitones
         if let key = vm.song.key {
             return ChordTransposer.transpose(key, semitones: semitones)
