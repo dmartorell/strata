@@ -47,9 +47,10 @@ struct ChordDiagramView: View {
         Canvas { context, size in
             let fretCount = 4
             let stringCount = 6
-            let oxAreaHeight: CGFloat = 18
-            let fretLabelWidth: CGFloat = 28
-            let sidePadding: CGFloat = 10
+            let scale = size.width / 140
+            let oxAreaHeight: CGFloat = 18 * scale
+            let fretLabelWidth: CGFloat = 28 * scale
+            let sidePadding: CGFloat = 10 * scale
 
             let gridX: CGFloat = sidePadding
             let gridY: CGFloat = oxAreaHeight
@@ -64,16 +65,21 @@ struct ChordDiagramView: View {
             let fingerFont = Font.system(size: dotRadius * 1.3, weight: .bold)
 
             // Draw fret lines
+            let stringLineWidth: CGFloat = 1 * scale
+            let nutOverhang = stringLineWidth / 2
             for f in 0...fretCount {
                 let y = gridY + CGFloat(f) * fretSpacing
-                let lineWidth: CGFloat = (f == 0 && position.baseFret == 1) ? 4 : 1
+                let isNut = f == 0 && position.baseFret == 1
+                let lw: CGFloat = isNut ? 4 * scale : 1 * scale
+                let x0 = isNut ? gridX - nutOverhang : gridX
+                let x1 = isNut ? gridX + gridWidth + nutOverhang : gridX + gridWidth
                 context.stroke(
                     Path { p in
-                        p.move(to: CGPoint(x: gridX, y: y))
-                        p.addLine(to: CGPoint(x: gridX + gridWidth, y: y))
+                        p.move(to: CGPoint(x: x0, y: y))
+                        p.addLine(to: CGPoint(x: x1, y: y))
                     },
                     with: shading,
-                    lineWidth: lineWidth
+                    lineWidth: lw
                 )
             }
 
@@ -86,12 +92,12 @@ struct ChordDiagramView: View {
                         p.addLine(to: CGPoint(x: x, y: gridY + gridHeight))
                     },
                     with: shading,
-                    lineWidth: 1
+                    lineWidth: 1 * scale
                 )
             }
 
             // Draw O/X indicators above grid
-            let oxFont = Font.system(size: 13)
+            let oxFont = Font.system(size: 13 * scale)
             for s in 0..<min(stringCount, position.frets.count) {
                 let fretValue = position.frets[s]
                 let label: String
@@ -105,7 +111,7 @@ struct ChordDiagramView: View {
                 let x = gridX + CGFloat(s) * stringSpacing
                 context.draw(
                     Text(label).font(oxFont).foregroundStyle(drawColor),
-                    at: CGPoint(x: x, y: gridY - 10),
+                    at: CGPoint(x: x, y: gridY - 10 * scale),
                     anchor: .center
                 )
             }
@@ -167,10 +173,11 @@ struct ChordDiagramView: View {
 
             // Draw fret number when baseFret > 1
             if position.baseFret > 1 {
-                let labelX = gridX + gridWidth + dotRadius + 6
+                let labelX = gridX + gridWidth + dotRadius + 6 * scale
                 let labelY = gridY + fretSpacing * 0.5
+                let fretFont = Font.system(size: 12 * scale)
                 context.draw(
-                    Text("\(position.baseFret)fr").font(.caption).foregroundStyle(drawColor),
+                    Text("\(position.baseFret)fr").font(fretFont).foregroundStyle(drawColor),
                     at: CGPoint(x: labelX, y: labelY),
                     anchor: .leading
                 )
@@ -179,28 +186,38 @@ struct ChordDiagramView: View {
     }
 
     private var navigationRow: some View {
-        HStack {
+        GeometryReader { geo in
+            let scale = geo.size.width / 140
+            let sidePadding = 10 * scale
+            let fretLabelWidth = 28 * scale
+            let string6X = sidePadding
+            let string1X = geo.size.width - sidePadding - fretLabelWidth
+            let midY = geo.size.height / 2
+
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) { variationIndex -= 1 }
             } label: {
                 Image(systemName: "chevron.left")
-                    .frame(width: 24, height: 24)
+                    .font(.system(size: 12 * scale))
+                    .frame(width: 24 * scale, height: 24 * scale)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            Spacer()
+            .position(x: string6X, y: midY)
 
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) { variationIndex += 1 }
             } label: {
                 Image(systemName: "chevron.right")
-                    .frame(width: 24, height: 24)
+                    .font(.system(size: 12 * scale))
+                    .frame(width: 24 * scale, height: 24 * scale)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .position(x: string1X, y: midY)
         }
-        .padding(.leading, 10)
-        .padding(.trailing, 38)
-        .font(.caption)
+        .padding(.top, 10)
+        .offset(x: 2)
+        .frame(height: 34)
     }
 }

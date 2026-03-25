@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-25 - Completed quick task 18: Chord diagram padding, centering, spacing, variation ordering
+Last activity: 2026-03-25 - Completed quick task 19: Indicar número de dedo en cada posición del diagrama de acordes
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 

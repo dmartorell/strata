@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ChordView: View {
+    var enlarged: Bool = false
+
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
@@ -56,18 +58,18 @@ struct ChordView: View {
 
     @ViewBuilder
     private var currentChordColumn: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: enlarged ? 8 : 4) {
             Text(vm.displayChord.isEmpty ? " " : vm.displayChord)
-                .font(.system(size: 64, weight: .bold, design: .rounded))
+                .font(.system(size: enlarged ? 128 : 64, weight: .bold, design: .rounded))
                 .contentTransition(.numericText())
                 .animation(.easeInOut(duration: 0.15), value: vm.displayChord)
-                .offset(x: -9)
+                .offset(x: enlarged ? -28 : -14)
 
             if showDiagrams && hasFingerings && !vm.displayChord.isEmpty {
                 let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
                     ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
-                        .frame(width: 140, height: 130)
+                        .frame(width: enlarged ? 280 : 140, height: enlarged ? 260 : 130)
                 }
             }
         }
@@ -75,19 +77,19 @@ struct ChordView: View {
 
     @ViewBuilder
     private var nextChordColumn: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: enlarged ? 8 : 4) {
             Text(vm.displayNextChord)
-                .font(.system(size: 32, weight: .regular, design: .rounded))
+                .font(.system(size: enlarged ? 64 : 32, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
                 .contentTransition(.numericText())
                 .animation(.easeInOut(duration: 0.15), value: vm.displayNextChord)
-                .offset(x: -6)
+                .offset(x: enlarged ? -19 : -10)
 
             if showDiagrams && hasFingerings && !vm.displayNextChord.isEmpty {
                 let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
                     ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord)
-                        .frame(width: 96, height: 90)
+                        .frame(width: enlarged ? 192 : 96, height: enlarged ? 180 : 90)
                         .opacity(0.5)
                 }
             }
