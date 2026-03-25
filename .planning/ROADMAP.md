@@ -159,7 +159,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
 | 8. YouTube Download Client-Side | 0/? | Not Started|  |
 | 9. Chord Finger Position Diagrams | 2/2 | Complete   | 2026-03-24 |
-| 10. Rehearsal Sheet View | 0/3 | Not Started|  |
+| 10. Rehearsal Sheet View | 2/3 | In Progress|  |
 
 
 ### Phase 8: YouTube Download Client-Side
@@ -204,7 +204,7 @@ Plans:
   4. Un panel de referencia muestra diagramas de acordes de todos los acordes únicos de la canción
   5. El selector de dificultad (Principiante/Intermedio/Avanzado) simplifica nombres de acordes en tiempo real
   6. El modo de visualización persiste por canción al volver a la biblioteca
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 10-01-PLAN.md — ChordSimplifier + selector de dificultad en ChordView

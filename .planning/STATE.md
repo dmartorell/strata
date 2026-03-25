@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-24T22:58:53.189Z"
+last_updated: "2026-03-25T22:45:58.341Z"
 progress:
-  total_phases: 9
+  total_phases: 11
   completed_phases: 8
-  total_plans: 27
-  completed_plans: 27
+  total_plans: 30
+  completed_plans: 29
 ---
 
 # Project State
@@ -73,6 +73,8 @@ Progress: [██████████] 100% (v1.0 milestone complete)
 | Phase 07-player-ui-display-usage P04 | 2 | 2 tasks | 5 files |
 | Phase 09 P01 | 8 | 2 tasks | 3 files |
 | Phase 09-show-chord-finger-position-diagram-alongside-chord-name P02 | 12 | 2 tasks | 4 files |
+| Phase 10-rehearsal-sheet-view P01 | 3 | 2 tasks | 2 files |
+| Phase 10-rehearsal-sheet-view P02 | 25 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -145,6 +147,9 @@ Recent decisions affecting current work:
 - [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: ChordDiagramView uses GraphicsContext.Shading.color() with colorScheme env for dark/light mode — .foregroundStyle not valid in Canvas context
 - [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: fingeringsMap lookup: build [chordName: positions] from all chords for transposition support; fall back to original entry if transposed name absent
 - [Phase 09-show-chord-finger-position-diagram-alongside-chord-name]: Legacy songs: hasFingerings guards both toggle and diagram display — no fingering data means no diagram and no toggle button
+- [Phase 10-rehearsal-sheet-view]: ChordSimplifier applies suffix-only transformation after transposition at view layer — order-independent with root transposition, avoids modifying PlayerViewModel
+- [Phase 10-rehearsal-sheet-view]: FlowLayout (Layout protocol) chosen over AttributedString for word-level VStack cells with chord+lyric vertical stacking
+- [Phase 10-rehearsal-sheet-view]: onScrollPhaseChange (macOS 15+) replaced with PreferenceKey+GeometryReader for macOS 14 compatibility in rehearsal sheet scroll detection
 
 ### Pending Todos
 
