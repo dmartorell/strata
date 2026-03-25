@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-25T22:45:58.341Z"
+last_updated: "2026-03-25T22:51:53.006Z"
 progress:
   total_phases: 11
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 30
-  completed_plans: 29
+  completed_plans: 30
 ---
 
 # Project State
@@ -75,6 +75,7 @@ Progress: [██████████] 100% (v1.0 milestone complete)
 | Phase 09-show-chord-finger-position-diagram-alongside-chord-name P02 | 12 | 2 tasks | 4 files |
 | Phase 10-rehearsal-sheet-view P01 | 3 | 2 tasks | 2 files |
 | Phase 10-rehearsal-sheet-view P02 | 25 | 2 tasks | 3 files |
+| Phase 10-rehearsal-sheet-view P03 | 3 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -150,6 +151,9 @@ Recent decisions affecting current work:
 - [Phase 10-rehearsal-sheet-view]: ChordSimplifier applies suffix-only transformation after transposition at view layer — order-independent with root transposition, avoids modifying PlayerViewModel
 - [Phase 10-rehearsal-sheet-view]: FlowLayout (Layout protocol) chosen over AttributedString for word-level VStack cells with chord+lyric vertical stacking
 - [Phase 10-rehearsal-sheet-view]: onScrollPhaseChange (macOS 15+) replaced with PreferenceKey+GeometryReader for macOS 14 compatibility in rehearsal sheet scroll detection
+- [Phase 10-rehearsal-sheet-view]: showRehearsalSheet is a third exclusive state alongside showLyrics/showChords — activating any one clears the others
+- [Phase 10-rehearsal-sheet-view]: RehearsalFontSizePopover is inline with separate AppStorage key rehearsalSheet.fontSize (14-40pt) independent from lyrics.fontSize
+- [Phase 10-rehearsal-sheet-view]: uniqueChords applies transposition + difficulty simplification so reference panel chord names match inline chord display
 
 ### Pending Todos
 
