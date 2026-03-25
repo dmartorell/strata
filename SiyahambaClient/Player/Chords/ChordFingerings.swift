@@ -32,6 +32,13 @@ enum ChordFingerings {
         "maj9": "maj9",
     ]
 
+    private static let suffixToSlashPrefix: [String: String] = [
+        "major": "",
+        "minor": "m",
+        "m9": "m9",
+        "7": "7",
+    ]
+
     private static let dbKeyMap: [String: String] = [
         "C#": "Csharp",
         "F#": "Fsharp",
@@ -39,6 +46,13 @@ enum ChordFingerings {
 
     private static let dbKeys: Set<String> = [
         "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B",
+    ]
+
+    private static let tuning = [40, 45, 50, 55, 59, 64] // E2 A2 D3 G3 B3 E4
+
+    private static let noteToPitchClass: [String: Int] = [
+        "C": 0, "C#": 1, "D": 2, "Eb": 3, "E": 4, "F": 5,
+        "F#": 6, "G": 7, "Ab": 8, "A": 9, "Bb": 10, "B": 11,
     ]
 
     // MARK: - Private Codable structures for guitar.json
@@ -72,28 +86,65 @@ enum ChordFingerings {
     // MARK: - Public API
 
     static func lookup(_ chordName: String) -> [ChordPosition] {
+        var bassNote: String?
+        if let slashIdx = chordName.firstIndex(of: "/") {
+            let raw = String(chordName[chordName.index(after: slashIdx)...])
+            let normalized = enharmonic[raw] ?? raw
+            if dbKeys.contains(normalized) {
+                bassNote = normalized
+            }
+        }
+
         guard let (key, suffix) = chordNameToKeySuffix(chordName) else { return [] }
         let dbKey = dbKeyMap[key] ?? key
         guard let entries = db?.chords[dbKey] else { return [] }
-        guard let entry = entries.first(where: { $0.suffix == suffix }) else { return [] }
-        return entry.positions.prefix(3).map { p in
-            ChordPosition(frets: p.frets, fingers: p.fingers, baseFret: p.baseFret, barres: p.barres)
+
+        if let bass = bassNote, let slashPrefix = suffixToSlashPrefix[suffix] {
+            let slashSuffix = slashPrefix.isEmpty ? "/\(bass)" : "\(slashPrefix)/\(bass)"
+            if let entry = entries.first(where: { $0.suffix == slashSuffix }) {
+                return entry.positions.prefix(3).map { toChordPosition($0) }
+            }
         }
+
+        guard let entry = entries.first(where: { $0.suffix == suffix }) else { return [] }
+        var result = entry.positions.prefix(3).map { toChordPosition($0) }
+        if let bass = bassNote {
+            result = reorderByBass(result, bassNote: bass)
+        }
+        return result
     }
 
     // MARK: - Private helpers
+
+    private static func toChordPosition(_ p: ChordDBPosition) -> ChordPosition {
+        ChordPosition(frets: p.frets, fingers: p.fingers, baseFret: p.baseFret, barres: p.barres)
+    }
+
+    private static func bassPitchClass(_ pos: ChordPosition) -> Int? {
+        for s in 0..<6 {
+            if pos.frets[s] != -1 {
+                return (tuning[s] + (pos.baseFret - 1) + pos.frets[s]) % 12
+            }
+        }
+        return nil
+    }
+
+    private static func reorderByBass(_ positions: [ChordPosition], bassNote: String) -> [ChordPosition] {
+        guard let target = noteToPitchClass[bassNote] else { return positions }
+        let matching = positions.filter { bassPitchClass($0) == target }
+        let rest = positions.filter { bassPitchClass($0) != target }
+        return matching + rest
+    }
 
     private static func chordNameToKeySuffix(_ chord: String) -> (key: String, suffix: String)? {
         guard !chord.isEmpty, chord != "N", chord != "-" else { return nil }
 
         var normalized = chord
 
-        // Strip slash bass note (e.g. "G/B" -> "G")
         if let slashIdx = normalized.firstIndex(of: "/") {
             normalized = String(normalized[..<slashIdx])
         }
 
-        // Extract root: 2 chars if second char is # or b, else 1 char
         let root: String
         let quality: String
         if normalized.count >= 2 {
@@ -110,7 +161,6 @@ enum ChordFingerings {
             quality = ""
         }
 
-        // Normalize enharmonic equivalents
         let normalizedRoot = enharmonic[root] ?? root
 
         guard dbKeys.contains(normalizedRoot) else { return nil }
