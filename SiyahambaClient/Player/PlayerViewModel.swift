@@ -1,6 +1,19 @@
 import Foundation
 import Observation
 
+struct RehearsalWord: Sendable {
+    let word: String
+    let chord: String?
+    let wordStart: Double
+}
+
+struct RehearsalLine: Identifiable, Sendable {
+    let id: UUID
+    let start: Double
+    let end: Double
+    let words: [RehearsalWord]
+}
+
 @Observable
 @MainActor
 final class PlayerViewModel {
@@ -170,6 +183,52 @@ final class PlayerViewModel {
             return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
         }
         return raw
+    }
+
+    var rehearsalLines: [RehearsalLine] {
+        let placeholders = Self.placeholderChords
+        let filteredChords = chords.filter { !placeholders.contains($0.chord) }
+
+        return lyrics.map { line in
+            let words: [RehearsalWord] = line.words.map { word in
+                let matchedChord = filteredChords.last(where: { chord in
+                    chord.start >= word.start && chord.start < word.end
+                })
+                let chordName: String?
+                if let raw = matchedChord?.chord {
+                    if showTransposed && engine.pitchSemitones != 0 {
+                        chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
+                    } else {
+                        chordName = raw
+                    }
+                } else {
+                    chordName = nil
+                }
+                return RehearsalWord(word: word.word, chord: chordName, wordStart: word.start)
+            }
+
+            // Attach any chord that falls before this line's first word to the first word
+            var finalWords = words
+            if !finalWords.isEmpty && finalWords[0].chord == nil {
+                let lineStart = line.start
+                let firstWordStart = line.words.first?.start ?? lineStart
+                let orphanChord = filteredChords.last(where: { chord in
+                    chord.start >= lineStart && chord.start < firstWordStart
+                })
+                if let raw = orphanChord?.chord {
+                    let chordName: String
+                    if showTransposed && engine.pitchSemitones != 0 {
+                        chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
+                    } else {
+                        chordName = raw
+                    }
+                    let original = finalWords[0]
+                    finalWords[0] = RehearsalWord(word: original.word, chord: chordName, wordStart: original.wordStart)
+                }
+            }
+
+            return RehearsalLine(id: line.id, start: line.start, end: line.end, words: finalWords)
+        }
     }
 
     func saveLyricsOffset() async {

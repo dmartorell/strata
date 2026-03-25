@@ -26,6 +26,7 @@ struct SongEntry: Codable, Identifiable, Sendable {
         case lyrics
         case lyricsAndChords
         case chords
+        case rehearsalSheet
     }
 
     init(
