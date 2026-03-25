@@ -15,6 +15,7 @@ enum APIEndpoint {
     case processFile
     case result(jobId: String)
     case usage
+    case cancel(jobId: String)
 
     var url: URL {
         switch self {
@@ -28,12 +29,14 @@ enum APIEndpoint {
             return APIEndpoint.baseURL.appendingPathComponent("result/\(jobId)")
         case .usage:
             return APIEndpoint.baseURL.appendingPathComponent("usage")
+        case .cancel(let jobId):
+            return APIEndpoint.baseURL.appendingPathComponent("cancel/\(jobId)")
         }
     }
 
     var method: String {
         switch self {
-        case .login, .renew, .processFile:
+        case .login, .renew, .processFile, .cancel:
             return "POST"
         case .result, .usage:
             return "GET"

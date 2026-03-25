@@ -16,6 +16,7 @@ final class ImportViewModel {
     private let libraryStore: LibraryStore
     private var authViewModel: any AuthTokenProviderProtocol
     private var currentTask: Task<Void, Never>?
+    private var currentJobId: String?
     private var placeholderID: UUID?
     private var queue: [QueueItem] = []
 
@@ -63,6 +64,13 @@ final class ImportViewModel {
     }
 
     func cancel() {
+        if let jobId = currentJobId, let token = authViewModel.token {
+            Task.detached { [apiClient] in
+                try? await apiClient.cancelJob(jobId: jobId, token: token)
+            }
+        }
+        currentJobId = nil
+
         currentTask?.cancel()
         currentTask = nil
 
@@ -167,6 +175,7 @@ final class ImportViewModel {
                 mimeType: mimeType,
                 token: token
             )
+            currentJobId = jobId
 
             try await pollAndFinalize(
                 jobId: jobId,
@@ -178,15 +187,19 @@ final class ImportViewModel {
                 overrideTitle: item.title
             )
         } catch let error as APIError where error == .httpError(429) {
+            currentJobId = nil
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .error("Limite mensual de procesamiento alcanzado. Puedes seguir reproduciendo canciones ya procesadas.")
         } catch is CancellationError {
+            currentJobId = nil
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             if case .cancelled = phase { } else { phase = .idle }
         } catch where Task.isCancelled {
+            currentJobId = nil
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             if case .cancelled = phase { } else { phase = .idle }
         } catch {
+            currentJobId = nil
             if let pid = placeholderID { libraryStore.removePlaceholder(id: pid); placeholderID = nil }
             phase = .error(error.localizedDescription)
         }
@@ -233,6 +246,7 @@ final class ImportViewModel {
         } else {
             await libraryStore.addSong(songEntry)
         }
+        currentJobId = nil
         phase = .ready(cached: false)
     }
 
