@@ -249,11 +249,16 @@ final class PlayerViewModel {
         }
     }
 
-    func saveDisplayMode(showLyrics: Bool, showChords: Bool) async {
-        let mode: SongEntry.DisplayMode = switch (showLyrics, showChords) {
-        case (true, true): .lyricsAndChords
-        case (false, true): .chords
-        default: .lyrics
+    func saveDisplayMode(showLyrics: Bool, showChords: Bool, showRehearsalSheet: Bool = false) async {
+        let mode: SongEntry.DisplayMode
+        if showRehearsalSheet {
+            mode = .rehearsalSheet
+        } else {
+            mode = switch (showLyrics, showChords) {
+            case (true, true): .lyricsAndChords
+            case (false, true): .chords
+            default: .lyrics
+            }
         }
         var songs = libraryStore.songs
         if let idx = songs.firstIndex(where: { $0.id == song.id }) {

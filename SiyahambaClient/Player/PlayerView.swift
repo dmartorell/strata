@@ -9,6 +9,7 @@ struct PlayerView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var showLyrics: Bool
     @State private var showChords: Bool
+    @State private var showRehearsalSheet: Bool
     @State private var isDragTargeted = false
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
@@ -18,6 +19,7 @@ struct PlayerView: View {
         let mode = song.displayMode ?? .lyrics
         _showLyrics = State(initialValue: mode == .lyrics || mode == .lyricsAndChords)
         _showChords = State(initialValue: mode == .chords || mode == .lyricsAndChords)
+        _showRehearsalSheet = State(initialValue: mode == .rehearsalSheet)
     }
     @FocusState private var isContentFocused: Bool
 
@@ -107,7 +109,7 @@ struct PlayerView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             Divider()
-            TransportBarView(showLyrics: $showLyrics, showChords: $showChords)
+            TransportBarView(showLyrics: $showLyrics, showChords: $showChords, showRehearsalSheet: $showRehearsalSheet)
         }
         .focusable()
         .focused($isContentFocused)
@@ -133,6 +135,7 @@ struct PlayerView: View {
             guard playerVM != nil && !playerVM!.lyrics.isEmpty else { return .ignored }
             showLyrics = true
             showChords = false
+            showRehearsalSheet = false
             return .handled
         }
         .onKeyPress(characters: CharacterSet(charactersIn: "a")) { press in
@@ -143,6 +146,14 @@ struct PlayerView: View {
                 showLyrics = playerVM != nil && !playerVM!.lyrics.isEmpty
                 showChords = true
             }
+            showRehearsalSheet = false
+            return .handled
+        }
+        .onKeyPress(characters: CharacterSet(charactersIn: "r")) { _ in
+            guard playerVM != nil && !playerVM!.chords.isEmpty else { return .ignored }
+            showRehearsalSheet = true
+            showLyrics = false
+            showChords = false
             return .handled
         }
     }
@@ -153,7 +164,7 @@ struct PlayerView: View {
             Button {
                 Task {
                     await vm.savePitchOffset()
-                    await vm.saveDisplayMode(showLyrics: showLyrics, showChords: showChords)
+                    await vm.saveDisplayMode(showLyrics: showLyrics, showChords: showChords, showRehearsalSheet: showRehearsalSheet)
                     await engine.fadeOutAndStop()
                     onBack()
                 }
@@ -176,20 +187,25 @@ struct PlayerView: View {
 
     @ViewBuilder
     private func mainZone(vm: PlayerViewModel) -> some View {
-        VStack(spacing: 0) {
-            if showLyrics {
-                LyricsView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        if showRehearsalSheet {
+            RehearsalSheetView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            VStack(spacing: 0) {
+                if showLyrics {
+                    LyricsView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                if showLyrics && showChords {
+                    Divider()
+                }
+                if showChords {
+                    ChordView(enlarged: !showLyrics)
+                        .frame(maxHeight: showLyrics ? (showDiagrams ? 300 : 180) : .infinity)
+                }
             }
-            if showLyrics && showChords {
-                Divider()
-            }
-            if showChords {
-                ChordView(enlarged: !showLyrics)
-                    .frame(maxHeight: showLyrics ? (showDiagrams ? 300 : 180) : .infinity)
-            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
 }

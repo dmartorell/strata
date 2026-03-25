@@ -65,6 +65,7 @@ struct TransportBarView: View {
     @Environment(PlayerViewModel.self) private var vm
     @Binding var showLyrics: Bool
     @Binding var showChords: Bool
+    @Binding var showRehearsalSheet: Bool
 
     @State private var wasPlayingBeforeDrag = false
     @State private var showPitchPopover = false
@@ -125,10 +126,21 @@ struct TransportBarView: View {
                     Spacer()
                     HStack(spacing: 16) {
                         panelToggle("Letras", icon: "text.quote", isActive: showLyrics, enabled: hasLyrics && (showChords || !showLyrics)) {
+                            showRehearsalSheet = false
                             showLyrics.toggle()
                         }
                         panelToggle("Acordes", icon: "music.quarternote.3", isActive: showChords, enabled: showLyrics || !showChords) {
+                            showRehearsalSheet = false
                             showChords.toggle()
+                        }
+                        panelToggle("Ensayo", icon: "music.note.list", isActive: showRehearsalSheet, enabled: hasChords) {
+                            showRehearsalSheet.toggle()
+                            if showRehearsalSheet {
+                                showLyrics = false
+                                showChords = false
+                            } else {
+                                showLyrics = true
+                            }
                         }
 
                         Button {
@@ -162,6 +174,10 @@ struct TransportBarView: View {
 
     private var hasLyrics: Bool {
         !vm.lyrics.isEmpty
+    }
+
+    private var hasChords: Bool {
+        !vm.chords.isEmpty
     }
 
     private func panelToggle(_ label: String, icon: String, isActive: Bool, enabled: Bool = true, action: @escaping () -> Void) -> some View {
