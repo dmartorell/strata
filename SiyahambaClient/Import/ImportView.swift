@@ -15,13 +15,6 @@ struct ImportView: View {
                 .animation(.easeInOut(duration: 0.2), value: importViewModel.phase == .idle)
         }
         .padding()
-        .sheet(isPresented: Binding(
-            get: { !importViewModel.pendingItems.isEmpty },
-            set: { if !$0 { importViewModel.cancelPending() } }
-        )) {
-            MetadataConfirmationSheet()
-                .environment(importViewModel)
-        }
     }
 
     // MARK: - Drop Zone
