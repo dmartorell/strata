@@ -3,6 +3,7 @@ import SwiftUI
 struct LibraryView: View {
     @Environment(LibraryStore.self) private var libraryStore
     @Environment(ImportViewModel.self) private var importViewModel
+    @Binding var cachedUsage: UsageData?
     var onSongSelected: (SongEntry) -> Void
 
     @State private var selection = Set<UUID>()
@@ -22,7 +23,7 @@ struct LibraryView: View {
                 .frame(maxHeight: .infinity)
 
             Divider()
-            UsageView()
+            UsageView(cachedUsage: $cachedUsage)
                 .layoutPriority(1)
         }
         .alert(

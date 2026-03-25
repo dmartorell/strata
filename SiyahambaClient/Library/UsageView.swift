@@ -2,13 +2,13 @@ import SwiftUI
 
 struct UsageView: View {
     @Environment(AuthViewModel.self) private var auth
-    @State private var usage: UsageData?
+    @Binding var cachedUsage: UsageData?
     @State private var loadError: Bool = false
     @State private var refreshID = UUID()
 
     var body: some View {
         VStack(spacing: 4) {
-            if let u = usage {
+            if let u = cachedUsage {
                 let remaining = String(format: "%.2f", u.creditRemainingEur)
                 Text("Crédito: €\(remaining)")
                     .font(.caption)
@@ -34,13 +34,12 @@ struct UsageView: View {
     }
 
     private func fetchUsage() async {
-        usage = nil
         loadError = false
         guard let token = auth.token else { return }
         do {
-            usage = try await APIClient().fetchUsage(token: token)
+            cachedUsage = try await APIClient().fetchUsage(token: token)
         } catch {
-            loadError = true
+            if cachedUsage == nil { loadError = true }
         }
     }
 }
