@@ -3,7 +3,9 @@ import SwiftUI
 struct ChordDiagramView: View {
     let fingerings: [ChordPosition]
     let chord: String
+    var interactive: Bool = true
     @State private var variationIndex = 0
+    @State private var isHoveringDiagram = false
     @Environment(\.colorScheme) private var colorScheme
 
     private var sortedFingerings: [ChordPosition] {
@@ -20,24 +22,24 @@ struct ChordDiagramView: View {
     private var textColor: Color { colorScheme == .dark ? .black : .white }
 
     var body: some View {
-        VStack(spacing: 2) {
-            canvas
-                .id(chord + String(variationIndex))
-                .transition(.opacity)
-                .animation(.easeInOut(duration: 0.15), value: chord)
-                .animation(.easeInOut(duration: 0.12), value: variationIndex)
-                .onTapGesture {
-                    if sortedFingerings.count > 1 {
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            variationIndex += 1
-                        }
-                    }
-                }
-
-            if sortedFingerings.count > 1 {
-                navigationRow
+        canvas
+            .id(chord + String(variationIndex))
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.15), value: chord)
+            .animation(.easeInOut(duration: 0.12), value: variationIndex)
+            .opacity(isHoveringDiagram && interactive ? 0.5 : 1.0)
+            .animation(.easeInOut(duration: 0.12), value: isHoveringDiagram)
+.onHover { inside in
+                guard interactive, sortedFingerings.count > 1 else { return }
+                withAnimation(.easeInOut(duration: 0.12)) { isHoveringDiagram = inside }
+                if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
             }
-        }
+            .onTapGesture {
+                guard sortedFingerings.count > 1 else { return }
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    variationIndex += 1
+                }
+            }
         .onChange(of: chord) {
             variationIndex = 0
         }
@@ -185,39 +187,4 @@ struct ChordDiagramView: View {
         }
     }
 
-    private var navigationRow: some View {
-        GeometryReader { geo in
-            let scale = geo.size.width / 140
-            let sidePadding = 10 * scale
-            let fretLabelWidth = 28 * scale
-            let string6X = sidePadding
-            let string1X = geo.size.width - sidePadding - fretLabelWidth
-            let midY = geo.size.height / 2
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) { variationIndex -= 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 12 * scale))
-                    .frame(width: 24 * scale, height: 24 * scale)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .position(x: string6X, y: midY)
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.15)) { variationIndex += 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12 * scale))
-                    .frame(width: 24 * scale, height: 24 * scale)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .position(x: string1X, y: midY)
-        }
-        .padding(.top, 10)
-        .offset(x: 2)
-        .frame(height: 34)
-    }
 }

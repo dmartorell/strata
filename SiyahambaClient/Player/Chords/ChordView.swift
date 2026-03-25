@@ -69,7 +69,7 @@ struct ChordView: View {
                 let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
                     ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
-                        .frame(width: enlarged ? 280 : 140, height: enlarged ? 260 : 130)
+                        .frame(width: enlarged ? 280 : 140, height: enlarged ? 280 : 140)
                 }
             }
         }
@@ -88,8 +88,8 @@ struct ChordView: View {
             if showDiagrams && hasFingerings && !vm.displayNextChord.isEmpty {
                 let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
-                    ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord)
-                        .frame(width: enlarged ? 192 : 96, height: enlarged ? 180 : 90)
+                    ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord, interactive: false)
+                        .frame(width: enlarged ? 192 : 96, height: enlarged ? 192 : 96)
                         .opacity(0.5)
                 }
             }

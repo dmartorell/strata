@@ -53,6 +53,9 @@ struct LibraryView: View {
                     .foregroundStyle(Color.accentColor)
                 }
                 .help("Abre y2mate para convertir YouTube a MP3")
+                .onHover { inside in
+                    if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+                }
             }
 
         }
