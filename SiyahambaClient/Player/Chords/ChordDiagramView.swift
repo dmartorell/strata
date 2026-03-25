@@ -17,6 +17,7 @@ struct ChordDiagramView: View {
     }
 
     private var drawColor: Color { colorScheme == .dark ? .white : .black }
+    private var textColor: Color { colorScheme == .dark ? .black : .white }
 
     var body: some View {
         VStack(spacing: 2) {
@@ -60,6 +61,7 @@ struct ChordDiagramView: View {
 
             let dotRadius = min(stringSpacing, fretSpacing) * 0.38
             let shading = GraphicsContext.Shading.color(drawColor)
+            let fingerFont = Font.system(size: dotRadius * 1.3, weight: .bold)
 
             // Draw fret lines
             for f in 0...fretCount {
@@ -127,6 +129,16 @@ struct ChordDiagramView: View {
                     Path(roundedRect: barreRect, cornerRadius: dotRadius),
                     with: shading
                 )
+                let barreFinger = position.fingers.indices.contains(barreStrings.first!) ? position.fingers[barreStrings.first!] : 0
+                if barreFinger > 0 {
+                    let barreCenterX = (x1 + x2) / 2
+                    let barreCenterY = y
+                    context.draw(
+                        Text("\(barreFinger)").font(fingerFont).foregroundStyle(textColor),
+                        at: CGPoint(x: barreCenterX, y: barreCenterY),
+                        anchor: .center
+                    )
+                }
             }
 
             // Draw finger dots
@@ -143,6 +155,14 @@ struct ChordDiagramView: View {
                     height: dotRadius * 2
                 )
                 context.fill(Path(ellipseIn: dotRect), with: shading)
+                let fingerNum = position.fingers.indices.contains(s) ? position.fingers[s] : 0
+                if fingerNum > 0 {
+                    context.draw(
+                        Text("\(fingerNum)").font(fingerFont).foregroundStyle(textColor),
+                        at: CGPoint(x: x, y: y),
+                        anchor: .center
+                    )
+                }
             }
 
             // Draw fret number when baseFret > 1
