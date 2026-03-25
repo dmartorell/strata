@@ -166,6 +166,7 @@ Recent decisions affecting current work:
 - Add font size controls to lyrics view (ui)
 - ~~Add guitar tuner popup with string and tuning indicator (ui)~~ DONE (quick task 22)
 - Implement persistent playback with mini-player (ui)
+- Manual chord positioning in rehearsal sheet (ui) — arrastrar/mover acordes sobre palabras, persistir per-song
 
 ### Roadmap Evolution
 

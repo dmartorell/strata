@@ -3,13 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		03DD6E718F1BC468B27CBE92 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7634123E16218DC5A1AA8E /* ImportView.swift */; };
 		063A46ECEB2ECACFA9F90BAD /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CE8A237F04E43A09DEB0F1 /* SongMetadata.swift */; };
-		08D91F8C96A152B0AFFEF0C6 /* ChordSimplifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D576FFCE0247F63DE9C3EBD2 /* ChordSimplifier.swift */; };
 		1449CF3EB9579E38CFBCC60C /* SiyahambaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008B84E85DCF2CE345BB578D /* SiyahambaApp.swift */; };
 		14FA5BD9E1EAEE8D084E164F /* GlobalDropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5EE77CC1351EDA247BB2B2 /* GlobalDropOverlay.swift */; };
 		191FEB38C974463A6A78D0D9 /* MetadataConfirmationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D0CD5B5C32D1AEF4F71526 /* MetadataConfirmationSheet.swift */; };
@@ -114,7 +113,6 @@
 		D11E2F5F68C66E872CE2FE25 /* LyricsFontSizePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsFontSizePopover.swift; sourceTree = "<group>"; };
 		D270581D830D515699977095 /* LyricsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsModels.swift; sourceTree = "<group>"; };
 		D326E20D8A524863334EC99A /* SiyahambaClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SiyahambaClient.entitlements; sourceTree = "<group>"; };
-		D576FFCE0247F63DE9C3EBD2 /* ChordSimplifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordSimplifier.swift; sourceTree = "<group>"; };
 		D6FA9116C73430A0C786D478 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D989ACF83FE053F49B3E8B3B /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		DA93C2D813644687535A6DAA /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
@@ -254,7 +252,6 @@
 				F750FEB50C293B5C374F4372 /* ChordDiagramView.swift */,
 				BCFE8D2E979FAEBA0BE7107A /* ChordFingerings.swift */,
 				4FA47CF4B211B6945DC34DFC /* ChordModels.swift */,
-				D576FFCE0247F63DE9C3EBD2 /* ChordSimplifier.swift */,
 				8A0305A1D58F8F7C121CB98E /* ChordTransposer.swift */,
 				A0F7FDDF133EFE4572F04205 /* ChordView.swift */,
 			);
@@ -387,7 +384,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					FBF5B06C048BC69014B81DC9 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -404,10 +400,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				401B6C0F399E505AA42191B3 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */,
 				2D186A7C93F9A0252E9BB126 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -454,7 +449,6 @@
 				AA3697C61BACD138FA11D871 /* ChordDiagramView.swift in Sources */,
 				8E99B2EBC4CF2A4D5D47C469 /* ChordFingerings.swift in Sources */,
 				E810DBB0A8FD1CA1686F4223 /* ChordModels.swift in Sources */,
-				08D91F8C96A152B0AFFEF0C6 /* ChordSimplifier.swift in Sources */,
 				656E5505F5776F8AE658ED03 /* ChordTransposer.swift in Sources */,
 				E3FAC929E8D96470E7C7F373 /* ChordView.swift in Sources */,
 				FAA70805A8D0B80C83F49742 /* ContentView.swift in Sources */,
@@ -532,7 +526,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SiyahambaClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -639,7 +633,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SiyahambaClient/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -758,7 +752,7 @@
 				minimumVersion = 14.0.0;
 			};
 		};
-		8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+		8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -776,7 +770,7 @@
 		};
 		998BC93CD52AA9C6DAF56B92 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			package = 8C7BDC69548AFC39F866BE01 /* XCRemoteSwiftPackageReference "JWTDecode" */;
 			productName = JWTDecode;
 		};
 		FD861707765DFE48A0ABC096 /* ZIPFoundation */ = {

@@ -28,6 +28,9 @@ struct LyricsView: View {
                                     fontSize: fontSize
                                 )
                                 .id(line.id)
+                                .onTapGesture {
+                                    vm.engine.seek(to: line.start)
+                                }
                             }
                         }
                     }

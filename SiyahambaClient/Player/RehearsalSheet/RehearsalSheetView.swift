@@ -9,9 +9,8 @@ private struct ScrollOffsetKey: PreferenceKey {
 
 struct RehearsalSheetView: View {
     @Environment(PlayerViewModel.self) private var vm
-    @AppStorage("rehearsalSheet.fontSize") private var fontSize: Double = 22
+    @AppStorage("lyrics.fontSize") private var fontSize: Double = 36
     @AppStorage("rehearsalSheet.showReferencePanel") private var showReferencePanel: Bool = true
-    @AppStorage("chordView.difficultyLevel") private var difficultyLevelRaw: String = DifficultyLevel.avanzado.rawValue
 
     @State private var isFollowingPlayback: Bool = true
     @State private var lastAutoScrollOffset: CGFloat = 0
@@ -23,11 +22,6 @@ struct RehearsalSheetView: View {
     private static let chordColor = Color(red: 0.47, green: 0.66, blue: 0.84)
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
-
-    private func simplified(_ chord: String) -> String {
-        let level = DifficultyLevel(rawValue: difficultyLevelRaw) ?? .avanzado
-        return ChordSimplifier.simplify(chord, level: level)
-    }
 
     private var uniqueChords: [String] {
         let placeholders: Set<String> = ["N", "-", ""]
@@ -41,7 +35,7 @@ struct RehearsalSheetView: View {
             } else {
                 transposed = entry.chord
             }
-            let name = simplified(transposed)
+            let name = transposed
             if seen.insert(name).inserted {
                 result.append(name)
             }
@@ -49,8 +43,14 @@ struct RehearsalSheetView: View {
         return result
     }
 
-    private var currentSimplifiedChord: String {
-        simplified(vm.displayChord)
+    private var currentChordName: String {
+        vm.displayChord
+    }
+
+    private var offsetLabel: String {
+        let ms = Int((vm.lyricsOffset * 1000).rounded())
+        if ms == 0 { return "0ms" }
+        return ms > 0 ? "+\(ms)ms" : "\(ms)ms"
     }
 
     var body: some View {
@@ -82,7 +82,7 @@ struct RehearsalSheetView: View {
                                 isActive: line.id == vm.currentLine?.id,
                                 linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
                                 fontSize: fontSize,
-                                simplify: simplified
+                                simplify: { $0 }
                             )
                             .id(line.id)
                             .onTapGesture {
@@ -146,10 +146,22 @@ struct RehearsalSheetView: View {
                 Button {
                     showOffsetPopover.toggle()
                 } label: {
-                    Image(systemName: "timer")
-                        .font(.system(size: 16))
-                        .padding(10)
-                        .background(.ultraThinMaterial, in: Circle())
+                    HStack(spacing: 4) {
+                        Image(systemName: "timer")
+                        Text(offsetLabel)
+                            .monospacedDigit()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.4))
+                    .frame(width: 90)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(.white.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(.white.opacity(0.15), lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 .padding(12)
@@ -163,15 +175,21 @@ struct RehearsalSheetView: View {
                     showFontSizePopover.toggle()
                 } label: {
                     Text("Aa")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.white.opacity(0.15), lineWidth: 1)
+                        )
                 }
                 .buttonStyle(.plain)
                 .padding(12)
                 .popover(isPresented: $showFontSizePopover) {
-                    RehearsalFontSizePopover(fontSize: $fontSize)
+                    LyricsFontSizePopover()
                 }
             }
             .overlay(alignment: .bottomLeading) {
@@ -194,7 +212,7 @@ struct RehearsalSheetView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
                 ForEach(uniqueChords, id: \.self) { chordName in
-                    let isCurrent = chordName == currentSimplifiedChord && !currentSimplifiedChord.isEmpty
+                    let isCurrent = chordName == currentChordName && !currentChordName.isEmpty
                     VStack(spacing: 4) {
                         Text(chordName)
                             .font(.system(size: 14, weight: .bold))
@@ -226,7 +244,7 @@ struct RehearsalSheetView: View {
                 Text(String(format: "%.1fs", entry.start))
                     .font(.system(size: CGFloat(fontSize) * 0.6, design: .monospaced))
                     .foregroundStyle(Self.passedColor)
-                Text(simplified(entry.chord))
+                Text(entry.chord)
                     .font(.system(size: CGFloat(fontSize), weight: .bold))
                     .foregroundStyle(Self.chordColor)
             }
@@ -243,50 +261,6 @@ struct RehearsalSheetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Self.background)
-    }
-}
-
-private struct RehearsalFontSizePopover: View {
-    @Binding var fontSize: Double
-
-    private let minSize: Double = 14
-    private let maxSize: Double = 40
-    private let step: Double = 2
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Text("Tamaño letra")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Text("\(Int(fontSize))pt")
-                .font(.title2)
-                .monospacedDigit()
-
-            HStack(spacing: 16) {
-                Button("A−") {
-                    fontSize = max(minSize, fontSize - step)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(fontSize <= minSize)
-
-                Button("A+") {
-                    fontSize = min(maxSize, fontSize + step)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .disabled(fontSize >= maxSize)
-            }
-
-            Button("Restablecer") {
-                fontSize = 22
-            }
-            .buttonStyle(.bordered)
-            .disabled(fontSize == 22)
-        }
-        .padding(20)
-        .frame(minWidth: 200)
     }
 }
 

@@ -14,7 +14,7 @@ final class TunerEngine {
     var lockedString: GuitarString? = nil
     var permissionDenied: Bool = false
 
-    private let audioEngine = AVAudioEngine()
+    private var audioEngine = AVAudioEngine()
     private let playbackEngine: PlaybackEngine
     private var wasPlaying: Bool = false
 
@@ -57,6 +57,7 @@ final class TunerEngine {
         if audioEngine.isRunning {
             audioEngine.stop()
         }
+        audioEngine = AVAudioEngine()
         isActive = false
         detectedPitch = 0
         deviationCents = 0

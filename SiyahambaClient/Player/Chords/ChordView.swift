@@ -5,7 +5,6 @@ struct ChordView: View {
 
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
-    @AppStorage("chordView.difficultyLevel") private var difficultyLevelRaw: String = DifficultyLevel.avanzado.rawValue
 
     private var hasFingerings: Bool {
         !vm.chords.isEmpty
@@ -19,11 +18,6 @@ struct ChordView: View {
             }
         }
         return map
-    }
-
-    private func simplified(_ chordName: String) -> String {
-        let level = DifficultyLevel(rawValue: difficultyLevelRaw) ?? .avanzado
-        return ChordSimplifier.simplify(chordName, level: level)
     }
 
     private func fingerings(for chordName: String, fallbackEntry: ChordEntry?) -> [ChordPosition] {
@@ -42,50 +36,39 @@ struct ChordView: View {
             } else {
                 HStack(alignment: .top, spacing: 48) {
                     currentChordColumn
-                    if !simplified(vm.displayNextChord).isEmpty {
+                    if !vm.displayNextChord.isEmpty {
                         nextChordColumn
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            HStack(spacing: 8) {
-                Picker("Nivel", selection: $difficultyLevelRaw) {
-                    ForEach(DifficultyLevel.allCases, id: \.rawValue) { level in
-                        Text(level.rawValue).tag(level.rawValue)
-                    }
+            if hasFingerings {
+                Button {
+                    showDiagrams.toggle()
+                } label: {
+                    Image(systemName: showDiagrams ? "square.grid.3x3.fill" : "square.grid.3x3")
+                        .font(.title3)
                 }
-                .pickerStyle(.segmented)
-                .frame(width: 260)
-
-                if hasFingerings {
-                    Button {
-                        showDiagrams.toggle()
-                    } label: {
-                        Image(systemName: showDiagrams ? "square.grid.3x3.fill" : "square.grid.3x3")
-                            .font(.title3)
-                    }
-                    .buttonStyle(.plain)
-                }
+                .buttonStyle(.plain)
+                .padding(12)
             }
-            .padding(12)
         }
     }
 
     @ViewBuilder
     private var currentChordColumn: some View {
-        let displayCurrent = simplified(vm.displayChord)
         VStack(spacing: enlarged ? 8 : 4) {
-            Text(displayCurrent.isEmpty ? " " : displayCurrent)
+            Text(vm.displayChord.isEmpty ? " " : vm.displayChord)
                 .font(.system(size: enlarged ? 128 : 64, weight: .bold, design: .rounded))
                 .contentTransition(.numericText())
-                .animation(.easeInOut(duration: 0.15), value: displayCurrent)
+                .animation(.easeInOut(duration: 0.15), value: vm.displayChord)
                 .offset(x: enlarged ? -28 : -14)
 
-            if showDiagrams && hasFingerings && !displayCurrent.isEmpty {
-                let currentFingerings = fingerings(for: displayCurrent, fallbackEntry: vm.currentChord)
+            if showDiagrams && hasFingerings && !vm.displayChord.isEmpty {
+                let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
-                    ChordDiagramView(fingerings: currentFingerings, chord: displayCurrent)
+                    ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
                         .frame(width: enlarged ? 280 : 140, height: enlarged ? 280 : 140)
                 }
             }
@@ -94,19 +77,18 @@ struct ChordView: View {
 
     @ViewBuilder
     private var nextChordColumn: some View {
-        let displayNext = simplified(vm.displayNextChord)
         VStack(spacing: enlarged ? 8 : 4) {
-            Text(displayNext)
+            Text(vm.displayNextChord)
                 .font(.system(size: enlarged ? 64 : 32, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
                 .contentTransition(.numericText())
-                .animation(.easeInOut(duration: 0.15), value: displayNext)
+                .animation(.easeInOut(duration: 0.15), value: vm.displayNextChord)
                 .offset(x: enlarged ? -19 : -10)
 
-            if showDiagrams && hasFingerings && !displayNext.isEmpty {
-                let nextFingerings = fingerings(for: displayNext, fallbackEntry: vm.nextChord)
+            if showDiagrams && hasFingerings && !vm.displayNextChord.isEmpty {
+                let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
-                    ChordDiagramView(fingerings: nextFingerings, chord: displayNext, interactive: false)
+                    ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord, interactive: false)
                         .frame(width: enlarged ? 192 : 96, height: enlarged ? 192 : 96)
                         .opacity(0.5)
                 }
