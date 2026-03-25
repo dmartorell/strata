@@ -31,15 +31,16 @@ struct StemControlsView: View {
         VStack(spacing: 0) {
             ForEach(stems, id: \.index) { stem in
                 StemRowView(label: stem.label, stemIndex: stem.index)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 96)
                 if stem.index < stems.count - 1 {
                     Rectangle()
                         .fill(Color.white.opacity(0.08))
                         .frame(height: 1)
                 }
             }
+            Spacer()
         }
-        .padding(.vertical, 4)
         .background(SidebarVisualEffect())
     }
 }
@@ -78,7 +79,7 @@ private struct StemRowView: View {
             .frame(width: 70, height: 12)
         }
         .padding(.horizontal, 12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         .opacity(muted ? 0.6 : 1.0)
         .animation(.easeOut(duration: 0.15), value: muted)
     }

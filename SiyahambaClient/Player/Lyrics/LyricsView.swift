@@ -2,41 +2,43 @@ import SwiftUI
 
 struct LyricsView: View {
     @Environment(PlayerViewModel.self) private var vm
+    @AppStorage("lyrics.fontSize") private var fontSize: Double = 36
     @State private var showOffsetPopover = false
+    @State private var showFontSizePopover = false
 
     var body: some View {
         if vm.lyrics.isEmpty {
             emptyState
         } else {
-            ZStack(alignment: .topTrailing) {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(vm.lyrics) { line in
-                                if line.words.isEmpty && line.text.isEmpty {
-                                    Spacer()
-                                        .frame(height: 16)
-                                        .id(line.id)
-                                } else {
-                                    LyricLineView(
-                                        line: line,
-                                        isActive: line.id == vm.currentLine?.id,
-                                        linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset
-                                    )
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 16) {
+                        ForEach(vm.lyrics) { line in
+                            if line.words.isEmpty && line.text.isEmpty {
+                                Spacer()
+                                    .frame(height: 16)
                                     .id(line.id)
-                                }
+                            } else {
+                                LyricLineView(
+                                    line: line,
+                                    isActive: line.id == vm.currentLine?.id,
+                                    linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
+                                    fontSize: fontSize
+                                )
+                                .id(line.id)
                             }
                         }
-                        .padding(.vertical, 200)
                     }
-                    .onChange(of: vm.currentLine?.id) { _, newID in
-                        guard let id = newID else { return }
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            proxy.scrollTo(id, anchor: .center)
-                        }
+                    .padding(.vertical, 200)
+                }
+                .onChange(of: vm.currentLine?.id) { _, newID in
+                    guard let id = newID else { return }
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        proxy.scrollTo(id, anchor: .center)
                     }
                 }
-
+            }
+            .overlay(alignment: .topTrailing) {
                 Button {
                     showOffsetPopover.toggle()
                 } label: {
@@ -61,6 +63,28 @@ struct LyricsView: View {
                 .padding(12)
                 .popover(isPresented: $showOffsetPopover) {
                     LyricsOffsetPopover()
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Button {
+                    showFontSizePopover.toggle()
+                } label: {
+                    Text("Aa")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.white.opacity(0.15), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+                .padding(12)
+                .popover(isPresented: $showFontSizePopover) {
+                    LyricsFontSizePopover()
                 }
             }
             .background(Color(red: 0.10, green: 0.16, blue: 0.27))
@@ -91,6 +115,7 @@ private struct LyricLineView: View {
     let line: LyricLine
     let isActive: Bool
     let linePassed: Bool
+    var fontSize: Double = 36
 
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
@@ -103,7 +128,7 @@ private struct LyricLineView: View {
 
     var body: some View {
         Text(line.text)
-            .font(.system(size: 32, weight: .bold))
+            .font(.system(size: CGFloat(fontSize), weight: .bold))
             .foregroundColor(lineColor)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, alignment: .center)

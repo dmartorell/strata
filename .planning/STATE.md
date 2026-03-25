@@ -154,6 +154,7 @@ Recent decisions affecting current work:
 - Remove all Python dependencies once the app is fully built (tooling)
 - Handle app termination with import queue in progress (import)
 - Implement chord difficulty level filtering (ui)
+- Add font size controls to lyrics view (ui)
 
 ### Roadmap Evolution
 
