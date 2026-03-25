@@ -156,6 +156,7 @@ Recent decisions affecting current work:
 - Implement chord difficulty level filtering (ui)
 - Add font size controls to lyrics view (ui)
 - Add guitar tuner popup with string and tuning indicator (ui)
+- Implement persistent playback with mini-player (ui)
 
 ### Roadmap Evolution
 
