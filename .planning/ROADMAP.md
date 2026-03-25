@@ -19,7 +19,7 @@ El proyecto arranca con el backend serverless (Modal GPU), que es la dependencia
 - [ ] **Phase 7: Player UI + Display + Usage** - Controles de reproduccion, karaoke, acordes y panel de uso
 - [ ] **Phase 8: YouTube Download Client-Side** - Descarga de YouTube local con yt-dlp
 - [ ] **Phase 9: Chord Finger Position Diagrams** - Diagramas de posicion de dedos junto a nombres de acordes
-- [ ] **Phase 10: Chord Difficulty Level Filtering** - Simplificacion de acordes segun nivel de guitarra del usuario
+
 
 ## Phase Details
 
@@ -159,7 +159,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
 | 8. YouTube Download Client-Side | 0/? | Not Started|  |
 | 9. Chord Finger Position Diagrams | 2/2 | Complete   | 2026-03-24 |
-| 10. Chord Difficulty Level Filtering | 0/? | Not Started|  |
+
 
 ### Phase 8: YouTube Download Client-Side
 **Goal**: La descarga de audio de YouTube ocurre en el Mac del usuario usando yt-dlp local con `--cookies-from-browser`, eliminando la dependencia de cookies en Modal Secret. El audio descargado se sube al servidor por `/process-file` para procesamiento GPU.
@@ -190,16 +190,3 @@ Plans:
 - [ ] 09-01-PLAN.md — Server: guitar.json bundle, fingerings.py lookup, chords.py extension con fingerings
 - [ ] 09-02-PLAN.md — Client: ChordPosition model, ChordDiagramView Canvas, ChordView integration + toggle + layout
 
-### Phase 10: Chord Difficulty Level Filtering
-**Goal**: El usuario selecciona su nivel de guitarra (Principiante / Intermedio / Avanzado) y los acordes mostrados se simplifican automaticamente segun ese nivel, incluyendo los diagramas de posicion
-**Depends on**: Phase 9
-**Success Criteria** (what must be TRUE):
-  1. El usuario puede seleccionar entre 3 niveles de dificultad (Principiante / Intermedio / Avanzado) desde el player
-  2. En nivel Principiante los acordes complejos se simplifican a versiones basicas (ej: Cmaj7 → C, Dm/F → Dm)
-  3. En nivel Intermedio se muestran acordes con septimas y suspensiones pero se simplifican inversiones y extensiones complejas
-  4. En nivel Avanzado se muestran los acordes originales detectados por CREMA sin simplificacion
-  5. Los diagramas de fingering se actualizan para reflejar el acorde simplificado, no el original
-  6. La transposicion funciona correctamente combinada con la simplificacion de nivel
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 10 to break down)

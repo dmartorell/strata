@@ -7,7 +7,9 @@ struct LyricsView: View {
     @State private var showFontSizePopover = false
 
     var body: some View {
-        if vm.lyrics.isEmpty {
+        if vm.isLoadingLyrics {
+            loadingState
+        } else if vm.lyrics.isEmpty {
             emptyState
         } else {
             ScrollViewReader { proxy in
@@ -97,10 +99,23 @@ struct LyricsView: View {
         return ms > 0 ? "+\(ms)ms" : "\(ms)ms"
     }
 
+    private var loadingState: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+                .progressViewStyle(.circular)
+                .scaleEffect(1.4)
+                .tint(Color(red: 0.47, green: 0.66, blue: 0.84))
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 0.10, green: 0.16, blue: 0.27))
+    }
+
     private var emptyState: some View {
         VStack {
             Spacer()
-            Text("No tenemos letra, ¡improvisa!")
+            Text("No he encontrado letra\n¡Toca improvisar!")
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(Color(red: 0.47, green: 0.66, blue: 0.84).opacity(0.6))
                 .multilineTextAlignment(.center)

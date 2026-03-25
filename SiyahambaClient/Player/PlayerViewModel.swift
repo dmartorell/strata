@@ -7,6 +7,7 @@ final class PlayerViewModel {
     let song: SongEntry
     private(set) var lyrics: [LyricLine] = []
     private(set) var chords: [ChordEntry] = []
+    private(set) var isLoadingLyrics: Bool = false
     var showTransposed: Bool = false
     var lyricsOffset: Double = 0
 
@@ -76,6 +77,7 @@ final class PlayerViewModel {
 
     func loadRemoteMetadata() async {
         if lyrics.isEmpty {
+            isLoadingLyrics = true
             if let lyricsFile = await LRCLibService.shared.fetchLyrics(
                 title: song.title,
                 artist: song.artist,
@@ -84,6 +86,7 @@ final class PlayerViewModel {
                 lyrics = lyricsFile.segments
                 try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
             }
+            isLoadingLyrics = false
         }
     }
 

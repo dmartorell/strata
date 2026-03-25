@@ -155,6 +155,7 @@ Recent decisions affecting current work:
 - Handle app termination with import queue in progress (import)
 - Implement chord difficulty level filtering (ui)
 - Add font size controls to lyrics view (ui)
+- Add guitar tuner popup with string and tuning indicator (ui)
 
 ### Roadmap Evolution
 
