@@ -190,11 +190,12 @@ Recent decisions affecting current work:
 | 17 | Diagramas de acordes persistentes en pausa + fallback guitar.json + legibilidad mejorada | 2026-03-25 | b7aa6d5 | [17-refinar-diagramas-de-acordes-visibilidad](./quick/17-refinar-diagramas-de-acordes-visibilidad/) |
 | 18 | Refinar chord diagrams: padding O/X, spacing, centrado, variaciones por traste | 2026-03-25 | pending | [18-refinar-chord-diagrams-padding-lateral-o](./quick/18-refinar-chord-diagrams-padding-lateral-o/) |
 | 19 | Indicar número de dedo en cada posición del diagrama de acordes | 2026-03-25 | 85e7026 | [19-indicar-n-mero-de-dedo-en-cada-posici-n-](./quick/19-indicar-n-mero-de-dedo-en-cada-posici-n-/) |
+| 20 | Cancel GPU job from client — POST /cancel/{job_id} + client fire-and-forget integration | 2026-03-25 | 98bd096 | [20-cancel-gpu-job-from-client](./quick/20-cancel-gpu-job-from-client/) |
 
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed quick task 19 — Finger numbers inside chord diagram dots and barres
+Stopped at: Completed quick task 20 — Cancel GPU job endpoint + client integration
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)

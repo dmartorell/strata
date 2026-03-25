@@ -95,6 +95,11 @@ struct MultipartRequest {
 protocol ImportAPIClientProtocol: Sendable {
     func uploadAudio(fileData: Data, fileName: String, mimeType: String, token: String) async throws -> String
     func pollJobStatus(jobId: String, token: String, intervalSeconds: Double, maxAttempts: Int, onStageChange: (@Sendable (String) -> Void)?) async throws -> JobResult
+    func cancelJob(jobId: String, token: String) async throws
+}
+
+extension ImportAPIClientProtocol {
+    func cancelJob(jobId: String, token: String) async throws {}
 }
 
 extension ImportAPIClientProtocol {
@@ -209,6 +214,14 @@ struct APIClient: Sendable {
         }
 
         throw APIError.timeout
+    }
+
+    /// POST /cancel/{jobId} — cancela un job GPU en curso
+    func cancelJob(jobId: String, token: String) async throws {
+        let endpoint = APIEndpoint.cancel(jobId: jobId)
+        let request = makeRequest(endpoint: endpoint, token: token)
+        let (_, response) = try await transport.data(for: request)
+        try checkResponse(response, isAuthenticated: true)
     }
 
     /// GET /usage — consulta de uso mensual (UsageData con camelCase y EUR)

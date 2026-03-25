@@ -126,6 +126,10 @@ class ProcessingService:
             update_progress(stage)
             await asyncio.sleep(1.5)
 
+        # Check if job was cancelled during processing
+        if job_progress.get(job_id, "") == "cancelled":
+            return b""
+
         # Registrar uso antes de marcar como completado
         if record_usage is not None:
             record_usage(username=username, source_type=source_type, source_name=source_name)
@@ -264,6 +268,9 @@ class AudioPipeline:
                 "processed_at": datetime.utcnow().isoformat() + "Z",
                 "original_filename": source_name if source_type == "file" else None,
             }
+            if progress.get(job_id, "") == "cancelled":
+                return b""
+
             record_usage(username=username, source_type=source_type, source_name=source_name, gpu_seconds=gpu_seconds)
 
             result = package_results(stems, chords, metadata)
