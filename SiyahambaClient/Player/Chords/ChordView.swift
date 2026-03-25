@@ -32,22 +32,20 @@ struct ChordView: View {
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                HStack(alignment: .top, spacing: 24) {
+                HStack(alignment: .top, spacing: 48) {
                     currentChordColumn
                     if !vm.displayNextChord.isEmpty {
                         nextChordColumn
                     }
-                    Spacer()
                 }
-                .padding(.horizontal, 24)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
             if hasFingerings {
                 Button {
                     showDiagrams.toggle()
                 } label: {
-                    Image(systemName: showDiagrams ? "hand.raised.fingers.spread.fill" : "hand.raised.fingers.spread")
+                    Image(systemName: showDiagrams ? "square.grid.3x3.fill" : "square.grid.3x3")
                         .font(.title3)
                 }
                 .buttonStyle(.plain)
@@ -58,17 +56,18 @@ struct ChordView: View {
 
     @ViewBuilder
     private var currentChordColumn: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             Text(vm.displayChord.isEmpty ? " " : vm.displayChord)
-                .font(.system(size: 72, weight: .bold, design: .rounded))
+                .font(.system(size: 64, weight: .bold, design: .rounded))
                 .contentTransition(.numericText())
                 .animation(.easeInOut(duration: 0.15), value: vm.displayChord)
+                .offset(x: -9)
 
             if showDiagrams && hasFingerings && !vm.displayChord.isEmpty {
                 let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
                     ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
-                        .frame(width: 130, height: 150)
+                        .frame(width: 140, height: 130)
                 }
             }
         }
@@ -76,18 +75,19 @@ struct ChordView: View {
 
     @ViewBuilder
     private var nextChordColumn: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             Text(vm.displayNextChord)
-                .font(.system(size: 36, weight: .regular, design: .rounded))
+                .font(.system(size: 32, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
                 .contentTransition(.numericText())
                 .animation(.easeInOut(duration: 0.15), value: vm.displayNextChord)
+                .offset(x: -6)
 
             if showDiagrams && hasFingerings && !vm.displayNextChord.isEmpty {
                 let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
                     ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord)
-                        .frame(width: 90, height: 108)
+                        .frame(width: 96, height: 90)
                         .opacity(0.5)
                 }
             }

@@ -6,9 +6,14 @@ struct ChordDiagramView: View {
     @State private var variationIndex = 0
     @Environment(\.colorScheme) private var colorScheme
 
+    private var sortedFingerings: [ChordPosition] {
+        fingerings.sorted { $0.baseFret < $1.baseFret }
+    }
+
     private var position: ChordPosition {
-        let clamped = min(max(variationIndex, 0), fingerings.count - 1)
-        return fingerings[clamped]
+        let count = sortedFingerings.count
+        guard count > 0 else { return sortedFingerings[0] }
+        return sortedFingerings[((variationIndex % count) + count) % count]
     }
 
     private var drawColor: Color { colorScheme == .dark ? .white : .black }
@@ -19,8 +24,16 @@ struct ChordDiagramView: View {
                 .id(chord + String(variationIndex))
                 .transition(.opacity)
                 .animation(.easeInOut(duration: 0.15), value: chord)
+                .animation(.easeInOut(duration: 0.12), value: variationIndex)
+                .onTapGesture {
+                    if sortedFingerings.count > 1 {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            variationIndex += 1
+                        }
+                    }
+                }
 
-            if fingerings.count > 1 {
+            if sortedFingerings.count > 1 {
                 navigationRow
             }
         }
@@ -34,11 +47,12 @@ struct ChordDiagramView: View {
             let fretCount = 4
             let stringCount = 6
             let oxAreaHeight: CGFloat = 18
-            let fretLabelWidth: CGFloat = position.baseFret > 1 ? 28 : 0
+            let fretLabelWidth: CGFloat = 28
+            let sidePadding: CGFloat = 10
 
-            let gridX: CGFloat = 0
+            let gridX: CGFloat = sidePadding
             let gridY: CGFloat = oxAreaHeight
-            let gridWidth = size.width - fretLabelWidth
+            let gridWidth = size.width - fretLabelWidth - sidePadding * 2
             let gridHeight = size.height - oxAreaHeight
 
             let stringSpacing = gridWidth / CGFloat(stringCount - 1)
@@ -133,7 +147,7 @@ struct ChordDiagramView: View {
 
             // Draw fret number when baseFret > 1
             if position.baseFret > 1 {
-                let labelX = gridX + gridWidth + 4
+                let labelX = gridX + gridWidth + dotRadius + 6
                 let labelY = gridY + fretSpacing * 0.5
                 context.draw(
                     Text("\(position.baseFret)fr").font(.caption).foregroundStyle(drawColor),
@@ -145,31 +159,28 @@ struct ChordDiagramView: View {
     }
 
     private var navigationRow: some View {
-        HStack(spacing: 6) {
+        HStack {
             Button {
-                variationIndex = max(0, variationIndex - 1)
+                withAnimation(.easeInOut(duration: 0.15)) { variationIndex -= 1 }
             } label: {
                 Image(systemName: "chevron.left")
                     .frame(width: 24, height: 24)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .disabled(variationIndex == 0)
-
-            Text("\(variationIndex + 1)/\(fingerings.count)")
-                .font(.caption)
-                .monospacedDigit()
+            Spacer()
 
             Button {
-                variationIndex = min(fingerings.count - 1, variationIndex + 1)
+                withAnimation(.easeInOut(duration: 0.15)) { variationIndex += 1 }
             } label: {
                 Image(systemName: "chevron.right")
                     .frame(width: 24, height: 24)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .disabled(variationIndex == fingerings.count - 1)
         }
+        .padding(.leading, 10)
+        .padding(.trailing, 38)
         .font(.caption)
     }
 }

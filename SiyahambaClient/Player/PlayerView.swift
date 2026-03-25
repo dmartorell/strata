@@ -127,7 +127,7 @@ struct PlayerView: View {
                 }
                 if showChords {
                     ChordView()
-                        .frame(maxHeight: showLyrics ? (showDiagrams ? 400 : 220) : .infinity)
+                        .frame(maxHeight: showLyrics ? (showDiagrams ? 300 : 180) : .infinity)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

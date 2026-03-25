@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-24 - Completed 09-02: Guitar chord finger position diagrams in ChordView
+Last activity: 2026-03-25 - Completed quick task 18: Chord diagram padding, centering, spacing, variation ordering
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -187,6 +187,7 @@ Recent decisions affecting current work:
 | 15 | Metadata confirmation sheet before batch processing | 2026-03-24 | fcfa380 | [15-metadata-confirmation-sheet-before-batch](./quick/15-metadata-confirmation-sheet-before-batch/) |
 | 16 | Modal billing API para credito real en UsageView (reemplaza estimacion local) | 2026-03-24 | ca2af1f | [16-investigar-api-modal-para-cr-dito-dispon](./quick/16-investigar-api-modal-para-cr-dito-dispon/) |
 | 17 | Diagramas de acordes persistentes en pausa + fallback guitar.json + legibilidad mejorada | 2026-03-25 | b7aa6d5 | [17-refinar-diagramas-de-acordes-visibilidad](./quick/17-refinar-diagramas-de-acordes-visibilidad/) |
+| 18 | Refinar chord diagrams: padding O/X, spacing, centrado, variaciones por traste | 2026-03-25 | pending | [18-refinar-chord-diagrams-padding-lateral-o](./quick/18-refinar-chord-diagrams-padding-lateral-o/) |
 
 ## Session Continuity
 
