@@ -50,9 +50,9 @@ struct TunerView: View {
     private var tunerLabel: some View {
         HStack(spacing: 5) {
             Image(systemName: "tuningfork")
-                .font(.system(size: 11))
+                .font(.system(size: 13))
             Text("Afinar")
-                .font(.system(size: 11))
+                .font(.system(size: 13))
                 .animation(nil, value: isExpanded)
         }
         .foregroundStyle(isExpanded ? Color.yellow : Color.secondary)

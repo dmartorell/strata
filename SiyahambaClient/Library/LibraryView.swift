@@ -108,6 +108,7 @@ struct LibraryView: View {
                 }
                 .width(80)
             }
+            .font(.system(size: 14))
             .onDeleteCommand {
                 let nonPlaceholders = selection.filter { id in
                     libraryStore.songs.first(where: { $0.id == id })?.isPlaceholder != true

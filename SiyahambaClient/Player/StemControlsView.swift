@@ -59,7 +59,7 @@ private struct StemRowView: View {
 
         HStack(spacing: 8) {
             Text(label)
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(muted ? .tertiary : .secondary)
                 .frame(width: 52, alignment: .leading)
 

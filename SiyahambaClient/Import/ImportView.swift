@@ -38,7 +38,7 @@ struct ImportView: View {
                     .font(.system(size: 24))
                     .foregroundStyle(.secondary)
                 Text("Arrastra un archivo de audio aquí")
-                    .font(.subheadline)
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)
             }
         }

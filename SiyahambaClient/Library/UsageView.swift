@@ -11,7 +11,7 @@ struct UsageView: View {
             if let u = cachedUsage {
                 let remaining = String(format: "%.2f", u.creditRemainingEur)
                 Text("Crédito: €\(remaining)")
-                    .font(.caption)
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(creditColor(for: u))
             } else if !loadError {
                 ProgressView()

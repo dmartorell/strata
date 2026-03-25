@@ -75,7 +75,7 @@ struct TransportBarView: View {
                 Spacer(minLength: 0)
                 HStack(spacing: 8) {
                     Text(formatTime(engine.currentTime))
-                        .font(.caption)
+                        .font(.system(size: 13, weight: .medium))
                         .monospacedDigit()
                         .frame(minWidth: 40, alignment: .trailing)
 
@@ -95,7 +95,7 @@ struct TransportBarView: View {
                     )
 
                     Text(formatTime(engine.duration))
-                        .font(.caption)
+                        .font(.system(size: 13, weight: .medium))
                         .monospacedDigit()
                         .frame(minWidth: 40, alignment: .leading)
                 }
