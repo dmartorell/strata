@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-25 - Completed quick task 19: Indicar número de dedo en cada posición del diagrama de acordes
+Last activity: 2026-03-25 - Completed quick task 22: Add guitar tuner popup with string and tuning indicator
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -155,7 +155,7 @@ Recent decisions affecting current work:
 - Handle app termination with import queue in progress (import)
 - Implement chord difficulty level filtering (ui)
 - Add font size controls to lyrics view (ui)
-- Add guitar tuner popup with string and tuning indicator (ui)
+- ~~Add guitar tuner popup with string and tuning indicator (ui)~~ DONE (quick task 22)
 - Implement persistent playback with mini-player (ui)
 
 ### Roadmap Evolution
@@ -194,11 +194,12 @@ Recent decisions affecting current work:
 | 19 | Indicar número de dedo en cada posición del diagrama de acordes | 2026-03-25 | 85e7026 | [19-indicar-n-mero-de-dedo-en-cada-posici-n-](./quick/19-indicar-n-mero-de-dedo-en-cada-posici-n-/) |
 | 20 | Cancel GPU job from client — POST /cancel/{job_id} + client fire-and-forget integration | 2026-03-25 | 98bd096 | [20-cancel-gpu-job-from-client](./quick/20-cancel-gpu-job-from-client/) |
 | 21 | Global drag-and-drop con marco verde en toda la ventana + MetadataConfirmationSheet a nivel app | 2026-03-25 | 1445e99 | [21-global-drag-and-drop-con-marco-verde-en-](./quick/21-global-drag-and-drop-con-marco-verde-en-/) |
+| 22 | Add guitar tuner popup with string and tuning indicator | 2026-03-25 | 2217cb4 | [22-add-guitar-tuner-popup-with-string-and-t](./quick/22-add-guitar-tuner-popup-with-string-and-t/) |
 
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed quick task 21 — Global drag-and-drop con marco verde y sheet metadata a nivel ContentView
+Stopped at: Completed quick task 22 — Guitar tuner in stem sidebar with vDSP pitch detection, awaiting human-verify checkpoint
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
