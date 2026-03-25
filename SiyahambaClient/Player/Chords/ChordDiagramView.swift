@@ -32,7 +32,6 @@ struct ChordDiagramView: View {
 .onHover { inside in
                 guard interactive, sortedFingerings.count > 1 else { return }
                 withAnimation(.easeInOut(duration: 0.12)) { isHoveringDiagram = inside }
-                if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
             }
             .onTapGesture {
                 guard sortedFingerings.count > 1 else { return }

@@ -4,6 +4,7 @@ import SwiftUI
 
 struct TunerView: View {
     @Environment(TunerEngine.self) private var tuner
+    @Environment(PlaybackEngine.self) private var engine
     @State private var isExpanded = false
 
     var body: some View {
@@ -13,43 +14,50 @@ struct TunerView: View {
 
             if isExpanded {
                 expandedContent
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .transition(.opacity)
             }
 
-            collapseButton
+            tunerLabel
         }
-        .animation(.easeOut(duration: 0.2), value: isExpanded)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.easeOut(duration: 0.15)) {
+                if isExpanded {
+                    tuner.stop()
+                    isExpanded = false
+                } else {
+                    isExpanded = true
+                    tuner.start()
+                }
+            }
+        }
         .onDisappear {
             if tuner.isActive {
-                tuner.stop()
+                tuner.stopWithoutResume()
                 isExpanded = false
+            }
+        }
+        .onChange(of: engine.isPlaying) { _, playing in
+            if playing && tuner.isActive {
+                tuner.stopWithoutResume()
+                withAnimation(.easeOut(duration: 0.15)) {
+                    isExpanded = false
+                }
             }
         }
     }
 
-    // MARK: - Collapsed Button
-
-    private var collapseButton: some View {
-        Button {
-            if isExpanded {
-                tuner.stop()
-                isExpanded = false
-            } else {
-                isExpanded = true
-                tuner.start()
-            }
-        } label: {
-            HStack(spacing: 5) {
-                Image(systemName: "tuningfork")
-                    .font(.system(size: 11))
-                Text("Afinar")
-                    .font(.system(size: 11))
-            }
-            .foregroundStyle(isExpanded ? Color.yellow : Color.secondary)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+    private var tunerLabel: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "tuningfork")
+                .font(.system(size: 11))
+            Text("Afinar")
+                .font(.system(size: 11))
+                .animation(nil, value: isExpanded)
         }
-        .buttonStyle(.plain)
+        .foregroundStyle(isExpanded ? Color.yellow : Color.secondary)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Expanded Content
@@ -65,13 +73,13 @@ struct TunerView: View {
             } else {
                 pitchDisplay
                 deviationBar
+                Spacer().frame(height: 3)
                 stringSelector
-                closeButton
             }
         }
         .padding(.horizontal, 10)
         .padding(.top, 10)
-        .padding(.bottom, 6)
+        .padding(.bottom, 10)
     }
 
     // MARK: - Pitch Display
@@ -180,18 +188,4 @@ struct TunerView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Close Button
-
-    private var closeButton: some View {
-        Button {
-            tuner.stop()
-            isExpanded = false
-        } label: {
-            Text("Cerrar")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-        }
-        .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, alignment: .trailing)
-    }
 }

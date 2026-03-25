@@ -3,13 +3,9 @@ import Accelerate
 import Foundation
 import Observation
 
-// MARK: - TunerEngine
-
 @Observable
 @MainActor
 final class TunerEngine {
-
-    // MARK: - Public State
 
     var detectedPitch: Double = 0
     var closestString: GuitarString = .e2
@@ -18,22 +14,23 @@ final class TunerEngine {
     var lockedString: GuitarString? = nil
     var permissionDenied: Bool = false
 
-    // MARK: - Private
-
     private let audioEngine = AVAudioEngine()
     private let playbackEngine: PlaybackEngine
     private var wasPlaying: Bool = false
-    private var lastUpdateTime: TimeInterval = 0
 
-    // MARK: - Init
+    private var smoothedPitch: Double = 0
+    private let smoothingFactor: Double = 0.3
+    private var pitchHistory: [Double] = []
+    private let historySize = 5
+    private let noiseFloor: Float = 0.01
 
     init(playbackEngine: PlaybackEngine) {
         self.playbackEngine = playbackEngine
     }
 
-    // MARK: - Public API
-
     func start() {
+        smoothedPitch = 0
+        pitchHistory = []
         Task {
             let granted = await AVCaptureDevice.requestAccess(for: .audio)
             await MainActor.run {
@@ -47,6 +44,14 @@ final class TunerEngine {
     }
 
     func stop() {
+        stop(resumePlayback: true)
+    }
+
+    func stopWithoutResume() {
+        stop(resumePlayback: false)
+    }
+
+    private func stop(resumePlayback: Bool) {
         guard isActive else { return }
         audioEngine.inputNode.removeTap(onBus: 0)
         if audioEngine.isRunning {
@@ -55,13 +60,13 @@ final class TunerEngine {
         isActive = false
         detectedPitch = 0
         deviationCents = 0
-        if wasPlaying {
+        smoothedPitch = 0
+        pitchHistory = []
+        if resumePlayback && wasPlaying {
             playbackEngine.play()
         }
         wasPlaying = false
     }
-
-    // MARK: - Private
 
     private func startAudioEngine() {
         wasPlaying = playbackEngine.isPlaying
@@ -71,7 +76,6 @@ final class TunerEngine {
 
         let inputNode = audioEngine.inputNode
         let inputFormat = inputNode.outputFormat(forBus: 0)
-
         let sampleRate = inputFormat.sampleRate
         let bufferSize: AVAudioFrameCount = 4096
 
@@ -89,88 +93,120 @@ final class TunerEngine {
     }
 
     private func processAudioBuffer(_ buffer: AVAudioPCMBuffer, sampleRate: Double) {
-        let now = Date.timeIntervalSinceReferenceDate
-        guard now - lastUpdateTime >= 0.1 else { return }
-
         guard let channelData = buffer.floatChannelData?[0] else { return }
         let frameCount = Int(buffer.frameLength)
         guard frameCount > 0 else { return }
 
-        var samples = [Float](UnsafeBufferPointer(start: channelData, count: frameCount))
+        let samples = Array(UnsafeBufferPointer(start: channelData, count: frameCount))
 
-        // Apply Hanning window
-        var window = [Float](repeating: 0, count: frameCount)
-        vDSP_hann_window(&window, vDSP_Length(frameCount), Int32(vDSP_HANN_NORM))
-        vDSP_vmul(samples, 1, window, 1, &samples, 1, vDSP_Length(frameCount))
+        var rms: Float = 0
+        vDSP_rmsqv(samples, 1, &rms, vDSP_Length(frameCount))
+        guard rms > noiseFloor else { return }
 
-        // Compute autocorrelation manually for lag range of interest
-        // r[lag] = sum(samples[i] * samples[i+lag]) for i in 0..N-1-lag
-        let r0 = samples.reduce(0) { $0 + $1 * $1 }
-        guard r0 > 0 else { return }
+        let minLag = Int(sampleRate / 350.0)
+        let maxLag = min(Int(sampleRate / 75.0), frameCount / 2)
+        guard minLag < maxLag else { return }
 
-        // Search range: lag indices covering E2 (82Hz) to E4 (330Hz) with margin
-        let minLag = Int(sampleRate / 350.0)  // ~126 samples @ 44100
-        let maxLag = Int(sampleRate / 75.0)   // ~588 samples @ 44100
+        let frequency = yinPitchDetect(samples: samples, sampleRate: sampleRate, minLag: minLag, maxLag: maxLag)
+        guard frequency > 0 else { return }
 
-        guard minLag < maxLag, maxLag < frameCount else { return }
-
-        // Build correlation values for search range using vDSP inner product
-        var peakValue: Float = -Float.infinity
-        var peakIndex = minLag
-        var correlationAtPeak: (prev: Float, next: Float) = (0, 0)
-
-        for lag in minLag...maxLag {
-            var dotProduct: Float = 0
-            let count = frameCount - lag
-            vDSP_dotpr(samples, 1, Array(samples[lag...]), 1, &dotProduct, vDSP_Length(count))
-            if dotProduct > peakValue {
-                peakValue = dotProduct
-                peakIndex = lag
-                let prevLag = lag - 1
-                let nextLag = lag + 1
-                var prev: Float = 0
-                var next: Float = 0
-                if prevLag >= minLag {
-                    vDSP_dotpr(samples, 1, Array(samples[prevLag...]), 1, &prev, vDSP_Length(frameCount - prevLag))
-                }
-                if nextLag <= maxLag {
-                    vDSP_dotpr(samples, 1, Array(samples[nextLag...]), 1, &next, vDSP_Length(frameCount - nextLag))
-                }
-                correlationAtPeak = (prev, next)
-            }
+        pitchHistory.append(frequency)
+        if pitchHistory.count > historySize {
+            pitchHistory.removeFirst()
         }
 
-        // Confidence check: peak must exceed 20% of r0
-        guard peakValue > 0.2 * r0 else { return }
+        let medianPitch = medianFilter(pitchHistory)
 
-        // Parabolic interpolation for sub-sample accuracy
-        let lagF: Double
-        let y1 = Double(correlationAtPeak.prev)
-        let y2 = Double(peakValue)
-        let y3 = Double(correlationAtPeak.next)
-        let denom = 2.0 * (2.0 * y2 - y1 - y3)
-        if denom != 0 {
-            lagF = Double(peakIndex) + (y1 - y3) / denom
+        if smoothedPitch == 0 {
+            smoothedPitch = medianPitch
         } else {
-            lagF = Double(peakIndex)
+            smoothedPitch = smoothedPitch * (1.0 - smoothingFactor) + medianPitch * smoothingFactor
         }
 
-        guard lagF > 0 else { return }
-        let frequency = sampleRate / lagF
-
-        lastUpdateTime = now
-
-        let pitch = frequency
         let target: GuitarString
         if let locked = lockedString {
             target = locked
         } else {
-            target = GuitarString.closestString(to: pitch)
+            target = GuitarString.closestString(to: smoothedPitch)
         }
-        let cents = GuitarString.deviationInCents(pitch: pitch, target: target.frequency)
+        let cents = GuitarString.deviationInCents(pitch: smoothedPitch, target: target.frequency)
 
-        detectedPitch = pitch
+        detectedPitch = smoothedPitch
         closestString = target
         deviationCents = cents
+    }
+
+    private func yinPitchDetect(samples: [Float], sampleRate: Double, minLag: Int, maxLag: Int) -> Double {
+        let n = samples.count
+
+        var diff = [Float](repeating: 0, count: maxLag + 1)
+        for tau in 1...maxLag {
+            var sum: Float = 0
+            let count = n - tau
+            for i in 0..<count {
+                let d = samples[i] - samples[i + tau]
+                sum += d * d
+            }
+            diff[tau] = sum
+        }
+
+        var cmnd = [Float](repeating: 1.0, count: maxLag + 1)
+        var runningSum: Float = 0
+        for tau in 1...maxLag {
+            runningSum += diff[tau]
+            if runningSum > 0 {
+                cmnd[tau] = diff[tau] * Float(tau) / runningSum
+            }
+        }
+
+        let threshold: Float = 0.15
+        var bestTau = -1
+
+        for tau in minLag...maxLag {
+            if cmnd[tau] < threshold {
+                while tau + 1 <= maxLag && cmnd[tau + 1] < cmnd[tau] {
+                    bestTau = tau + 1
+                    break
+                }
+                if bestTau < 0 { bestTau = tau }
+                break
+            }
+        }
+
+        if bestTau < 0 {
+            var minVal: Float = Float.infinity
+            for tau in minLag...maxLag {
+                if cmnd[tau] < minVal {
+                    minVal = cmnd[tau]
+                    bestTau = tau
+                }
+            }
+            guard minVal < 0.4 else { return 0 }
+        }
+
+        guard bestTau > 0, bestTau < maxLag else { return 0 }
+
+        let y1 = Double(cmnd[bestTau - 1])
+        let y2 = Double(cmnd[bestTau])
+        let y3 = Double(cmnd[bestTau + 1])
+        let denom = 2.0 * y2 - y1 - y3
+        let adjustedTau: Double
+        if denom != 0 {
+            adjustedTau = Double(bestTau) + (y1 - y3) / (2.0 * denom)
+        } else {
+            adjustedTau = Double(bestTau)
+        }
+
+        guard adjustedTau > 0 else { return 0 }
+        return sampleRate / adjustedTau
+    }
+
+    private func medianFilter(_ values: [Double]) -> Double {
+        let sorted = values.sorted()
+        let mid = sorted.count / 2
+        if sorted.count % 2 == 0 && sorted.count >= 2 {
+            return (sorted[mid - 1] + sorted[mid]) / 2.0
+        }
+        return sorted[mid]
     }
 }
