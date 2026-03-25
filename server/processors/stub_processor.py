@@ -34,6 +34,31 @@ def _get_pipeline():
     return modal.Cls.from_name("siyahamba", "AudioPipeline")()
 
 
+@router.post("/cancel/{job_id}")
+async def cancel_job(job_id: str, username: str = Depends(require_auth)):
+    import modal
+
+    job_dict = _get_job_dict()
+
+    try:
+        status = await job_dict.get.aio(job_id, "unknown")
+    except Exception:
+        status = "unknown"
+
+    if status in ("completed", "unknown") or (isinstance(status, str) and status.startswith("error:")):
+        return {"status": "already_finished", "job_id": job_id}
+
+    await job_dict.put.aio(job_id, "cancelled")
+
+    try:
+        call = modal.FunctionCall.from_id(job_id)
+        await call.cancel.aio()
+    except Exception:
+        pass
+
+    return {"status": "cancelled", "job_id": job_id}
+
+
 @router.post("/process-file")
 async def process_file(
     audio_file: UploadFile,
