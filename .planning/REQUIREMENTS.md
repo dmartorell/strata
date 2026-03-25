@@ -54,6 +54,16 @@
 - [x] **CHRD-03**: App shows guitar chord finger position diagram below chord name via SwiftUI Canvas
 - [x] **CHRD-04**: App shows diagrams for both current and next chord with visual hierarchy (current full-size, next smaller/dimmer)
 - [x] **CHRD-05**: App provides toggle for diagram visibility (persisted in UserDefaults, enabled by default) with variation navigation
+- [ ] **CHRD-06**: App provides difficulty level selector (Principiante/Intermedio/Avanzado) that simplifies chord names at display time
+- [ ] **CHRD-07**: Simplified chord names resolve correct fingering diagrams via ChordFingerings.lookup()
+
+### Rehearsal Sheet
+
+- [ ] **RHRS-01**: App displays rehearsal sheet with chord names positioned inline above the lyrics word where the chord change occurs
+- [ ] **RHRS-02**: Rehearsal sheet auto-scrolls synchronized to playback with line-level highlighting (current/passed/upcoming)
+- [ ] **RHRS-03**: Lines wrap naturally when content exceeds window width with chords staying attached to their word
+- [ ] **RHRS-04**: User can activate rehearsal sheet via R key shortcut or "Ensayo" toggle in transport bar
+- [ ] **RHRS-05**: Collapsible reference panel at bottom shows chord diagrams for all unique chords in the song
 
 ### Library
 
@@ -149,14 +159,21 @@
 | USGR-02 | Phase 7 | Complete |
 | USGR-03 | Phase 7 | Complete |
 | USGR-04 | Phase 7 | Complete |
+| CHRD-06 | Phase 10 | Pending |
+| CHRD-07 | Phase 10 | Pending |
+| RHRS-01 | Phase 10 | Pending |
+| RHRS-02 | Phase 10 | Pending |
+| RHRS-03 | Phase 10 | Pending |
+| RHRS-04 | Phase 10 | Pending |
+| RHRS-05 | Phase 10 | Pending |
 | INFR-01 | Phase 1 | Complete |
 | INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 1 | Pending |
 | INFR-04 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 42 total
-- Mapped to phases: 42
+- v1 requirements: 49 total
+- Mapped to phases: 49
 - Unmapped: 0
 
 ---

@@ -159,6 +159,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
 | 8. YouTube Download Client-Side | 0/? | Not Started|  |
 | 9. Chord Finger Position Diagrams | 2/2 | Complete   | 2026-03-24 |
+| 10. Rehearsal Sheet View | 0/3 | Not Started|  |
 
 
 ### Phase 8: YouTube Download Client-Side
@@ -190,3 +191,22 @@ Plans:
 - [ ] 09-01-PLAN.md — Server: guitar.json bundle, fingerings.py lookup, chords.py extension con fingerings
 - [ ] 09-02-PLAN.md — Client: ChordPosition model, ChordDiagramView Canvas, ChordView integration + toggle + layout
 
+
+### Phase 10: Rehearsal sheet view with lyrics and positioned chord diagrams
+
+**Goal:** El usuario ve una vista de "hoja de ensayo" estilo Ultimate Guitar con acordes posicionados inline encima de las letras, panel de referencia con diagramas, selector de dificultad de acordes, y controles de fuente/offset — todo sincronizado con la reproducción
+**Requirements**: RHRS-01, RHRS-02, RHRS-03, RHRS-04, RHRS-05, CHRD-06, CHRD-07
+**Depends on:** Phase 9
+**Success Criteria** (what must be TRUE):
+  1. El usuario puede activar la vista de ensayo con la tecla R o el botón "Ensayo" en la barra de transporte
+  2. Los acordes aparecen inline encima de la palabra donde ocurre el cambio de acorde
+  3. La vista se desplaza automáticamente siguiendo la reproducción con highlighting por línea
+  4. Un panel de referencia muestra diagramas de acordes de todos los acordes únicos de la canción
+  5. El selector de dificultad (Principiante/Intermedio/Avanzado) simplifica nombres de acordes en tiempo real
+  6. El modo de visualización persiste por canción al volver a la biblioteca
+**Plans:** 3 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — ChordSimplifier + selector de dificultad en ChordView
+- [ ] 10-02-PLAN.md — RehearsalSheetView core: layout inline, auto-scroll, highlighting
+- [ ] 10-03-PLAN.md — Integración: PlayerView wiring, TransportBar toggle, panel de referencia, controles

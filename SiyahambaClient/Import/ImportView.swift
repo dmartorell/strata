@@ -33,13 +33,17 @@ struct ImportView: View {
                         .fill(isDragTargeted ? Color.accentColor.opacity(0.08) : Color.clear)
                 )
 
-            VStack(spacing: 6) {
+            VStack(spacing: 10) {
                 Image(systemName: "square.and.arrow.down")
                     .font(.system(size: 24))
                     .foregroundStyle(.secondary)
                 Text("Arrastra un archivo de audio aquí")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.secondary)
+
+                Button("Selecciona archivo") { openFilePicker() }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
             }
         }
         .onDrop(of: [UTType.audio], isTargeted: $isDragTargeted) { providers in
@@ -178,5 +182,23 @@ struct ImportView: View {
         case .ready, .cancelled, .error: return true
         default: return false
         }
+    }
+
+    private func openFilePicker() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [UTType.audio]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        guard panel.runModal() == .OK, !panel.urls.isEmpty else { return }
+
+        let files: [(fileURL: URL, originalURL: URL?)] = panel.urls.map { url in
+            let tmpDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString, isDirectory: true)
+            try? FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+            let copy = tmpDir.appendingPathComponent(url.lastPathComponent)
+            try? FileManager.default.copyItem(at: url, to: copy)
+            return (fileURL: copy, originalURL: url)
+        }
+        importViewModel.collectPendingFiles(files)
     }
 }

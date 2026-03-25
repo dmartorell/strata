@@ -162,6 +162,7 @@ Recent decisions affecting current work:
 
 - Phase 8 added: YouTube Download Client-Side — descarga local con yt-dlp y upload por /process-file (elimina dependencia de cookies en Modal)
 - Phase 9 added: Show chord finger position diagram alongside chord name
+- Phase 10 added: Rehearsal sheet view with lyrics and positioned chord diagrams
 
 ### Blockers/Concerns
 

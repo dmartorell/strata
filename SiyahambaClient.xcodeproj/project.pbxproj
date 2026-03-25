@@ -523,6 +523,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client;
+				PRODUCT_NAME = Siyahamba;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};
@@ -630,6 +631,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.siyahamba.client;
+				PRODUCT_NAME = Siyahamba;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};
