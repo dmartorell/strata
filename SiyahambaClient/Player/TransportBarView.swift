@@ -107,38 +107,18 @@ struct TransportBarView: View {
 
             ZStack {
                 HStack(spacing: 24) {
-                    Button {
+                    transportButton("gobackward.5") {
                         engine.seek(to: max(0, engine.currentTime - 5))
-                    } label: {
-                        Image(systemName: "gobackward.5")
                     }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        if engine.isPlaying {
-                            engine.pause()
-                        } else {
-                            engine.play()
-                        }
-                    } label: {
-                        Image(systemName: engine.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.title)
+                    transportButton(engine.isPlaying ? "pause.fill" : "play.fill", large: true) {
+                        if engine.isPlaying { engine.pause() } else { engine.play() }
                     }
-                    .buttonStyle(.plain)
-
-                    Button {
+                    transportButton("goforward.5") {
                         engine.seek(to: min(engine.duration, engine.currentTime + 5))
-                    } label: {
-                        Image(systemName: "goforward.5")
                     }
-                    .buttonStyle(.plain)
-
-                    Button {
+                    transportButton("backward.end.fill") {
                         engine.seek(to: 0)
-                    } label: {
-                        Image(systemName: "backward.end.fill")
                     }
-                    .buttonStyle(.plain)
                 }
 
                 HStack {
@@ -200,7 +180,17 @@ struct TransportBarView: View {
         .opacity(enabled ? 1 : 0.4)
     }
 
-private var pitchLabel: String {
+    private func transportButton(_ icon: String, large: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(large ? .title : .body)
+                .frame(width: 32, height: 32)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(TransportButtonStyle())
+    }
+
+    private var pitchLabel: String {
         let semitones = engine.pitchSemitones
         if let key = vm.song.key {
             return ChordTransposer.transpose(key, semitones: semitones)
@@ -214,5 +204,20 @@ private var pitchLabel: String {
         let minutes = Int(s) / 60
         let secs = Int(s) % 60
         return String(format: "%d:%02d", minutes, secs)
+    }
+}
+
+private struct TransportButtonStyle: ButtonStyle {
+    @State private var isHovered = false
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(6)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.primary.opacity(isHovered ? 0.1 : 0))
+            )
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
+            .onHover { isHovered = $0 }
     }
 }

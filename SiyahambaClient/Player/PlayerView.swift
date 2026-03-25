@@ -90,6 +90,22 @@ struct PlayerView: View {
             engine.seek(to: min(engine.duration, engine.currentTime + 5))
             return .handled
         }
+        .onKeyPress(characters: CharacterSet(charactersIn: "l")) { _ in
+            guard playerVM != nil && !playerVM!.lyrics.isEmpty else { return .ignored }
+            showLyrics = true
+            showChords = false
+            return .handled
+        }
+        .onKeyPress(characters: CharacterSet(charactersIn: "a")) { press in
+            if press.modifiers.contains(.command) {
+                showChords = true
+                showLyrics = false
+            } else {
+                showLyrics = playerVM != nil && !playerVM!.lyrics.isEmpty
+                showChords = true
+            }
+            return .handled
+        }
     }
 
     @ViewBuilder
