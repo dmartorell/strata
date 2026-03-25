@@ -191,11 +191,12 @@ Recent decisions affecting current work:
 | 18 | Refinar chord diagrams: padding O/X, spacing, centrado, variaciones por traste | 2026-03-25 | pending | [18-refinar-chord-diagrams-padding-lateral-o](./quick/18-refinar-chord-diagrams-padding-lateral-o/) |
 | 19 | Indicar número de dedo en cada posición del diagrama de acordes | 2026-03-25 | 85e7026 | [19-indicar-n-mero-de-dedo-en-cada-posici-n-](./quick/19-indicar-n-mero-de-dedo-en-cada-posici-n-/) |
 | 20 | Cancel GPU job from client — POST /cancel/{job_id} + client fire-and-forget integration | 2026-03-25 | 98bd096 | [20-cancel-gpu-job-from-client](./quick/20-cancel-gpu-job-from-client/) |
+| 21 | Global drag-and-drop con marco verde en toda la ventana + MetadataConfirmationSheet a nivel app | 2026-03-25 | 1445e99 | [21-global-drag-and-drop-con-marco-verde-en-](./quick/21-global-drag-and-drop-con-marco-verde-en-/) |
 
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed quick task 20 — Cancel GPU job endpoint + client integration
+Stopped at: Completed quick task 21 — Global drag-and-drop con marco verde y sheet metadata a nivel ContentView
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
