@@ -166,7 +166,7 @@ Recent decisions affecting current work:
 - Add font size controls to lyrics view (ui)
 - ~~Add guitar tuner popup with string and tuning indicator (ui)~~ DONE (quick task 22)
 - Implement persistent playback with mini-player (ui)
-- Manual chord positioning in rehearsal sheet (ui) — arrastrar/mover acordes sobre palabras, persistir per-song
+- ~~Manual chord positioning in rehearsal sheet (ui) — arrastrar/mover acordes sobre palabras, persistir per-song~~ DONE (quick task 24)
 
 ### Roadmap Evolution
 
@@ -207,11 +207,12 @@ Recent decisions affecting current work:
 | 21 | Global drag-and-drop con marco verde en toda la ventana + MetadataConfirmationSheet a nivel app | 2026-03-25 | 1445e99 | [21-global-drag-and-drop-con-marco-verde-en-](./quick/21-global-drag-and-drop-con-marco-verde-en-/) |
 | 22 | Add guitar tuner popup with string and tuning indicator | 2026-03-25 | 2217cb4 | [22-add-guitar-tuner-popup-with-string-and-t](./quick/22-add-guitar-tuner-popup-with-string-and-t/) |
 | 23 | Fix chord positioning in rehearsal sheet — nearest-subsequent-word matching | 2026-03-27 | 46259b5 | [23-fix-chord-positioning-in-rehearsal-sheet](./quick/23-fix-chord-positioning-in-rehearsal-sheet/) |
+| 24 | Add manual chord drag-to-reposition in rehearsal sheet with persistence | 2026-03-27 | a535b76 | [24-add-manual-chord-drag-to-reposition-in-r](./quick/24-add-manual-chord-drag-to-reposition-in-r/) |
 
 ## Session Continuity
 
 Last session: 2026-03-27
-Stopped at: Completed quick task 23 — Rehearsal sheet chord matching rewritten, awaiting human-verify checkpoint
+Stopped at: Completed quick task 24 — Chord drag-to-reposition in rehearsal sheet, awaiting human-verify checkpoint
 Resume file: None
 
 ### Bugs Resueltos (2026-03-05)
