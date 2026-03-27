@@ -1,6 +1,12 @@
 import Foundation
 import Observation
 
+struct ChordOverride: Codable, Sendable {
+    let lineIndex: Int
+    let wordIndex: Int
+    let chord: String
+}
+
 struct RehearsalWord: Sendable {
     let word: String
     let chord: String?
@@ -23,6 +29,7 @@ final class PlayerViewModel {
     private(set) var isLoadingLyrics: Bool = false
     var showTransposed: Bool = false
     var lyricsOffset: Double = 0
+    var chordOverrides: [ChordOverride] = []
 
     let engine: PlaybackEngine
     private let cacheManager: CacheManager
@@ -86,6 +93,8 @@ final class PlayerViewModel {
                 }
             }
         }
+
+        chordOverrides = (try? await cacheManager.readChordOverrides(songID: song.id)) ?? []
     }
 
     func loadRemoteMetadata() async {
@@ -189,7 +198,7 @@ final class PlayerViewModel {
         let placeholders = Self.placeholderChords
         let filteredChords = chords.filter { !placeholders.contains($0.chord) }
 
-        return lyrics.map { line in
+        return lyrics.enumerated().map { lineIndex, line in
             let words: [RehearsalWord] = line.words.map { word in
                 let matchedChord = filteredChords.last(where: { chord in
                     chord.start >= word.start && chord.start < word.end
@@ -227,8 +236,52 @@ final class PlayerViewModel {
                 }
             }
 
+            // Apply chord overrides for this line
+            let lineOverrides = chordOverrides.filter { $0.lineIndex == lineIndex }
+            for override in lineOverrides {
+                guard override.wordIndex < finalWords.count else { continue }
+                let original = finalWords[override.wordIndex]
+                let newChord: String?
+                if override.chord.isEmpty {
+                    newChord = nil
+                } else if showTransposed && engine.pitchSemitones != 0 {
+                    newChord = ChordTransposer.transpose(override.chord, semitones: engine.pitchSemitones)
+                } else {
+                    newChord = override.chord
+                }
+                finalWords[override.wordIndex] = RehearsalWord(word: original.word, chord: newChord, wordStart: original.wordStart)
+            }
+
             return RehearsalLine(id: line.id, start: line.start, end: line.end, words: finalWords)
         }
+    }
+
+    func saveChordOverrides() async {
+        try? await cacheManager.writeChordOverrides(songID: song.id, overrides: chordOverrides)
+    }
+
+    func applyChordOverride(lineIndex: Int, fromWordIndex: Int, toWordIndex: Int) {
+        guard lineIndex < rehearsalLines.count else { return }
+        let line = rehearsalLines[lineIndex]
+        guard fromWordIndex < line.words.count, toWordIndex < line.words.count else { return }
+
+        // Get the displayed chord at the source word and reverse-transpose to raw
+        guard let displayedChord = line.words[fromWordIndex].chord else { return }
+        let rawChord: String
+        if showTransposed && engine.pitchSemitones != 0 {
+            rawChord = ChordTransposer.transpose(displayedChord, semitones: -engine.pitchSemitones)
+        } else {
+            rawChord = displayedChord
+        }
+
+        // Remove existing overrides for both source and target word indices
+        chordOverrides.removeAll { $0.lineIndex == lineIndex && ($0.wordIndex == fromWordIndex || $0.wordIndex == toWordIndex) }
+
+        // Add override: chord moves to target, source cleared
+        chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: toWordIndex, chord: rawChord))
+        chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: fromWordIndex, chord: ""))
+
+        Task { await saveChordOverrides() }
     }
 
     func saveLyricsOffset() async {

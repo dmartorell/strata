@@ -107,6 +107,27 @@ extension CacheManager {
     }
 }
 
+// MARK: - Chord overrides per song
+
+extension CacheManager {
+    func chordOverridesURL(songID: UUID) -> URL {
+        songDirectory(for: songID).appendingPathComponent("chord_overrides.json")
+    }
+
+    func readChordOverrides(songID: UUID) throws -> [ChordOverride] {
+        let url = chordOverridesURL(songID: songID)
+        guard FileManager.default.fileExists(atPath: url.path) else { return [] }
+        let data = try Data(contentsOf: url)
+        return try JSONDecoder().decode([ChordOverride].self, from: data)
+    }
+
+    func writeChordOverrides(songID: UUID, overrides: [ChordOverride]) throws {
+        let url = chordOverridesURL(songID: songID)
+        let data = try JSONEncoder().encode(overrides)
+        try data.write(to: url, options: .atomic)
+    }
+}
+
 // MARK: - Materializacion de cancion desde tempDir
 
 extension CacheManager {
