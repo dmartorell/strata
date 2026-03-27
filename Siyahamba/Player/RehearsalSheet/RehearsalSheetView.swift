@@ -76,13 +76,15 @@ struct RehearsalSheetView: View {
                     if vm.rehearsalLines.isEmpty {
                         chordsOnlyView
                     } else {
-                        ForEach(vm.rehearsalLines) { line in
+                        ForEach(Array(vm.rehearsalLines.enumerated()), id: \.element.id) { index, line in
                             RehearsalLineView(
                                 line: line,
+                                lineIndex: index,
                                 isActive: line.id == vm.currentLine?.id,
                                 linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
                                 fontSize: fontSize,
-                                simplify: { $0 }
+                                simplify: { $0 },
+                                onChordMoved: { from, to in vm.applyChordOverride(lineIndex: index, fromWordIndex: from, toWordIndex: to) }
                             )
                             .id(line.id)
                             .onTapGesture {
@@ -266,10 +268,12 @@ struct RehearsalSheetView: View {
 
 private struct RehearsalLineView: View {
     let line: RehearsalLine
+    let lineIndex: Int
     let isActive: Bool
     let linePassed: Bool
     let fontSize: Double
     let simplify: (String) -> String
+    let onChordMoved: (Int, Int) -> Void
 
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
@@ -282,7 +286,14 @@ private struct RehearsalLineView: View {
     }
 
     var body: some View {
-        RehearsalWordFlow(words: line.words, fontSize: fontSize, lyricColor: lyricColor, chordColor: Self.chordColor, simplify: simplify)
+        RehearsalWordFlow(
+            words: line.words,
+            fontSize: fontSize,
+            lyricColor: lyricColor,
+            chordColor: Self.chordColor,
+            simplify: simplify,
+            onChordMoved: onChordMoved
+        )
     }
 }
 
@@ -292,19 +303,42 @@ private struct RehearsalWordFlow: View {
     let lyricColor: Color
     let chordColor: Color
     let simplify: (String) -> String
+    let onChordMoved: (Int, Int) -> Void
+
+    @State private var dropTargetIndex: Int? = nil
 
     var body: some View {
         FlowLayout(spacing: CGSize(width: 4, height: 8)) {
             ForEach(words.indices, id: \.self) { index in
                 let word = words[index]
                 let displayChord = word.chord.map { simplify($0) }
+                let isTarget = dropTargetIndex == index
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(displayChord ?? " ")
-                        .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
-                        .foregroundStyle(displayChord != nil ? chordColor : Color.clear)
+                    if let chord = displayChord {
+                        Text(chord)
+                            .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
+                            .foregroundStyle(chordColor)
+                            .draggable(String(index))
+                    } else {
+                        Text(" ")
+                            .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
+                            .foregroundStyle(Color.clear)
+                    }
                     Text(word.word)
                         .font(.system(size: CGFloat(fontSize), weight: .bold))
                         .foregroundStyle(lyricColor)
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(isTarget ? Color.accentColor.opacity(0.3) : Color.clear)
+                )
+                .dropDestination(for: String.self) { items, _ in
+                    guard let first = items.first, let sourceIndex = Int(first) else { return false }
+                    guard sourceIndex != index else { return false }
+                    onChordMoved(sourceIndex, index)
+                    return true
+                } isTargeted: { targeted in
+                    dropTargetIndex = targeted ? index : nil
                 }
             }
         }
