@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import SiyahambaClient
+@testable import Siyahamba
 
 // MARK: - Helpers JWT
 

@@ -56,8 +56,8 @@ struct ImportView: View {
 
                 for provider in providers {
                     let originalURL: URL? = await withCheckedContinuation { cont in
-                        _ = provider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, isInPlace, _ in
-                            cont.resume(returning: isInPlace ? url : nil)
+                        _ = provider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.audio.identifier) { url, _, _ in
+                            cont.resume(returning: url)
                         }
                     }
 

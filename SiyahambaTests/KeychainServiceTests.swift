@@ -1,7 +1,7 @@
 import Testing
 import Foundation
 import Security
-@testable import SiyahambaClient
+@testable import Siyahamba
 
 // NOTA: Estos tests usan el Keychain real del entorno de test (no mockeado).
 // Security.framework no tiene mock oficial y el comportamiento real es lo que importa.

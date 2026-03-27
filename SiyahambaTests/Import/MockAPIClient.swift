@@ -1,5 +1,5 @@
 import Foundation
-@testable import SiyahambaClient
+@testable import Siyahamba
 
 // MARK: - MockAuthTokenProvider
 

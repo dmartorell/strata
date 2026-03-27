@@ -21,7 +21,7 @@ server/           Backend (Modal + FastAPI)
   pipeline/       Pipeline GPU (Demucs, acordes, alineación, packaging)
   processors/     Procesadores de audio
   usage/          Tracking de uso y costes
-SiyahambaClient/  App macOS (SwiftUI)
+Siyahamba/        App macOS (SwiftUI)
   Auth/           Login + Keychain
   Import/         Importación de canciones
   Library/        Biblioteca local + cache
@@ -107,28 +107,28 @@ Desde ahí puedes ver:
 xcodegen generate
 ```
 
-Esto genera `SiyahambaClient.xcodeproj` a partir de `project.yml`.
+Esto genera `Siyahamba.xcodeproj` a partir de `project.yml`.
 
 ### Build y run desde CLI
 
 ```bash
-xcodebuild -project SiyahambaClient.xcodeproj \
-  -scheme SiyahambaClient \
+xcodebuild -project Siyahamba.xcodeproj \
+  -scheme Siyahamba \
   -configuration Debug \
   build
 
 # Build y ejecutar
-xcodebuild -project SiyahambaClient.xcodeproj \
-  -scheme SiyahambaClient \
+xcodebuild -project Siyahamba.xcodeproj \
+  -scheme Siyahamba \
   -configuration Debug \
   build && \
-  open build/Debug/SiyahambaClient.app
+  open build/Debug/Siyahamba.app
 ```
 
 ### Abrir en Xcode
 
 ```bash
-open SiyahambaClient.xcodeproj
+open Siyahamba.xcodeproj
 ```
 
 Luego `Cmd+R` para build y ejecutar.
@@ -142,7 +142,7 @@ La app apunta por defecto a `https://dani-martorell--siyahamba-web.modal.run`. P
 export SIYAHAMBA_API_URL="https://tu-url.modal.run"
 ```
 
-O modificar `SiyahambaClient/Network/APIEndpoint.swift`.
+O modificar `Siyahamba/Network/APIEndpoint.swift`.
 
 ## Distribución
 
@@ -150,7 +150,7 @@ La app se distribuye como `.app` firmado ad-hoc (sin cuenta de Apple Developer d
 
 ### Exportar el .app
 
-1. Abrir el proyecto en Xcode (`open SiyahambaClient.xcodeproj`)
+1. Abrir el proyecto en Xcode (`open Siyahamba.xcodeproj`)
 2. `Product → Archive`
 3. En el Organizer: `Distribute App → Copy App`
 4. Comprimir el `.app` resultante en un `.zip`
@@ -162,7 +162,7 @@ Enviar el `.zip` por AirDrop, iCloud Drive o cualquier medio.
 ### Instalación (instrucciones para el usuario)
 
 1. Descomprimir el `.zip`
-2. Arrastrar `SiyahambaClient.app` a la carpeta **Aplicaciones**
+2. Arrastrar `Siyahamba.app` a la carpeta **Aplicaciones**
 3. **Primera vez**: click derecho sobre la app → **Abrir** → confirmar en el diálogo de Gatekeeper
 4. Las siguientes ejecuciones se abren con doble click normal
 
