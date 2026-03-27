@@ -11,6 +11,7 @@ struct RehearsalWord: Sendable {
     let word: String
     let chord: String?
     let wordStart: Double
+    let overrideIndex: Int?
 }
 
 struct RehearsalLine: Identifiable, Sendable {
@@ -30,6 +31,7 @@ final class PlayerViewModel {
     var showTransposed: Bool = false
     var lyricsOffset: Double = 0
     var chordOverrides: [ChordOverride] = []
+    var isEditingChord: Bool = false
 
     let engine: PlaybackEngine
     private let cacheManager: CacheManager
@@ -213,7 +215,7 @@ final class PlayerViewModel {
                 } else {
                     chordName = nil
                 }
-                return RehearsalWord(word: word.word, chord: chordName, wordStart: word.start)
+                return RehearsalWord(word: word.word, chord: chordName, wordStart: word.start, overrideIndex: nil)
             }
 
             // Attach any chord that falls before this line's first word to the first word
@@ -232,7 +234,7 @@ final class PlayerViewModel {
                         chordName = raw
                     }
                     let original = finalWords[0]
-                    finalWords[0] = RehearsalWord(word: original.word, chord: chordName, wordStart: original.wordStart)
+                    finalWords[0] = RehearsalWord(word: original.word, chord: chordName, wordStart: original.wordStart, overrideIndex: nil)
                 }
             }
 
@@ -249,7 +251,21 @@ final class PlayerViewModel {
                 } else {
                     newChord = override.chord
                 }
-                finalWords[override.wordIndex] = RehearsalWord(word: original.word, chord: newChord, wordStart: original.wordStart)
+                finalWords[override.wordIndex] = RehearsalWord(word: original.word, chord: newChord, wordStart: original.wordStart, overrideIndex: override.wordIndex)
+            }
+
+            // Append tail chords (overrides beyond last word)
+            let tailOverrides = lineOverrides
+                .filter { $0.wordIndex >= finalWords.count && !$0.chord.isEmpty }
+                .sorted { $0.wordIndex < $1.wordIndex }
+            for override in tailOverrides {
+                let chordName: String
+                if showTransposed && engine.pitchSemitones != 0 {
+                    chordName = ChordTransposer.transpose(override.chord, semitones: engine.pitchSemitones)
+                } else {
+                    chordName = override.chord
+                }
+                finalWords.append(RehearsalWord(word: "", chord: chordName, wordStart: line.end, overrideIndex: override.wordIndex))
             }
 
             return RehearsalLine(id: line.id, start: line.start, end: line.end, words: finalWords)
@@ -263,9 +279,8 @@ final class PlayerViewModel {
     func applyChordOverride(lineIndex: Int, fromWordIndex: Int, toWordIndex: Int) {
         guard lineIndex < rehearsalLines.count else { return }
         let line = rehearsalLines[lineIndex]
-        guard fromWordIndex < line.words.count, toWordIndex < line.words.count else { return }
+        guard fromWordIndex < line.words.count else { return }
 
-        // Get the displayed chord at the source word and reverse-transpose to raw
         guard let displayedChord = line.words[fromWordIndex].chord else { return }
         let rawChord: String
         if showTransposed && engine.pitchSemitones != 0 {
@@ -274,14 +289,50 @@ final class PlayerViewModel {
             rawChord = displayedChord
         }
 
-        // Remove existing overrides for both source and target word indices
-        chordOverrides.removeAll { $0.lineIndex == lineIndex && ($0.wordIndex == fromWordIndex || $0.wordIndex == toWordIndex) }
+        let baseWordCount = lyrics[lineIndex].words.count
+        let sourceOverrideIndex = line.words[fromWordIndex].overrideIndex ?? fromWordIndex
+        let fromIsTail = sourceOverrideIndex >= baseWordCount
 
-        // Add override: chord moves to target, source cleared
-        chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: toWordIndex, chord: rawChord))
-        chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: fromWordIndex, chord: ""))
+        // Clean up source
+        chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == sourceOverrideIndex }
+        if !fromIsTail {
+            chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: sourceOverrideIndex, chord: ""))
+        }
+
+        if toWordIndex >= baseWordCount {
+            let existingTailIndices = chordOverrides
+                .filter { $0.lineIndex == lineIndex && $0.wordIndex >= baseWordCount && !$0.chord.isEmpty }
+                .map(\.wordIndex)
+            let nextTailIndex = (existingTailIndices.max() ?? (baseWordCount - 1)) + 1
+            chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: nextTailIndex, chord: rawChord))
+        } else {
+            chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == toWordIndex }
+            chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: toWordIndex, chord: rawChord))
+        }
 
         Task { await saveChordOverrides() }
+    }
+
+    func deleteChordOverride(lineIndex: Int, wordIndex: Int) {
+        let realIndex = resolveOverrideIndex(lineIndex: lineIndex, wordIndex: wordIndex)
+        let baseWordCount = lyrics[lineIndex].words.count
+        chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == realIndex }
+        if realIndex < baseWordCount {
+            chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: ""))
+        }
+        Task { await saveChordOverrides() }
+    }
+
+    func addChordOverride(lineIndex: Int, wordIndex: Int, chord: String) {
+        let realIndex = resolveOverrideIndex(lineIndex: lineIndex, wordIndex: wordIndex)
+        chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == realIndex }
+        chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: chord))
+        Task { await saveChordOverrides() }
+    }
+
+    private func resolveOverrideIndex(lineIndex: Int, wordIndex: Int) -> Int {
+        guard lineIndex < rehearsalLines.count, wordIndex < rehearsalLines[lineIndex].words.count else { return wordIndex }
+        return rehearsalLines[lineIndex].words[wordIndex].overrideIndex ?? wordIndex
     }
 
     func saveLyricsOffset() async {

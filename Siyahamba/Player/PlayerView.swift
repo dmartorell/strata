@@ -116,6 +116,7 @@ struct PlayerView: View {
         .focusEffectDisabled()
         .onAppear { isContentFocused = true }
         .onKeyPress(.space) {
+            if playerVM?.isEditingChord == true { return .ignored }
             if engine.isPlaying {
                 engine.pause()
             } else {
@@ -124,14 +125,17 @@ struct PlayerView: View {
             return .handled
         }
         .onKeyPress(.leftArrow) {
+            if playerVM?.isEditingChord == true { return .ignored }
             engine.seek(to: max(0, engine.currentTime - 5))
             return .handled
         }
         .onKeyPress(.rightArrow) {
+            if playerVM?.isEditingChord == true { return .ignored }
             engine.seek(to: min(engine.duration, engine.currentTime + 5))
             return .handled
         }
         .onKeyPress(characters: CharacterSet(charactersIn: "l")) { _ in
+            if playerVM?.isEditingChord == true { return .ignored }
             guard playerVM != nil && !playerVM!.lyrics.isEmpty else { return .ignored }
             showLyrics = true
             showChords = false
@@ -139,6 +143,7 @@ struct PlayerView: View {
             return .handled
         }
         .onKeyPress(characters: CharacterSet(charactersIn: "a")) { press in
+            if playerVM?.isEditingChord == true { return .ignored }
             if press.modifiers.contains(.command) {
                 showChords = true
                 showLyrics = false
@@ -150,6 +155,7 @@ struct PlayerView: View {
             return .handled
         }
         .onKeyPress(characters: CharacterSet(charactersIn: "r")) { _ in
+            if playerVM?.isEditingChord == true { return .ignored }
             guard playerVM != nil && !playerVM!.chords.isEmpty else { return .ignored }
             showRehearsalSheet = true
             showLyrics = false
