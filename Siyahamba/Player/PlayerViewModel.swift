@@ -7,6 +7,11 @@ struct ChordOverride: Codable, Sendable {
     let chord: String
 }
 
+struct DragSource {
+    let line: Int
+    let word: Int
+}
+
 struct RehearsalWord: Sendable {
     let word: String
     let chord: String?
@@ -32,6 +37,7 @@ final class PlayerViewModel {
     var lyricsOffset: Double = 0
     var chordOverrides: [ChordOverride] = []
     var isEditingChord: Bool = false
+    var draggingChordSource: DragSource? = nil
 
     let engine: PlaybackEngine
     private let cacheManager: CacheManager

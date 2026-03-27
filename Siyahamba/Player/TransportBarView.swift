@@ -133,7 +133,7 @@ struct TransportBarView: View {
                             showRehearsalSheet = false
                             showChords.toggle()
                         }
-                        panelToggle("Ensayo", icon: "music.note.list", isActive: showRehearsalSheet, enabled: hasChords) {
+                        panelToggle("Estudio", icon: "music.note.list", isActive: showRehearsalSheet, enabled: hasChords) {
                             showRehearsalSheet.toggle()
                             if showRehearsalSheet {
                                 showLyrics = false

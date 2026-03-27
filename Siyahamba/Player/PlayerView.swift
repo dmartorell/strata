@@ -162,6 +162,12 @@ struct PlayerView: View {
             showChords = false
             return .handled
         }
+        .onChange(of: playerVM?.isEditingChord) { _, editing in
+            if editing == false { isContentFocused = true }
+        }
+        .onChange(of: playerVM?.draggingChordSource == nil) { _, dropped in
+            if dropped { isContentFocused = true }
+        }
     }
 
     @ViewBuilder

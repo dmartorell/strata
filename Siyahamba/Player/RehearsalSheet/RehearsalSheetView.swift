@@ -10,13 +10,15 @@ private struct ScrollOffsetKey: PreferenceKey {
 struct RehearsalSheetView: View {
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("lyrics.fontSize") private var fontSize: Double = 36
-    @AppStorage("rehearsalSheet.showReferencePanel") private var showReferencePanel: Bool = true
+    @State private var showReferencePanel: Bool = false
 
     @State private var isFollowingPlayback: Bool = true
     @State private var lastAutoScrollOffset: CGFloat = 0
     @State private var scrollOffset: CGFloat = 0
     @State private var showFontSizePopover: Bool = false
     @State private var showOffsetPopover: Bool = false
+    @State private var dragPollTask: Task<Void, Never>? = nil
+    @State private var referenceDismissTask: Task<Void, Never>? = nil
 
     private static let background = Color(red: 0.10, green: 0.16, blue: 0.27)
     private static let chordColor = Color(red: 0.47, green: 0.66, blue: 0.84)
@@ -53,10 +55,6 @@ struct RehearsalSheetView: View {
         return result
     }
 
-    private var currentChordName: String {
-        vm.displayChord
-    }
-
     private var offsetLabel: String {
         let ms = Int((vm.lyricsOffset * 1000).rounded())
         if ms == 0 { return "0ms" }
@@ -73,10 +71,61 @@ struct RehearsalSheetView: View {
                 if showReferencePanel {
                     Divider()
                     referencePanel
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
+                Color.clear
+                    .frame(height: 50)
+                    .allowsHitTesting(!showReferencePanel)
+                    .onHover { hovering in
+                        if hovering {
+                            referenceDismissTask?.cancel()
+                            referenceDismissTask = nil
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                showReferencePanel = true
+                            }
+                        }
+                    }
             }
             .background(Self.background)
+            .onChange(of: vm.draggingChordSource != nil) { _, isDragging in
+                dragPollTask?.cancel()
+                if isDragging {
+                    dragPollTask = Task { @MainActor in
+                        try? await Task.sleep(for: .milliseconds(500))
+                        while !Task.isCancelled && vm.draggingChordSource != nil {
+                            if NSEvent.pressedMouseButtons == 0 {
+                                try? await Task.sleep(for: .milliseconds(500))
+                                if !Task.isCancelled && vm.draggingChordSource != nil {
+                                    vm.draggingChordSource = nil
+                                }
+                                break
+                            }
+                            try? await Task.sleep(for: .milliseconds(50))
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    @ViewBuilder
+    private func rehearsalLineRow(vm: PlayerViewModel, index: Int, line: RehearsalLine) -> some View {
+        let bindable = Bindable(vm)
+        RehearsalLineView(
+            line: line,
+            lineIndex: index,
+            isActive: line.id == vm.currentLine?.id,
+            linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
+            fontSize: fontSize,
+            simplify: { $0 },
+            onChordMoved: { from, to in vm.applyChordOverride(lineIndex: index, fromWordIndex: from, toWordIndex: to) },
+            onChordDeleted: { wordIndex in vm.deleteChordOverride(lineIndex: index, wordIndex: wordIndex) },
+            onChordAdded: { wordIndex, chord in vm.addChordOverride(lineIndex: index, wordIndex: wordIndex, chord: chord) },
+            onWordTapped: { time in vm.engine.seek(to: time) },
+            isEditingChord: bindable.isEditingChord,
+            draggingSource: bindable.draggingChordSource
+        )
+        .id(line.id)
     }
 
     private var scrollContent: some View {
@@ -87,22 +136,7 @@ struct RehearsalSheetView: View {
                         chordsOnlyView
                     } else {
                         ForEach(Array(vm.rehearsalLines.enumerated()), id: \.element.id) { index, line in
-                            RehearsalLineView(
-                                line: line,
-                                lineIndex: index,
-                                isActive: line.id == vm.currentLine?.id,
-                                linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
-                                fontSize: fontSize,
-                                simplify: { $0 },
-                                onChordMoved: { from, to in vm.applyChordOverride(lineIndex: index, fromWordIndex: from, toWordIndex: to) },
-                                onChordDeleted: { wordIndex in vm.deleteChordOverride(lineIndex: index, wordIndex: wordIndex) },
-                                onChordAdded: { wordIndex, chord in vm.addChordOverride(lineIndex: index, wordIndex: wordIndex, chord: chord) },
-                                isEditingChord: Bindable(vm).isEditingChord
-                            )
-                            .id(line.id)
-                            .onTapGesture {
-                                vm.engine.seek(to: line.start)
-                            }
+                            rehearsalLineRow(vm: vm, index: index, line: line)
                         }
                     }
                 }
@@ -207,19 +241,6 @@ struct RehearsalSheetView: View {
                     LyricsFontSizePopover()
                 }
             }
-            .overlay(alignment: .bottomLeading) {
-                Button {
-                    withAnimation { showReferencePanel.toggle() }
-                } label: {
-                    Image(systemName: showReferencePanel ? "rectangle.bottomthird.inset.filled" : "rectangle.bottomthird.inset.filled")
-                        .font(.system(size: 14))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
-                }
-                .buttonStyle(.plain)
-                .padding(12)
-            }
         }
     }
 
@@ -227,7 +248,6 @@ struct RehearsalSheetView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
                 ForEach(uniqueChords, id: \.self) { chordName in
-                    let isCurrent = chordName == currentChordName && !currentChordName.isEmpty
                     VStack(spacing: 4) {
                         Text(chordName)
                             .font(.system(size: 14, weight: .bold))
@@ -240,10 +260,6 @@ struct RehearsalSheetView: View {
                         .frame(width: 80, height: 80)
                     }
                     .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(isCurrent ? Color.white.opacity(0.1) : Color.clear)
-                    )
                 }
             }
             .padding(.horizontal, 16)
@@ -251,6 +267,21 @@ struct RehearsalSheetView: View {
         }
         .frame(height: 120)
         .background(Self.background)
+        .onHover { hovering in
+            if hovering {
+                referenceDismissTask?.cancel()
+                referenceDismissTask = nil
+            } else {
+                referenceDismissTask?.cancel()
+                referenceDismissTask = Task {
+                    try? await Task.sleep(for: .seconds(1.2))
+                    guard !Task.isCancelled else { return }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showReferencePanel = false
+                    }
+                }
+            }
+        }
     }
 
     private var chordsOnlyView: some View {
@@ -289,7 +320,9 @@ private struct RehearsalLineView: View {
     let onChordMoved: (Int, Int) -> Void
     let onChordDeleted: (Int) -> Void
     let onChordAdded: (Int, String) -> Void
+    let onWordTapped: (Double) -> Void
     @Binding var isEditingChord: Bool
+    @Binding var draggingSource: DragSource?
 
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
@@ -303,6 +336,7 @@ private struct RehearsalLineView: View {
 
     var body: some View {
         RehearsalWordFlow(
+            lineIndex: lineIndex,
             words: line.words,
             fontSize: fontSize,
             lyricColor: lyricColor,
@@ -311,12 +345,15 @@ private struct RehearsalLineView: View {
             onChordMoved: onChordMoved,
             onChordDeleted: onChordDeleted,
             onChordAdded: onChordAdded,
-            isEditingChord: $isEditingChord
+            onWordTapped: onWordTapped,
+            isEditingChord: $isEditingChord,
+            draggingSource: $draggingSource
         )
     }
 }
 
 private struct RehearsalWordFlow: View {
+    let lineIndex: Int
     let words: [RehearsalWord]
     let fontSize: Double
     let lyricColor: Color
@@ -325,14 +362,28 @@ private struct RehearsalWordFlow: View {
     let onChordMoved: (Int, Int) -> Void
     let onChordDeleted: (Int) -> Void
     let onChordAdded: (Int, String) -> Void
+    let onWordTapped: (Double) -> Void
     @Binding var isEditingChord: Bool
+    @Binding var draggingSource: DragSource?
 
     @State private var dropTargetIndex: Int? = nil
-    @State private var draggingIndex: Int? = nil
     @State private var editingIndex: Int? = nil
     @State private var editText: String = ""
 
     private var tailSlotIndex: Int { words.count }
+
+    private var draggingIndex: Int? {
+        guard let src = draggingSource, src.line == lineIndex else { return nil }
+        return src.word
+    }
+
+    private func parseDropData(_ data: String) -> Int? {
+        let parts = data.split(separator: ":")
+        guard parts.count == 2,
+              let line = Int(parts[0]), line == lineIndex,
+              let word = Int(parts[1]) else { return nil }
+        return word
+    }
 
     var body: some View {
         FlowLayout(spacing: CGSize(width: 4, height: 8)) {
@@ -342,7 +393,7 @@ private struct RehearsalWordFlow: View {
             tailDropSlot
         }
         .onChange(of: words.map(\.chord)) { _, _ in
-            draggingIndex = nil
+            draggingSource = nil
         }
         .onChange(of: editingIndex) { _, newValue in
             isEditingChord = newValue != nil
@@ -373,10 +424,11 @@ private struct RehearsalWordFlow: View {
                     .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
                     .foregroundStyle(chordColor)
                     .opacity(draggingIndex == index ? 0 : 1)
-                    .draggable(String(index)) {
-                        Color.clear
-                            .frame(width: 1, height: 1)
-                            .onAppear { draggingIndex = index }
+                    .onDrag {
+                        draggingSource = DragSource(line: lineIndex, word: index)
+                        return NSItemProvider(object: "\(lineIndex):\(index)" as NSString)
+                    } preview: {
+                        Color.clear.frame(width: 1, height: 1)
                     }
                     .contextMenu {
                         Button {
@@ -408,24 +460,22 @@ private struct RehearsalWordFlow: View {
             editText = ""
             editingIndex = index
         }
+        .onTapGesture(count: 1) {
+            guard !word.word.isEmpty else { return }
+            onWordTapped(word.wordStart)
+        }
         .background(
             RoundedRectangle(cornerRadius: 4)
                 .fill(isTarget ? Color.accentColor.opacity(0.3) : Color.clear)
         )
-        .dropDestination(for: String.self) { items, _ in
-            defer { draggingIndex = nil }
-            guard word.chord == nil else { return false }
-            guard let first = items.first, let sourceIndex = Int(first) else { return false }
-            guard sourceIndex != index else { return false }
-            onChordMoved(sourceIndex, index)
-            return true
-        } isTargeted: { targeted in
-            if word.chord != nil {
-                dropTargetIndex = nil
-            } else {
-                dropTargetIndex = targeted ? index : nil
-            }
-        }
+        .onDrop(of: [.text], delegate: WordDropDelegate(
+            wordIndex: index,
+            hasChord: word.chord != nil,
+            lineIndex: lineIndex,
+            draggingSource: $draggingSource,
+            dropTargetIndex: $dropTargetIndex,
+            onChordMoved: onChordMoved
+        ))
     }
 
     private func commitEdit(at index: Int) {
@@ -455,20 +505,103 @@ private struct RehearsalWordFlow: View {
                 .font(.system(size: CGFloat(fontSize), weight: .bold))
                 .foregroundStyle(Color.clear)
         }
-        .frame(minWidth: 30)
+        .frame(minWidth: 44)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: 4)
                 .fill(isTarget ? Color.accentColor.opacity(0.3) : Color.clear)
         )
-        .dropDestination(for: String.self) { items, _ in
-            defer { draggingIndex = nil }
-            guard let first = items.first, let sourceIndex = Int(first) else { return false }
-            guard !isLastTailChord(sourceIndex) else { return false }
-            onChordMoved(sourceIndex, tailSlotIndex)
-            return true
-        } isTargeted: { targeted in
-            dropTargetIndex = targeted ? tailSlotIndex : nil
+        .onDrop(of: [.text], delegate: TailDropDelegate(
+            tailSlotIndex: tailSlotIndex,
+            lineIndex: lineIndex,
+            draggingSource: $draggingSource,
+            dropTargetIndex: $dropTargetIndex,
+            isLastTailChord: isLastTailChord,
+            onChordMoved: onChordMoved
+        ))
+    }
+}
+
+
+private struct WordDropDelegate: DropDelegate {
+    let wordIndex: Int
+    let hasChord: Bool
+    let lineIndex: Int
+    @Binding var draggingSource: DragSource?
+    @Binding var dropTargetIndex: Int?
+    let onChordMoved: (Int, Int) -> Void
+
+    private var isLocalDrag: Bool {
+        draggingSource?.line == lineIndex
+    }
+
+    func validateDrop(info: DropInfo) -> Bool {
+        guard !hasChord, isLocalDrag else { return false }
+        return true
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard !hasChord, isLocalDrag else { return }
+        dropTargetIndex = wordIndex
+    }
+
+    func dropExited(info: DropInfo) {
+        if dropTargetIndex == wordIndex { dropTargetIndex = nil }
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard let source = draggingSource, source.line == lineIndex else {
+            draggingSource = nil
+            return false
         }
+        guard !hasChord, source.word != wordIndex else {
+            draggingSource = nil
+            return false
+        }
+        onChordMoved(source.word, wordIndex)
+        draggingSource = nil
+        return true
+    }
+}
+
+private struct TailDropDelegate: DropDelegate {
+    let tailSlotIndex: Int
+    let lineIndex: Int
+    @Binding var draggingSource: DragSource?
+    @Binding var dropTargetIndex: Int?
+    let isLastTailChord: (Int) -> Bool
+    let onChordMoved: (Int, Int) -> Void
+
+    private var isLocalDrag: Bool {
+        draggingSource?.line == lineIndex
+    }
+
+    func validateDrop(info: DropInfo) -> Bool {
+        isLocalDrag
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard isLocalDrag else { return }
+        dropTargetIndex = tailSlotIndex
+    }
+
+    func dropExited(info: DropInfo) {
+        if dropTargetIndex == tailSlotIndex { dropTargetIndex = nil }
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard let source = draggingSource, source.line == lineIndex else {
+            draggingSource = nil
+            return false
+        }
+        guard !isLastTailChord(source.word) else {
+            draggingSource = nil
+            return false
+        }
+        onChordMoved(source.word, tailSlotIndex)
+        draggingSource = nil
+        return true
     }
 }
 
@@ -493,7 +626,18 @@ private struct FocusedTextField: NSViewRepresentable {
         field.cell?.isScrollable = true
         field.setContentHuggingPriority(.defaultLow, for: .horizontal)
         field.delegate = context.coordinator
-        DispatchQueue.main.async { field.window?.makeFirstResponder(field) }
+        func focusWhenReady(_ field: NSTextField, attempts: Int = 0) {
+            DispatchQueue.main.async {
+                if let window = field.window {
+                    window.makeFirstResponder(field)
+                } else if attempts < 10 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                        focusWhenReady(field, attempts: attempts + 1)
+                    }
+                }
+            }
+        }
+        focusWhenReady(field)
         return field
     }
 
