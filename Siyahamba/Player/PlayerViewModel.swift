@@ -189,13 +189,30 @@ final class PlayerViewModel {
         let placeholders = Self.placeholderChords
         let filteredChords = chords.filter { !placeholders.contains($0.chord) }
 
-        return lyrics.map { line in
-            let words: [RehearsalWord] = line.words.map { word in
-                let matchedChord = filteredChords.last(where: { chord in
-                    chord.start >= word.start && chord.start < word.end
-                })
+        return lyrics.enumerated().map { (lineIdx, line) in
+            let windowStart = lineIdx > 0 ? lyrics[lineIdx - 1].end : 0.0
+            let windowEnd = line.end
+
+            let lineChords = filteredChords.filter { $0.start >= windowStart && $0.start < windowEnd }
+
+            var chordForWord: [Int: ChordEntry] = [:]
+            for chord in lineChords {
+                let wordIdx: Int
+                if let idx = line.words.firstIndex(where: { $0.start >= chord.start }) {
+                    wordIdx = idx
+                } else if !line.words.isEmpty {
+                    wordIdx = line.words.count - 1
+                } else {
+                    continue
+                }
+                if chordForWord[wordIdx] == nil {
+                    chordForWord[wordIdx] = chord
+                }
+            }
+
+            let words: [RehearsalWord] = line.words.enumerated().map { (wordIdx, word) in
                 let chordName: String?
-                if let raw = matchedChord?.chord {
+                if let raw = chordForWord[wordIdx]?.chord {
                     if showTransposed && engine.pitchSemitones != 0 {
                         chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
                     } else {
@@ -207,27 +224,7 @@ final class PlayerViewModel {
                 return RehearsalWord(word: word.word, chord: chordName, wordStart: word.start)
             }
 
-            // Attach any chord that falls before this line's first word to the first word
-            var finalWords = words
-            if !finalWords.isEmpty && finalWords[0].chord == nil {
-                let lineStart = line.start
-                let firstWordStart = line.words.first?.start ?? lineStart
-                let orphanChord = filteredChords.last(where: { chord in
-                    chord.start >= lineStart && chord.start < firstWordStart
-                })
-                if let raw = orphanChord?.chord {
-                    let chordName: String
-                    if showTransposed && engine.pitchSemitones != 0 {
-                        chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-                    } else {
-                        chordName = raw
-                    }
-                    let original = finalWords[0]
-                    finalWords[0] = RehearsalWord(word: original.word, chord: chordName, wordStart: original.wordStart)
-                }
-            }
-
-            return RehearsalLine(id: line.id, start: line.start, end: line.end, words: finalWords)
+            return RehearsalLine(id: line.id, start: line.start, end: line.end, words: words)
         }
     }
 
