@@ -74,19 +74,28 @@ struct RehearsalSheetView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 Color.clear
-                    .frame(height: 50)
+                    .frame(height: 90)
                     .allowsHitTesting(!showReferencePanel)
                     .onHover { hovering in
-                        if hovering {
-                            referenceDismissTask?.cancel()
-                            referenceDismissTask = nil
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                showReferencePanel = true
+                        referenceDismissTask?.cancel()
+                        referenceDismissTask = nil
+                        if hovering && NSApp.isActive {
+                            referenceDismissTask = Task {
+                                try? await Task.sleep(for: .milliseconds(400))
+                                guard !Task.isCancelled else { return }
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    showReferencePanel = true
+                                }
                             }
                         }
                     }
             }
             .background(Self.background)
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showReferencePanel = false
+                }
+            }
             .onChange(of: vm.draggingChordSource != nil) { _, isDragging in
                 dragPollTask?.cancel()
                 if isDragging {
@@ -268,13 +277,14 @@ struct RehearsalSheetView: View {
         .frame(height: 120)
         .background(Self.background)
         .onHover { hovering in
+            guard NSApp.isActive else { return }
             if hovering {
                 referenceDismissTask?.cancel()
                 referenceDismissTask = nil
             } else {
                 referenceDismissTask?.cancel()
                 referenceDismissTask = Task {
-                    try? await Task.sleep(for: .seconds(1.2))
+                    try? await Task.sleep(for: .milliseconds(400))
                     guard !Task.isCancelled else { return }
                     withAnimation(.easeInOut(duration: 0.2)) {
                         showReferencePanel = false
