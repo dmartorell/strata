@@ -725,6 +725,27 @@ private struct FocusedTextField: NSViewRepresentable {
     }
 }
 
+private struct ChordVariationButton: View {
+    let systemName: String
+    let action: () -> Void
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 14))
+                .foregroundStyle(isHovered ? .white : .secondary)
+                .frame(width: 36, height: 36)
+                .background(isHovered ? .white.opacity(0.1) : .clear)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .contentShape(Rectangle())
+                .animation(.easeInOut(duration: 0.15), value: isHovered)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+    }
+}
+
 private struct ChordPopoverContent: View {
     let chordName: String
     @State private var variationIndex: Int = 0
@@ -756,23 +777,15 @@ private struct ChordPopoverContent: View {
             }
             if displayedFingerings.count > 1 {
                 HStack(spacing: 20) {
-                    Button {
+                    ChordVariationButton(systemName: "chevron.left") {
                         variationIndex = (variationIndex - 1 + displayedFingerings.count) % displayedFingerings.count
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14))
                     }
-                    .buttonStyle(.plain)
                     Text("\(variationIndex % displayedFingerings.count + 1)/\(displayedFingerings.count)")
                         .font(.system(size: 13))
                         .monospacedDigit()
-                    Button {
+                    ChordVariationButton(systemName: "chevron.right") {
                         variationIndex = (variationIndex + 1) % displayedFingerings.count
-                    } label: {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14))
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
