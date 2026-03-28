@@ -137,6 +137,7 @@ struct RehearsalSheetView: View {
             linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
             fontSize: fontSize,
             simplify: { $0 },
+            isPaused: !vm.engine.isPlaying,
             onChordMoved: { from, to in vm.applyChordOverride(lineIndex: index, fromWordIndex: from, toWordIndex: to) },
             onChordDeleted: { wordIndex in vm.deleteChordOverride(lineIndex: index, wordIndex: wordIndex) },
             onChordAdded: { wordIndex, chord in vm.addChordOverride(lineIndex: index, wordIndex: wordIndex, chord: chord) },
@@ -336,6 +337,7 @@ private struct RehearsalLineView: View {
     let linePassed: Bool
     let fontSize: Double
     let simplify: (String) -> String
+    let isPaused: Bool
     let onChordMoved: (Int, Int) -> Void
     let onChordDeleted: (Int) -> Void
     let onChordAdded: (Int, String) -> Void
@@ -361,6 +363,7 @@ private struct RehearsalLineView: View {
             lyricColor: lyricColor,
             chordColor: Self.chordColor,
             simplify: simplify,
+            isPaused: isPaused,
             onChordMoved: onChordMoved,
             onChordDeleted: onChordDeleted,
             onChordAdded: onChordAdded,
@@ -378,6 +381,7 @@ private struct RehearsalWordFlow: View {
     let lyricColor: Color
     let chordColor: Color
     let simplify: (String) -> String
+    let isPaused: Bool
     let onChordMoved: (Int, Int) -> Void
     let onChordDeleted: (Int) -> Void
     let onChordAdded: (Int, String) -> Void
@@ -388,6 +392,7 @@ private struct RehearsalWordFlow: View {
     @State private var dropTargetIndex: Int? = nil
     @State private var editingIndex: Int? = nil
     @State private var editText: String = ""
+    @State private var popoverChordIndex: Int? = nil
 
     private var tailSlotIndex: Int { words.count }
 
@@ -417,6 +422,11 @@ private struct RehearsalWordFlow: View {
         .onChange(of: editingIndex) { _, newValue in
             isEditingChord = newValue != nil
         }
+        .onChange(of: isPaused) { _, newValue in
+            if !newValue {
+                popoverChordIndex = nil
+            }
+        }
     }
 
     private func wordCell(index: Int, word: RehearsalWord) -> some View {
@@ -438,6 +448,16 @@ private struct RehearsalWordFlow: View {
                     .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
                     .foregroundStyle(chordColor)
                     .opacity(draggingIndex == index ? 0 : 1)
+                    .onTapGesture {
+                        guard isPaused else { return }
+                        popoverChordIndex = index
+                    }
+                    .popover(isPresented: Binding(
+                        get: { popoverChordIndex == index },
+                        set: { if !$0 { popoverChordIndex = nil } }
+                    )) {
+                        ChordPopoverContent(chordName: chord)
+                    }
                     .onDrag {
                         draggingSource = DragSource(line: lineIndex, word: index)
                         return NSItemProvider(object: "\(lineIndex):\(index)" as NSString)
@@ -702,6 +722,54 @@ private struct FocusedTextField: NSViewRepresentable {
             }
             return false
         }
+    }
+}
+
+private struct ChordPopoverContent: View {
+    let chordName: String
+    @State private var variationIndex: Int = 0
+
+    private var allFingerings: [ChordPosition] {
+        ChordFingerings.lookup(chordName).sorted { $0.baseFret < $1.baseFret }
+    }
+
+    private var displayedFingerings: [ChordPosition] {
+        Array(allFingerings.prefix(3))
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(chordName)
+                .font(.system(size: 16, weight: .bold))
+            if !displayedFingerings.isEmpty {
+                ChordDiagramView(
+                    fingerings: [displayedFingerings[variationIndex % displayedFingerings.count]],
+                    chord: chordName,
+                    interactive: false
+                )
+                .frame(width: 120, height: 120)
+            }
+            if displayedFingerings.count > 1 {
+                HStack(spacing: 16) {
+                    Button {
+                        variationIndex = (variationIndex - 1 + displayedFingerings.count) % displayedFingerings.count
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .buttonStyle(.plain)
+                    Text("\(variationIndex % displayedFingerings.count + 1)/\(displayedFingerings.count)")
+                        .font(.caption)
+                        .monospacedDigit()
+                    Button {
+                        variationIndex = (variationIndex + 1) % displayedFingerings.count
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(12)
     }
 }
 
