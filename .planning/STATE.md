@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
-Last activity: 2026-03-25 - Completed quick task 22: Add guitar tuner popup with string and tuning indicator
+Last activity: 2026-03-28 - Completed quick task 25: Popup con diagrama de acorde al clicar sobre acorde en rehearsal sheet
 
 Progress: [██████████] 100% (v1.0 milestone complete)
 
@@ -208,6 +208,7 @@ Recent decisions affecting current work:
 | 22 | Add guitar tuner popup with string and tuning indicator | 2026-03-25 | 2217cb4 | [22-add-guitar-tuner-popup-with-string-and-t](./quick/22-add-guitar-tuner-popup-with-string-and-t/) |
 | 23 | Fix chord positioning in rehearsal sheet — nearest-subsequent-word matching | 2026-03-27 | 46259b5 | [23-fix-chord-positioning-in-rehearsal-sheet](./quick/23-fix-chord-positioning-in-rehearsal-sheet/) |
 | 24 | Add manual chord drag-to-reposition in rehearsal sheet with persistence | 2026-03-27 | a535b76 | [24-add-manual-chord-drag-to-reposition-in-r](./quick/24-add-manual-chord-drag-to-reposition-in-r/) |
+| 25 | Popup con diagrama de acorde al clicar sobre acorde en rehearsal sheet (solo en pausa, con navegación entre variantes) | 2026-03-28 | 002243b | [25-popup-con-diagrama-de-acorde-al-clicar-s](./quick/25-popup-con-diagrama-de-acorde-al-clicar-s/) |
 
 ## Session Continuity
 

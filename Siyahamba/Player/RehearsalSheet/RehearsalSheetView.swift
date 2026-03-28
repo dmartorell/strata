@@ -737,39 +737,46 @@ private struct ChordPopoverContent: View {
         Array(allFingerings.prefix(3))
     }
 
+    private var currentFingering: ChordPosition? {
+        guard !displayedFingerings.isEmpty else { return nil }
+        return displayedFingerings[variationIndex % displayedFingerings.count]
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             Text(chordName)
-                .font(.system(size: 16, weight: .bold))
-            if !displayedFingerings.isEmpty {
+                .font(.system(size: 20, weight: .bold))
+            if let fingering = currentFingering {
                 ChordDiagramView(
-                    fingerings: [displayedFingerings[variationIndex % displayedFingerings.count]],
+                    fingerings: [fingering],
                     chord: chordName,
                     interactive: false
                 )
-                .frame(width: 120, height: 120)
+                .frame(width: 180, height: 180)
             }
             if displayedFingerings.count > 1 {
-                HStack(spacing: 16) {
+                HStack(spacing: 20) {
                     Button {
                         variationIndex = (variationIndex - 1 + displayedFingerings.count) % displayedFingerings.count
                     } label: {
                         Image(systemName: "chevron.left")
+                            .font(.system(size: 14))
                     }
                     .buttonStyle(.plain)
                     Text("\(variationIndex % displayedFingerings.count + 1)/\(displayedFingerings.count)")
-                        .font(.caption)
+                        .font(.system(size: 13))
                         .monospacedDigit()
                     Button {
                         variationIndex = (variationIndex + 1) % displayedFingerings.count
                     } label: {
                         Image(systemName: "chevron.right")
+                            .font(.system(size: 14))
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
-        .padding(12)
+        .padding(16)
     }
 }
 

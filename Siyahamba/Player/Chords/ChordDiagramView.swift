@@ -50,7 +50,7 @@ struct ChordDiagramView: View {
             let stringCount = 6
             let scale = size.width / 140
             let oxAreaHeight: CGFloat = 18 * scale
-            let fretLabelWidth: CGFloat = 28 * scale
+            let fretLabelWidth: CGFloat = position.baseFret > 1 ? 28 * scale : 0
             let sidePadding: CGFloat = 10 * scale
 
             let gridX: CGFloat = sidePadding
