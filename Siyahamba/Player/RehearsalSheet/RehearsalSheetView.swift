@@ -68,27 +68,37 @@ struct RehearsalSheetView: View {
             VStack(spacing: 0) {
                 scrollContent
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay(alignment: .bottom) {
+                        Color.clear
+                            .frame(height: 90)
+                            .allowsHitTesting(true)
+                            .onHover { hovering in
+                                referenceDismissTask?.cancel()
+                                referenceDismissTask = nil
+                                if hovering && NSApp.isActive && !showReferencePanel {
+                                    referenceDismissTask = Task {
+                                        try? await Task.sleep(for: .milliseconds(400))
+                                        guard !Task.isCancelled else { return }
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            showReferencePanel = true
+                                        }
+                                    }
+                                } else if !hovering && showReferencePanel {
+                                    referenceDismissTask = Task {
+                                        try? await Task.sleep(for: .milliseconds(400))
+                                        guard !Task.isCancelled else { return }
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            showReferencePanel = false
+                                        }
+                                    }
+                                }
+                            }
+                    }
                 if showReferencePanel {
                     Divider()
                     referencePanel
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
-                Color.clear
-                    .frame(height: 90)
-                    .allowsHitTesting(!showReferencePanel)
-                    .onHover { hovering in
-                        referenceDismissTask?.cancel()
-                        referenceDismissTask = nil
-                        if hovering && NSApp.isActive {
-                            referenceDismissTask = Task {
-                                try? await Task.sleep(for: .milliseconds(400))
-                                guard !Task.isCancelled else { return }
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    showReferencePanel = true
-                                }
-                            }
-                        }
-                    }
             }
             .background(Self.background)
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
@@ -201,40 +211,18 @@ struct RehearsalSheetView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: isFollowingPlayback)
             .overlay(alignment: .topTrailing) {
-                Button {
-                    showOffsetPopover.toggle()
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "timer")
-                        Text(offsetLabel)
-                            .monospacedDigit()
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.4))
-                    .frame(width: 90)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                    .background(.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(.white.opacity(0.15), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .padding(12)
-                .popover(isPresented: $showOffsetPopover) {
-                    LyricsOffsetPopover()
-                        .environment(vm)
-                }
-            }
-            .overlay(alignment: .bottomTrailing) {
-                Button {
-                    showFontSizePopover.toggle()
-                } label: {
-                    Text("Aa")
+                VStack(alignment: .trailing, spacing: 10) {
+                    Button {
+                        showOffsetPopover.toggle()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "timer")
+                            Text(offsetLabel)
+                                .monospacedDigit()
+                        }
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.4))
+                        .frame(width: 90)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
                         .background(.white.opacity(0.05))
@@ -243,12 +231,33 @@ struct RehearsalSheetView: View {
                             RoundedRectangle(cornerRadius: 6)
                                 .stroke(.white.opacity(0.15), lineWidth: 1)
                         )
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showOffsetPopover) {
+                        LyricsOffsetPopover()
+                            .environment(vm)
+                    }
+                    Button {
+                        showFontSizePopover.toggle()
+                    } label: {
+                        Text("Aa")
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 5)
+                            .background(.white.opacity(0.05))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(.white.opacity(0.15), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showFontSizePopover) {
+                        LyricsFontSizePopover()
+                    }
                 }
-                .buttonStyle(.plain)
                 .padding(12)
-                .popover(isPresented: $showFontSizePopover) {
-                    LyricsFontSizePopover()
-                }
             }
         }
     }
@@ -274,7 +283,7 @@ struct RehearsalSheetView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
         }
-        .frame(height: 120)
+        .frame(height: 160)
         .background(Self.background)
         .onHover { hovering in
             guard NSApp.isActive else { return }
@@ -416,19 +425,14 @@ private struct RehearsalWordFlow: View {
         let isEditing = editingIndex == index
         return VStack(alignment: .leading, spacing: 2) {
             if isEditing {
-                Text(editText.isEmpty ? "Am" : editText)
-                    .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
-                    .foregroundStyle(Color.clear)
-                    .frame(minWidth: 40)
-                    .overlay(alignment: .leading) {
-                        FocusedTextField(
-                            text: $editText,
-                            fontSize: CGFloat(fontSize) * 0.7,
-                            textColor: NSColor(chordColor),
-                            onCommit: { commitEdit(at: index) },
-                            onEscape: { editingIndex = nil }
-                        )
-                    }
+                FocusedTextField(
+                    text: $editText,
+                    fontSize: CGFloat(fontSize) * 0.7,
+                    textColor: NSColor(chordColor),
+                    onCommit: { commitEdit(at: index) },
+                    onEscape: { editingIndex = nil }
+                )
+                .frame(minWidth: 40, maxWidth: 120)
             } else if let chord = displayChord {
                 Text(chord)
                     .font(.system(size: CGFloat(fontSize) * 0.7, weight: .bold))
@@ -615,6 +619,18 @@ private struct TailDropDelegate: DropDelegate {
     }
 }
 
+private final class CursorColorTextField: NSTextField {
+    var cursorColor: NSColor = .white
+
+    override func becomeFirstResponder() -> Bool {
+        let result = super.becomeFirstResponder()
+        if result, let editor = currentEditor() as? NSTextView {
+            editor.insertionPointColor = cursorColor
+        }
+        return result
+    }
+}
+
 private struct FocusedTextField: NSViewRepresentable {
     @Binding var text: String
     var fontSize: CGFloat
@@ -622,8 +638,9 @@ private struct FocusedTextField: NSViewRepresentable {
     var onCommit: () -> Void
     var onEscape: () -> Void
 
-    func makeNSView(context: Context) -> NSTextField {
-        let field = NSTextField()
+    func makeNSView(context: Context) -> CursorColorTextField {
+        let field = CursorColorTextField()
+        field.cursorColor = textColor
         field.isBordered = false
         field.drawsBackground = false
         field.focusRingType = .none
@@ -636,10 +653,13 @@ private struct FocusedTextField: NSViewRepresentable {
         field.cell?.isScrollable = true
         field.setContentHuggingPriority(.defaultLow, for: .horizontal)
         field.delegate = context.coordinator
-        func focusWhenReady(_ field: NSTextField, attempts: Int = 0) {
+        func focusWhenReady(_ field: CursorColorTextField, attempts: Int = 0) {
             DispatchQueue.main.async {
                 if let window = field.window {
                     window.makeFirstResponder(field)
+                    if let editor = field.currentEditor() as? NSTextView {
+                        editor.insertionPointColor = field.cursorColor
+                    }
                 } else if attempts < 10 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
                         focusWhenReady(field, attempts: attempts + 1)
@@ -651,7 +671,7 @@ private struct FocusedTextField: NSViewRepresentable {
         return field
     }
 
-    func updateNSView(_ nsView: NSTextField, context: Context) {}
+    func updateNSView(_ nsView: CursorColorTextField, context: Context) {}
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
