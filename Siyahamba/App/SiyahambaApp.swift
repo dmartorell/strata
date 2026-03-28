@@ -53,6 +53,7 @@ struct SiyahambaApp: App {
                 }
             }
             .environment(authViewModel)
+            .preferredColorScheme(.dark)
             .task {
                 await libraryStore.loadFromDisk()
             }
