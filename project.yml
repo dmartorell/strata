@@ -43,7 +43,7 @@ targets:
         CFBundleName: Siyahamba
         CFBundleIdentifier: com.siyahamba.client
         CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.0"
+        CFBundleShortVersionString: "1.1"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
@@ -81,7 +81,7 @@ targets:
         CFBundleName: SiyahambaTests
         CFBundleIdentifier: com.siyahamba.client.tests
         CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.0"
+        CFBundleShortVersionString: "1.1"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client.tests

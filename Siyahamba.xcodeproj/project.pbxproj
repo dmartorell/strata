@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -395,6 +395,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					E6A0D1EFD62615552D0B6E24 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -411,9 +412,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B4A67E301B5F8294CB3ED8C6 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */,
+				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
 				995F7FA9DFD976BCB5F82964 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -636,7 +638,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Siyahamba/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -659,7 +661,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 89ZFGW6H88;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Siyahamba/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -750,7 +752,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
+		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -779,7 +781,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		34A0891AF00904CF2550AC40 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */;
+			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
 			productName = JWTDecode;
 		};
 		39D297249C7628D1B89EEEEA /* DSWaveformImageViews */ = {
