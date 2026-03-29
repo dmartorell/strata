@@ -24,7 +24,10 @@ struct LyricsView: View {
                                 LyricLineView(
                                     line: line,
                                     isActive: line.id == vm.currentLine?.id,
-                                    linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
+                                    linePassed: {
+                                        guard let current = vm.currentLine else { return false }
+                                        return line.end <= current.start
+                                    }(),
                                     fontSize: fontSize
                                 )
                                 .id(line.id)

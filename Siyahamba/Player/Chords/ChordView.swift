@@ -6,11 +6,13 @@ struct ChordView: View {
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("chordView.showDiagrams") private var showDiagrams: Bool = true
 
+    @State private var fingeringsMap: [String: [ChordPosition]] = [:]
+
     private var hasFingerings: Bool {
         !vm.chords.isEmpty
     }
 
-    private var fingeringsMap: [String: [ChordPosition]] {
+    private func buildFingeringsMap() -> [String: [ChordPosition]] {
         var map: [String: [ChordPosition]] = [:]
         for entry in vm.chords {
             if let f = entry.fingerings, !f.isEmpty {
@@ -54,6 +56,8 @@ struct ChordView: View {
                 .padding(12)
             }
         }
+        .onAppear { fingeringsMap = buildFingeringsMap() }
+        .onChange(of: vm.chords.count) { _, _ in fingeringsMap = buildFingeringsMap() }
     }
 
     @ViewBuilder

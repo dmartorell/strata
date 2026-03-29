@@ -11,6 +11,7 @@ struct RehearsalSheetView: View {
     @Environment(PlayerViewModel.self) private var vm
     @AppStorage("lyrics.fontSize") private var fontSize: Double = 36
     @State private var showReferencePanel: Bool = false
+    @State private var uniqueChords: [String] = []
 
     @State private var isFollowingPlayback: Bool = true
     @State private var lastAutoScrollOffset: CGFloat = 0
@@ -25,7 +26,7 @@ struct RehearsalSheetView: View {
     private static let passedColor = Color(red: 0.30, green: 0.44, blue: 0.58)
     private static let upcomingColor = Color(red: 0.47, green: 0.66, blue: 0.84)
 
-    private var uniqueChords: [String] {
+    private func buildUniqueChords() -> [String] {
         let placeholders: Set<String> = ["N", "-", ""]
         var seen = Set<String>()
         var result: [String] = []
@@ -101,6 +102,11 @@ struct RehearsalSheetView: View {
                 }
             }
             .background(Self.background)
+            .onAppear { uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.chords.count) { _, _ in uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.chordOverrides.count) { _, _ in uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.showTransposed) { _, _ in uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.engine.pitchSemitones) { _, _ in uniqueChords = buildUniqueChords() }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showReferencePanel = false
@@ -134,7 +140,10 @@ struct RehearsalSheetView: View {
             line: line,
             lineIndex: index,
             isActive: line.id == vm.currentLine?.id,
-            linePassed: line.end <= vm.engine.currentTime + vm.lyricsOffset,
+            linePassed: {
+                guard let current = vm.currentLine else { return false }
+                return line.end <= current.start
+            }(),
             fontSize: fontSize,
             simplify: { $0 },
             isPaused: !vm.engine.isPlaying,
