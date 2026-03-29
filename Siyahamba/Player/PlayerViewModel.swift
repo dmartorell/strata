@@ -12,7 +12,8 @@ struct DragSource {
     let word: Int
 }
 
-struct RehearsalWord: Sendable {
+struct RehearsalWord: Identifiable, Sendable {
+    let id: String
     let word: String
     let chord: String?
     let wordStart: Double
@@ -255,7 +256,7 @@ final class PlayerViewModel {
         let filteredChords = chords.filter { !placeholders.contains($0.chord) }
 
         rehearsalLines = lyrics.enumerated().map { lineIndex, line in
-            let words: [RehearsalWord] = line.words.map { word in
+            let words: [RehearsalWord] = line.words.enumerated().map { wordIndex, word in
                 let matchedChord = filteredChords.last(where: { chord in
                     chord.start >= word.start && chord.start < word.end
                 })
@@ -269,7 +270,7 @@ final class PlayerViewModel {
                 } else {
                     chordName = nil
                 }
-                return RehearsalWord(word: word.word, chord: chordName, wordStart: word.start, overrideIndex: nil)
+                return RehearsalWord(id: "\(lineIndex)-\(wordIndex)", word: word.word, chord: chordName, wordStart: word.start, overrideIndex: nil)
             }
 
             // Attach any chord that falls before this line's first word to the first word
@@ -288,7 +289,7 @@ final class PlayerViewModel {
                         chordName = raw
                     }
                     let original = finalWords[0]
-                    finalWords[0] = RehearsalWord(word: original.word, chord: chordName, wordStart: original.wordStart, overrideIndex: nil)
+                    finalWords[0] = RehearsalWord(id: original.id, word: original.word, chord: chordName, wordStart: original.wordStart, overrideIndex: nil)
                 }
             }
 
@@ -305,7 +306,7 @@ final class PlayerViewModel {
                 } else {
                     newChord = override.chord
                 }
-                finalWords[override.wordIndex] = RehearsalWord(word: original.word, chord: newChord, wordStart: original.wordStart, overrideIndex: override.wordIndex)
+                finalWords[override.wordIndex] = RehearsalWord(id: original.id, word: original.word, chord: newChord, wordStart: original.wordStart, overrideIndex: override.wordIndex)
             }
 
             // Append tail chords (overrides beyond last word)
@@ -319,7 +320,7 @@ final class PlayerViewModel {
                 } else {
                     chordName = override.chord
                 }
-                finalWords.append(RehearsalWord(word: "", chord: chordName, wordStart: line.end, overrideIndex: override.wordIndex))
+                finalWords.append(RehearsalWord(id: "\(lineIndex)-tail-\(override.wordIndex)", word: "", chord: chordName, wordStart: line.end, overrideIndex: override.wordIndex))
             }
 
             return RehearsalLine(id: line.id, start: line.start, end: line.end, words: finalWords)
@@ -364,6 +365,7 @@ final class PlayerViewModel {
             chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: toWordIndex, chord: rawChord))
         }
 
+        draggingChordSource = nil
         rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }
@@ -375,6 +377,7 @@ final class PlayerViewModel {
         if realIndex < baseWordCount {
             chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: ""))
         }
+        draggingChordSource = nil
         rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }
@@ -383,6 +386,7 @@ final class PlayerViewModel {
         let realIndex = resolveOverrideIndex(lineIndex: lineIndex, wordIndex: wordIndex)
         chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == realIndex }
         chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: chord))
+        draggingChordSource = nil
         rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }

@@ -420,13 +420,10 @@ private struct RehearsalWordFlow: View {
 
     var body: some View {
         FlowLayout(spacing: CGSize(width: 4, height: 8)) {
-            ForEach(words.indices, id: \.self) { index in
-                wordCell(index: index, word: words[index])
+            ForEach(Array(words.enumerated()), id: \.element.id) { index, word in
+                wordCell(index: index, word: word)
             }
             tailDropSlot
-        }
-        .onChange(of: words.map(\.chord)) { _, _ in
-            draggingSource = nil
         }
         .onChange(of: editingIndex) { _, newValue in
             isEditingChord = newValue != nil
