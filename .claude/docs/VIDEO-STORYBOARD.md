@@ -30,7 +30,7 @@
 
 ## Shot List
 
-### Shot 1 — Hook: Lyrics en vivo (0s → 4s)
+### - [ ] Shot 1 — Hook: Lyrics en vivo (0s → 4s)
 
 **Qué se ve:** Player con modo Lyrics activo. Canción sonando a mitad. Las letras auto-scrollean: línea actual en blanco, próximas en azul claro, pasadas en azul oscuro. Sidebar de stems visible a la izquierda. Transport bar abajo con el slider moviéndose.
 
@@ -49,7 +49,7 @@
 
 ---
 
-### Shot 2 — Stems: Mutear voz + Solo bajo (4s → 8s)
+### - [ ] Shot 2 — Stems: Mutear voz + Solo bajo (4s → 8s)
 
 **Qué se ve:** Mismo player. La cámara retrocede ligeramente para incluir el sidebar de stems.
 
@@ -69,7 +69,7 @@
 
 ---
 
-### Shot 3 — Vista Acordes + Diagrama (8s → 13s)
+### - [ ] Shot 3 — Vista Acordes + Diagrama (8s → 13s)
 
 **Qué se ve:** Click en "Acordes" en el transport bar. La zona central cambia a vista de acordes: nombre grande (128pt bold), acorde siguiente más pequeño (64pt, 50% opacidad), diagrama de guitarra debajo (cuerdas, trastes, dedos).
 
@@ -90,7 +90,7 @@
 
 ---
 
-### Shot 4 — Rehearsal Sheet + Panel de referencia (13s → 18s)
+### - [ ] Shot 4 — Rehearsal Sheet + Panel de referencia (13s → 18s)
 
 **Qué se ve:** Click en "Estudio" en transport bar. Cambia a RehearsalSheet: fondo azul oscuro, letras en layout de flujo, nombres de acordes en azul claro posicionados sobre cada palabra.
 
@@ -110,7 +110,7 @@
 
 ---
 
-### Shot 5 — Pitch Shift (18s → 22s)
+### - [ ] Shot 5 — Pitch Shift (18s → 22s)
 
 **Qué se ve:** Click en botón de tono del transport bar. Aparece PitchPopover: "Tono", nombre de la key grande, botones −/+, contador de semitonos.
 
@@ -130,7 +130,7 @@
 
 ---
 
-### Shot 6 — Flashback: Importar canción (22s → 27s)
+### - [ ] Shot 6 — Flashback: Importar canción (22s → 27s)
 
 **Qué se ve:** Navegar a la librería (botón "Biblioteca" con chevron.left). Tabla con columnas Título, Artista, Tono, Duración. Arrastrar archivo desde Finder al drop zone (borde punteado). Badge púrpura con spinner: "Subiendo archivo..." → "Separando stems..." → "Detectando acordes..." → verde "Finalizado".
 
@@ -151,7 +151,7 @@
 
 ---
 
-### Shot 7 — Payoff: Player completo (27s → 30s)
+### - [ ] Shot 7 — Payoff: Player completo (27s → 30s)
 
 **Qué se ve:** Badge verde visible. Doble-click en la canción recién importada. Se abre el player completo: sidebar de stems a la izquierda, lyrics scrolleando en el centro, transport bar abajo. Todo poblado y activo.
 

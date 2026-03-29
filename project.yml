@@ -16,6 +16,18 @@ packages:
     url: https://github.com/dmrschmidt/DSWaveformImage
     from: 14.0.0
 
+schemes:
+  Siyahamba:
+    build:
+      targets:
+        Siyahamba: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - SiyahambaTests
+
 targets:
   Siyahamba:
     type: application
