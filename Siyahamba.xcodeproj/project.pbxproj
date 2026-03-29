@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -39,10 +39,12 @@
 		94965BDA9794F4579D81FD07 /* ChordDiagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DD1D43B5EA5248C5D70A9D /* ChordDiagramView.swift */; };
 		94B9809EE122C3AF42088833 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57371222DD562CD76B9AF8FA /* ContentView.swift */; };
 		A221CA352363A89042C5EAC2 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 7844B5F4924D0D06A83E3DAA /* ZIPFoundation */; };
+		A28998D6A7BEC7327997CF79 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FD8E8A5B3B793E7BB52969 /* FlowLayout.swift */; };
 		A4A12209C90DCE87551C4B06 /* ChordTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF8AC48DD10A79F171B725 /* ChordTransposer.swift */; };
 		ABE111581CCEAD0724E71141 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2413A51BD059860C00C1ADD0 /* TransportBarView.swift */; };
 		B0ED8000B26C552AB781E04B /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA9300CD2970136F554A6B0 /* SongEntry.swift */; };
 		B6A36F4C71EABF9F5D189191 /* RehearsalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */; };
+		BCF11E547BDF9005D1324ACA /* RehearsalReferencePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */; };
 		C079780D826DFD9C286485C0 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AECB9D53BC6B8BCD9B3AABA /* LoginView.swift */; };
 		C8DB21DD90C497C9144A0096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0EAA14CF59E71597E0C97AA /* Assets.xcassets */; };
 		CE737FD3CBF21602C5433E1B /* GuitarTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6CC3852F98CAC63B903246 /* GuitarTuning.swift */; };
@@ -88,10 +90,12 @@
 		402B315682DE950E55028026 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
 		4686A448C9C5855FBAA07AA5 /* ChordFingerings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordFingerings.swift; sourceTree = "<group>"; };
 		476EBDCEA1F0E36A5F4523A7 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		49FD8E8A5B3B793E7BB52969 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		4D4E7094033A28CD608F02DC /* StemControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StemControlsView.swift; sourceTree = "<group>"; };
 		5236B1AA2F4D23765DAE02A7 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		57371222DD562CD76B9AF8FA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		58B8A9A161D77645DB943BB8 /* Siyahamba.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Siyahamba.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalReferencePanel.swift; sourceTree = "<group>"; };
 		67F332BD21E70B278F205CF6 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		6BD97ED7C9989AE382B5F656 /* LyricsFontSizePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsFontSizePopover.swift; sourceTree = "<group>"; };
 		71BFE52BEE5737C77EA098FC /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
@@ -145,6 +149,8 @@
 		06734A5BFBE3A510CE571EDA /* RehearsalSheet */ = {
 			isa = PBXGroup;
 			children = (
+				49FD8E8A5B3B793E7BB52969 /* FlowLayout.swift */,
+				633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */,
 				0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */,
 			);
 			path = RehearsalSheet;
@@ -395,7 +401,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					E6A0D1EFD62615552D0B6E24 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -412,10 +417,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B4A67E301B5F8294CB3ED8C6 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */,
 				995F7FA9DFD976BCB5F82964 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -466,6 +470,7 @@
 				A4A12209C90DCE87551C4B06 /* ChordTransposer.swift in Sources */,
 				1857BBC2810F4A92E9CC1432 /* ChordView.swift in Sources */,
 				94B9809EE122C3AF42088833 /* ContentView.swift in Sources */,
+				A28998D6A7BEC7327997CF79 /* FlowLayout.swift in Sources */,
 				F7AFEEF32C39E0EE0D716132 /* GlobalDropOverlay.swift in Sources */,
 				CE737FD3CBF21602C5433E1B /* GuitarTuning.swift in Sources */,
 				56148967706C6C9CC0168939 /* ImportPhase.swift in Sources */,
@@ -486,6 +491,7 @@
 				17B6A0BA44479DEDB43C46C0 /* PlaybackEngine.swift in Sources */,
 				8E596AC0F27A63AF99F70C5F /* PlayerView.swift in Sources */,
 				DF93427BE6EC48626B94E9EF /* PlayerViewModel.swift in Sources */,
+				BCF11E547BDF9005D1324ACA /* RehearsalReferencePanel.swift in Sources */,
 				B6A36F4C71EABF9F5D189191 /* RehearsalSheetView.swift in Sources */,
 				74F2B175A9B4595D471B7E89 /* SiyahambaApp.swift in Sources */,
 				B0ED8000B26C552AB781E04B /* SongEntry.swift in Sources */,
@@ -638,7 +644,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Siyahamba/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -661,7 +667,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Siyahamba/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -752,7 +758,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -781,7 +787,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		34A0891AF00904CF2550AC40 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */;
 			productName = JWTDecode;
 		};
 		39D297249C7628D1B89EEEEA /* DSWaveformImageViews */ = {

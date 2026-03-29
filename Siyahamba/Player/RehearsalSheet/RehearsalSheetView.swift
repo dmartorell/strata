@@ -97,16 +97,20 @@ struct RehearsalSheetView: View {
                     }
                 if showReferencePanel {
                     Divider()
-                    referencePanel
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    RehearsalReferencePanel(
+                        uniqueChords: uniqueChords,
+                        showPanel: $showReferencePanel,
+                        dismissTask: $referenceDismissTask
+                    )
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .background(Self.background)
             .onAppear { uniqueChords = buildUniqueChords() }
-            .onChange(of: vm.chords.count) { _, _ in uniqueChords = buildUniqueChords() }
-            .onChange(of: vm.chordOverrides.count) { _, _ in uniqueChords = buildUniqueChords() }
-            .onChange(of: vm.showTransposed) { _, _ in uniqueChords = buildUniqueChords() }
-            .onChange(of: vm.engine.pitchSemitones) { _, _ in uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.chords.count) { uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.chordOverrides.count) { uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.showTransposed) { uniqueChords = buildUniqueChords() }
+            .onChange(of: vm.engine.pitchSemitones) { uniqueChords = buildUniqueChords() }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showReferencePanel = false
@@ -272,46 +276,6 @@ struct RehearsalSheetView: View {
         }
     }
 
-    private var referencePanel: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-                ForEach(uniqueChords, id: \.self) { chordName in
-                    VStack(spacing: 4) {
-                        Text(chordName)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(Self.chordColor)
-                        ChordDiagramView(
-                            fingerings: ChordFingerings.lookup(chordName),
-                            chord: chordName,
-                            interactive: true
-                        )
-                        .frame(width: 80, height: 80)
-                    }
-                    .padding(6)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-        }
-        .frame(height: 160)
-        .background(Self.background)
-        .onHover { hovering in
-            guard NSApp.isActive else { return }
-            if hovering {
-                referenceDismissTask?.cancel()
-                referenceDismissTask = nil
-            } else {
-                referenceDismissTask?.cancel()
-                referenceDismissTask = Task {
-                    try? await Task.sleep(for: .milliseconds(400))
-                    guard !Task.isCancelled else { return }
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        showReferencePanel = false
-                    }
-                }
-            }
-        }
-    }
 
     private var chordsOnlyView: some View {
         ForEach(vm.chords.filter { !["N", "-", ""].contains($0.chord) }) { entry in
@@ -796,67 +760,5 @@ private struct ChordPopoverContent: View {
             }
         }
         .padding(16)
-    }
-}
-
-private struct FlowLayout: Layout {
-    let spacing: CGSize
-
-    init(spacing: CGSize = CGSize(width: 4, height: 8)) {
-        self.spacing = spacing
-    }
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let containerWidth = proposal.width ?? .infinity
-        var height: CGFloat = 0
-        var rowWidth: CGFloat = 0
-        var rowHeight: CGFloat = 0
-        var firstInRow = true
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if firstInRow {
-                rowWidth = size.width
-                rowHeight = size.height
-                firstInRow = false
-            } else if rowWidth + spacing.width + size.width <= containerWidth {
-                rowWidth += spacing.width + size.width
-                rowHeight = max(rowHeight, size.height)
-            } else {
-                height += rowHeight + spacing.height
-                rowWidth = size.width
-                rowHeight = size.height
-            }
-        }
-        height += rowHeight
-        return CGSize(width: containerWidth, height: height)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x = bounds.minX
-        var y = bounds.minY
-        var rowHeight: CGFloat = 0
-        var firstInRow = true
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if firstInRow {
-                subview.place(at: CGPoint(x: x, y: y), proposal: .unspecified)
-                rowHeight = size.height
-                x += size.width
-                firstInRow = false
-            } else if x + spacing.width + size.width <= bounds.maxX {
-                x += spacing.width
-                subview.place(at: CGPoint(x: x, y: y), proposal: .unspecified)
-                x += size.width
-                rowHeight = max(rowHeight, size.height)
-            } else {
-                y += rowHeight + spacing.height
-                x = bounds.minX
-                rowHeight = size.height
-                subview.place(at: CGPoint(x: x, y: y), proposal: .unspecified)
-                x += size.width
-            }
-        }
     }
 }
