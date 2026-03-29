@@ -185,7 +185,6 @@ private struct PlayheadView: View {
             .offset(x: engine.duration > 0
                 ? width * CGFloat(engine.currentTime / engine.duration)
                 : 0)
-            .animation(.easeOut(duration: 0.15), value: engine.currentTime)
     }
 }
 
