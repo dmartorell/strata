@@ -11,14 +11,13 @@ El proyecto arranca con el backend serverless (Modal GPU), que es la dependencia
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [ ] **Phase 1: Backend Foundation** - Modal API deployada con auth JWT, endpoints stub y contratos reales
-- [x] **Phase 2: GPU Pipeline** - Demucs + WhisperX + CREMA corriendo en T4 con cold-start dentro de presupuesto (completed 2026-03-02)
-- [x] **Phase 3: Swift Client + Auth** - Cliente Swift con URLSession, JWT en Keychain y pantalla de login (completed 2026-03-03)
-- [x] **Phase 4: Library + Cache** - Cache local ~/Music/Strata/ con schema fijo antes de persistir canciones (completed 2026-03-03)
-- [x] **Phase 5: Multi-Stem Playback** - AVAudioEngine con sync frame-accurate, pitch shift y controles de stem (completed 2026-03-03)
-- [x] **Phase 6: Import + End-to-End Flow** - Drag & drop, URL de YouTube y UI de progreso conectados al pipeline (completed 2026-03-03)
+- [x] **Phase 2: GPU Pipeline** - Demucs + WhisperX + CREMA corriendo en T4 con cold-start dentro de presupuesto (completed 2008-03-02)
+- [x] **Phase 3: Swift Client + Auth** - Cliente Swift con URLSession, JWT en Keychain y pantalla de login (completed 2008-03-03)
+- [x] **Phase 4: Library + Cache** - Cache local ~/Music/Strata/ con schema fijo antes de persistir canciones (completed 2008-03-03)
+- [x] **Phase 5: Multi-Stem Playback** - AVAudioEngine con sync frame-accurate, pitch shift y controles de stem (completed 2008-03-03)
+- [x] **Phase 6: Import + End-to-End Flow** - Drag & drop, URL de YouTube y UI de progreso conectados al pipeline (completed 2008-03-03)
 - [ ] **Phase 7: Player UI + Display + Usage** - Controles de reproduccion, karaoke, acordes y panel de uso
-- [ ] **Phase 8: YouTube Download Client-Side** - Descarga de YouTube local con yt-dlp
-- [ ] **Phase 9: Chord Finger Position Diagrams** - Diagramas de posicion de dedos junto a nombres de acordes
+- [ ] **Phase 8: Chord Finger Position Diagrams** - Diagramas de posicion de dedos junto a nombres de acordes
 
 
 ## Phase Details
@@ -151,31 +150,17 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 2/3 | In Progress|  |
-| 2. GPU Pipeline | 5/5 | Complete   | 2026-03-02 |
-| 3. Swift Client + Auth | 3/3 | Complete   | 2026-03-03 |
-| 4. Library + Cache | 2/2 | Complete   | 2026-03-03 |
-| 5. Multi-Stem Playback | 3/3 | Complete   | 2026-03-03 |
-| 6. Import + End-to-End Flow | 3/3 | Complete   | 2026-03-03 |
-| 7. Player UI + Display + Usage | 5/5 | Complete   | 2026-03-05 |
-| 8. YouTube Download Client-Side | 0/? | Not Started|  |
-| 9. Chord Finger Position Diagrams | 2/2 | Complete   | 2026-03-24 |
-| 10. Rehearsal Sheet View | 3/3 | Complete    | 2026-03-25 |
+| 2. GPU Pipeline | 5/5 | Complete   | 2008-03-02 |
+| 3. Swift Client + Auth | 3/3 | Complete   | 2008-03-03 |
+| 4. Library + Cache | 2/2 | Complete   | 2008-03-03 |
+| 5. Multi-Stem Playback | 3/3 | Complete   | 2008-03-03 |
+| 6. Import + End-to-End Flow | 3/3 | Complete   | 2008-03-03 |
+| 7. Player UI + Display + Usage | 5/5 | Complete   | 2008-03-05 |
+| 8. Chord Finger Position Diagrams | 2/2 | Complete   | 2008-03-24 |
+| 8. Rehearsal Sheet View | 3/3 | Complete    | 2008-03-25 |
 
 
-### Phase 8: YouTube Download Client-Side
-**Goal**: La descarga de audio de YouTube ocurre en el Mac del usuario usando yt-dlp local con `--cookies-from-browser`, eliminando la dependencia de cookies en Modal Secret. El audio descargado se sube al servidor por `/process-file` para procesamiento GPU.
-**Depends on**: Phase 6
-**Success Criteria** (what must be TRUE):
-  1. El usuario pega una URL de YouTube y la app descarga el audio localmente sin pedir cookies ni configuracion extra
-  2. El audio descargado se sube automaticamente por `/process-file` y se procesa igual que un archivo arrastrado
-  3. No se usa el endpoint `/process-url` ni el Modal Secret `youtube-cookies` para nuevas descargas
-  4. El flujo muestra progreso: validando → descargando → subiendo → procesando → listo
-  5. Si yt-dlp no esta instalado, la app muestra un mensaje claro con instrucciones de instalacion
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 8 to break down)
-
-### Phase 9: Show chord finger position diagram alongside chord name
+### Phase 8: Show chord finger position diagram alongside chord name
 **Goal**: El usuario ve diagramas de posicion de dedos para guitarra junto a los nombres de acordes en ChordView, con datos generados en el pipeline del servidor y renderizados via Canvas en el cliente
 **Requirements**: CHRD-01, CHRD-02, CHRD-03, CHRD-04, CHRD-05
 **Depends on**: Phase 7
@@ -188,15 +173,15 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 09-01-PLAN.md — Server: guitar.json bundle, fingerings.py lookup, chords.py extension con fingerings
-- [ ] 09-02-PLAN.md — Client: ChordPosition model, ChordDiagramView Canvas, ChordView integration + toggle + layout
+- [ ] 08-01-PLAN.md — Server: guitar.json bundle, fingerings.py lookup, chords.py extension con fingerings
+- [ ] 08-02-PLAN.md — Client: ChordPosition model, ChordDiagramView Canvas, ChordView integration + toggle + layout
 
 
-### Phase 10: Rehearsal sheet view with lyrics and positioned chord diagrams
+### Phase 8: Rehearsal sheet view with lyrics and positioned chord diagrams
 
 **Goal:** El usuario ve una vista de "hoja de ensayo" estilo Ultimate Guitar con acordes posicionados inline encima de las letras, panel de referencia con diagramas, selector de dificultad de acordes, y controles de fuente/offset — todo sincronizado con la reproducción
 **Requirements**: RHRS-01, RHRS-02, RHRS-03, RHRS-04, RHRS-05, CHRD-06, CHRD-07
-**Depends on:** Phase 9
+**Depends on:** Phase 8
 **Success Criteria** (what must be TRUE):
   1. El usuario puede activar la vista de ensayo con la tecla R o el botón "Ensayo" en la barra de transporte
   2. Los acordes aparecen inline encima de la palabra donde ocurre el cambio de acorde
@@ -207,6 +192,6 @@ Plans:
 **Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 10-01-PLAN.md — ChordSimplifier + selector de dificultad en ChordView
-- [ ] 10-02-PLAN.md — RehearsalSheetView core: layout inline, auto-scroll, highlighting
-- [ ] 10-03-PLAN.md — Integración: PlayerView wiring, TransportBar toggle, panel de referencia, controles
+- [ ] 08-01-PLAN.md — ChordSimplifier + selector de dificultad en ChordView
+- [ ] 08-02-PLAN.md — RehearsalSheetView core: layout inline, auto-scroll, highlighting
+- [ ] 08-03-PLAN.md — Integración: PlayerView wiring, TransportBar toggle, panel de referencia, controles

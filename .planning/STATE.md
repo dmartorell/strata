@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-25T22:55:45.416Z"
+last_updated: "2026-03-28T22:22:53.914Z"
 progress:
-  total_phases: 11
+  total_phases: 10
   completed_phases: 9
   total_plans: 30
   completed_plans: 30
@@ -22,7 +22,7 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 7 of 7 (Player UI Display Usage) — COMPLETE
+Phase: 7 of 6 (Player UI Display Usage) — COMPLETE
 Plan: 5 of 5 (07-05 COMPLETE — LyricsView karaoke + ChordView + PlayerView integración zona principal)
 Status: Phase 07 COMPLETE — reproductor completo con letras karaoke, acordes en tiempo real, waveforms, stems M/S/vol, pitch, transport. UsageView con spinner+texto en biblioteca.
 Last activity: 2026-03-28 - Completed quick task 25: Popup con diagrama de acorde al clicar sobre acorde en rehearsal sheet
@@ -157,6 +157,8 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
+- **Optimize SwiftUI invalidation during playback** (ui) — rehearsalLines O(n×m) 60×/s, timer 60fps cascade, currentLine/currentChord computed 60×/s
+- **Minor SwiftUI performance fixes** (ui) — fingeringsMap, uniqueChords, ForEach identity, onChange allocation, playhead animation
 - **Upload plain text lyrics and force-align with WhisperX** (ui) — importar .txt y sincronizar con audio via whisperx.align()
 - Analyze adding lyrics editing to LyricsView (ui)
 - Replace yt-dlp with Cobalt Tools API for YouTube downloads (server)
