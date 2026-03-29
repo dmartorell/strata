@@ -11,13 +11,13 @@ final class ImportViewModel {
     var queueCount: Int { queue.count }
     var pendingItems: [PendingImportItem] = []
 
-    private let apiClient: any ImportAPIClientProtocol
-    private let cacheManager: CacheManager
-    private let libraryStore: LibraryStore
-    private var authViewModel: any AuthTokenProviderProtocol
-    private var currentTask: Task<Void, Never>?
-    private var currentJobId: String?
-    private var placeholderID: UUID?
+    @ObservationIgnored private let apiClient: any ImportAPIClientProtocol
+    @ObservationIgnored private let cacheManager: CacheManager
+    @ObservationIgnored private let libraryStore: LibraryStore
+    @ObservationIgnored private var authViewModel: any AuthTokenProviderProtocol
+    @ObservationIgnored private var currentTask: Task<Void, Never>?
+    @ObservationIgnored private var currentJobId: String?
+    @ObservationIgnored private var placeholderID: UUID?
     private var queue: [QueueItem] = []
 
     init(apiClient: any ImportAPIClientProtocol = APIClient(), cacheManager: CacheManager, libraryStore: LibraryStore, authViewModel: any AuthTokenProviderProtocol) {

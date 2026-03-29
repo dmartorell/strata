@@ -14,15 +14,15 @@ final class TunerEngine {
     var lockedString: GuitarString? = nil
     var permissionDenied: Bool = false
 
-    private var audioEngine = AVAudioEngine()
-    private let playbackEngine: PlaybackEngine
-    private var wasPlaying: Bool = false
+    @ObservationIgnored private var audioEngine = AVAudioEngine()
+    @ObservationIgnored private let playbackEngine: PlaybackEngine
+    @ObservationIgnored private var wasPlaying: Bool = false
 
-    private var smoothedPitch: Double = 0
-    private let smoothingFactor: Double = 0.3
-    private var pitchHistory: [Double] = []
-    private let historySize = 5
-    private let noiseFloor: Float = 0.01
+    @ObservationIgnored private var smoothedPitch: Double = 0
+    @ObservationIgnored private let smoothingFactor: Double = 0.3
+    @ObservationIgnored private var pitchHistory: [Double] = []
+    @ObservationIgnored private let historySize = 5
+    @ObservationIgnored private let noiseFloor: Float = 0.01
 
     init(playbackEngine: PlaybackEngine) {
         self.playbackEngine = playbackEngine

@@ -30,27 +30,27 @@ final class PlaybackEngine {
 
     // MARK: - Private Audio Graph
 
-    private let engine = AVAudioEngine()
-    private var players: [AVAudioPlayerNode] = []
-    private var stemMixers: [AVAudioMixerNode] = []
-    private let preMixNode = AVAudioMixerNode()
-    private let timePitchNode = AVAudioUnitTimePitch()
-    private var stemFiles: [AVAudioFile] = []
+    @ObservationIgnored private let engine = AVAudioEngine()
+    @ObservationIgnored private var players: [AVAudioPlayerNode] = []
+    @ObservationIgnored private var stemMixers: [AVAudioMixerNode] = []
+    @ObservationIgnored private let preMixNode = AVAudioMixerNode()
+    @ObservationIgnored private let timePitchNode = AVAudioUnitTimePitch()
+    @ObservationIgnored private var stemFiles: [AVAudioFile] = []
 
     // MARK: - Tick callback (set by PlayerView to wire PlayerViewModel.tick())
     @ObservationIgnored var onTick: (() -> Void)?
 
     // MARK: - Private State
 
-    private var seekOffset: TimeInterval = 0
-    private var updateTimer: Timer?
+    @ObservationIgnored private var seekOffset: TimeInterval = 0
+    @ObservationIgnored private var updateTimer: Timer?
     private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
-    private var preMuteVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
+    @ObservationIgnored private var preMuteVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
     private var manualMute: [Bool] = [false, false, false, false]
     private(set) var soloedStems: Set<Int> = []
     private var soloExempt: Set<Int> = []
-    private var isLooping: Bool = false
-    private var playbackGeneration: Int = 0
+    @ObservationIgnored private var isLooping: Bool = false
+    @ObservationIgnored private var playbackGeneration: Int = 0
 
     // MARK: - Public API
 
