@@ -132,10 +132,7 @@ struct APIClient: Sendable {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: ["password": password])
 
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: false)
-
-        let decoded = try decode(LoginResponse.self, from: data)
+        let decoded: LoginResponse = try await performRequest(LoginResponse.self, request: request, isAuthenticated: false)
         return decoded.token
     }
 
@@ -144,10 +141,7 @@ struct APIClient: Sendable {
         let endpoint = APIEndpoint.renew
         let request = makeRequest(endpoint: endpoint, token: current)
 
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        let decoded = try decode(LoginResponse.self, from: data)
+        let decoded: LoginResponse = try await performRequest(LoginResponse.self, request: request, isAuthenticated: true)
         return decoded.token
     }
 
@@ -162,10 +156,7 @@ struct APIClient: Sendable {
         request.setValue(multipart.contentTypeHeader, forHTTPHeaderField: "Content-Type")
         request.httpBody = body
 
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        let decoded = try decode(ProcessResponse.self, from: data)
+        let decoded: ProcessResponse = try await performRequest(ProcessResponse.self, request: request, isAuthenticated: true)
         return decoded.job_id
     }
 
@@ -230,14 +221,17 @@ struct APIClient: Sendable {
         var request = makeRequest(endpoint: endpoint, token: token)
         request.cachePolicy = .reloadIgnoringLocalCacheData
 
-        let (data, response) = try await transport.data(for: request)
-        try checkResponse(response, isAuthenticated: true)
-
-        return try decode(UsageData.self, from: data)
+        return try await performRequest(UsageData.self, request: request, isAuthenticated: true)
     }
 
 
     // MARK: - Private Helpers
+
+    private func performRequest<T: Decodable>(_ type: T.Type, request: URLRequest, isAuthenticated: Bool) async throws -> T {
+        let (data, response) = try await transport.data(for: request)
+        try checkResponse(response, isAuthenticated: isAuthenticated)
+        return try decode(type, from: data)
+    }
 
     private func makeRequest(endpoint: APIEndpoint, token: String?) -> URLRequest {
         var request = URLRequest(url: endpoint.url)
