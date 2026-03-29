@@ -18,6 +18,7 @@ struct PitchPopover: View {
             HStack(spacing: 16) {
                 Button("−") {
                     engine.setPitch(semitones: engine.pitchSemitones - 1)
+                    vm.refreshTransposition()
                     Task { await vm.savePitchOffset() }
                 }
                 .buttonStyle(.borderedProminent)
@@ -30,6 +31,7 @@ struct PitchPopover: View {
 
                 Button("+") {
                     engine.setPitch(semitones: engine.pitchSemitones + 1)
+                    vm.refreshTransposition()
                     Task { await vm.savePitchOffset() }
                 }
                 .buttonStyle(.borderedProminent)
@@ -38,6 +40,7 @@ struct PitchPopover: View {
 
             Button("Restablecer") {
                 engine.setPitch(semitones: 0)
+                vm.refreshTransposition()
                 Task { await vm.savePitchOffset() }
             }
             .buttonStyle(.bordered)
@@ -46,7 +49,10 @@ struct PitchPopover: View {
                 Divider()
                 Toggle("Mostrar transpuesto", isOn: Binding(
                     get: { vm.showTransposed },
-                    set: { vm.showTransposed = $0 }
+                    set: {
+                        vm.showTransposed = $0
+                        vm.refreshTransposition()
+                    }
                 ))
                 .toggleStyle(.switch)
             }

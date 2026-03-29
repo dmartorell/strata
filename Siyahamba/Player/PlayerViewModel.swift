@@ -141,12 +141,17 @@ final class PlayerViewModel {
     // Called by PlaybackEngine's timer on every frame
     func tick() {
         if showTransposed != lastShowTransposed || engine.pitchSemitones != lastPitchSemitones {
-            lastShowTransposed = showTransposed
-            lastPitchSemitones = engine.pitchSemitones
-            rebuildRehearsalLines()
+            refreshTransposition()
         }
         updateCurrentLine()
         updateCurrentChord()
+    }
+
+    func refreshTransposition() {
+        lastShowTransposed = showTransposed
+        lastPitchSemitones = engine.pitchSemitones
+        rebuildRehearsalLines()
+        updateDisplayChords()
     }
 
     private func updateCurrentLine() {
@@ -214,7 +219,6 @@ final class PlayerViewModel {
         if newChord?.id != currentChord?.id {
             currentChord = newChord
 
-            // Update next chord
             let newNext: ChordEntry?
             if let current = newChord,
                let idx = chords.firstIndex(where: { $0.id == current.id }),
@@ -224,32 +228,25 @@ final class PlayerViewModel {
                 newNext = nil
             }
             nextChord = newNext
-
-            // Update display strings
-            let placeholders = Self.placeholderChords
-            if let raw = newChord?.chord, !placeholders.contains(raw) {
-                if showTransposed && engine.pitchSemitones != 0 {
-                    displayChord = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-                } else {
-                    displayChord = raw
-                }
-            } else {
-                displayChord = ""
-            }
-
-            if let raw = newNext?.chord, !placeholders.contains(raw) {
-                if showTransposed && engine.pitchSemitones != 0 {
-                    displayNextChord = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-                } else {
-                    displayNextChord = raw
-                }
-            } else {
-                displayNextChord = ""
-            }
         }
+        updateDisplayChords()
+    }
+
+    private func updateDisplayChords() {
+        let placeholders = Self.placeholderChords
+        let newDisplay = currentChord.flatMap { !placeholders.contains($0.chord) ? transposeIfNeeded($0.chord) : nil } ?? ""
+        let newNext = nextChord.flatMap { !placeholders.contains($0.chord) ? transposeIfNeeded($0.chord) : nil } ?? ""
+        if newDisplay != displayChord { displayChord = newDisplay }
+        if newNext != displayNextChord { displayNextChord = newNext }
     }
 
     private static let placeholderChords: Set<String> = ["N", "-", ""]
+
+    private func transposeIfNeeded(_ raw: String) -> String {
+        showTransposed && engine.pitchSemitones != 0
+            ? ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
+            : raw
+    }
 
     private func rebuildRehearsalLines() {
         let placeholders = Self.placeholderChords
@@ -260,16 +257,7 @@ final class PlayerViewModel {
                 let matchedChord = filteredChords.last(where: { chord in
                     chord.start >= word.start && chord.start < word.end
                 })
-                let chordName: String?
-                if let raw = matchedChord?.chord {
-                    if showTransposed && engine.pitchSemitones != 0 {
-                        chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-                    } else {
-                        chordName = raw
-                    }
-                } else {
-                    chordName = nil
-                }
+                let chordName = matchedChord.map { transposeIfNeeded($0.chord) }
                 return RehearsalWord(id: "\(lineIndex)-\(wordIndex)", word: word.word, chord: chordName, wordStart: word.start, overrideIndex: nil)
             }
 
@@ -282,12 +270,7 @@ final class PlayerViewModel {
                     chord.start >= lineStart && chord.start < firstWordStart
                 })
                 if let raw = orphanChord?.chord {
-                    let chordName: String
-                    if showTransposed && engine.pitchSemitones != 0 {
-                        chordName = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-                    } else {
-                        chordName = raw
-                    }
+                    let chordName = transposeIfNeeded(raw)
                     let original = finalWords[0]
                     finalWords[0] = RehearsalWord(id: original.id, word: original.word, chord: chordName, wordStart: original.wordStart, overrideIndex: nil)
                 }
@@ -298,14 +281,7 @@ final class PlayerViewModel {
             for override in lineOverrides {
                 guard override.wordIndex < finalWords.count else { continue }
                 let original = finalWords[override.wordIndex]
-                let newChord: String?
-                if override.chord.isEmpty {
-                    newChord = nil
-                } else if showTransposed && engine.pitchSemitones != 0 {
-                    newChord = ChordTransposer.transpose(override.chord, semitones: engine.pitchSemitones)
-                } else {
-                    newChord = override.chord
-                }
+                let newChord: String? = override.chord.isEmpty ? nil : transposeIfNeeded(override.chord)
                 finalWords[override.wordIndex] = RehearsalWord(id: original.id, word: original.word, chord: newChord, wordStart: original.wordStart, overrideIndex: override.wordIndex)
             }
 
@@ -314,12 +290,7 @@ final class PlayerViewModel {
                 .filter { $0.wordIndex >= finalWords.count && !$0.chord.isEmpty }
                 .sorted { $0.wordIndex < $1.wordIndex }
             for override in tailOverrides {
-                let chordName: String
-                if showTransposed && engine.pitchSemitones != 0 {
-                    chordName = ChordTransposer.transpose(override.chord, semitones: engine.pitchSemitones)
-                } else {
-                    chordName = override.chord
-                }
+                let chordName = transposeIfNeeded(override.chord)
                 finalWords.append(RehearsalWord(id: "\(lineIndex)-tail-\(override.wordIndex)", word: "", chord: chordName, wordStart: line.end, overrideIndex: override.wordIndex))
             }
 
