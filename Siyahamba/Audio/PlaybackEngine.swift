@@ -37,6 +37,9 @@ final class PlaybackEngine {
     private let timePitchNode = AVAudioUnitTimePitch()
     private var stemFiles: [AVAudioFile] = []
 
+    // MARK: - Tick callback (set by PlayerView to wire PlayerViewModel.tick())
+    @ObservationIgnored var onTick: (() -> Void)?
+
     // MARK: - Private State
 
     private var seekOffset: TimeInterval = 0
@@ -479,5 +482,6 @@ final class PlaybackEngine {
         } else {
             currentTime = raw
         }
+        onTick?()
     }
 }

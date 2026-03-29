@@ -90,6 +90,7 @@ struct PlayerView: View {
             do {
                 try await vm.load()
             } catch {}
+            engine.onTick = { [weak vm] in vm?.tick() }
             playerVM = vm
             await vm.loadRemoteMetadata()
         }

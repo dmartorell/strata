@@ -39,11 +39,21 @@ final class PlayerViewModel {
     var isEditingChord: Bool = false
     var draggingChordSource: DragSource? = nil
 
+    // Cached derived state — updated via tick(), not recomputed on every body evaluation
+    private(set) var currentLine: LyricLine? = nil
+    private(set) var currentChord: ChordEntry? = nil
+    private(set) var nextChord: ChordEntry? = nil
+    private(set) var displayChord: String = ""
+    private(set) var displayNextChord: String = ""
+    private(set) var rehearsalLines: [RehearsalLine] = []
+
     let engine: PlaybackEngine
     private let cacheManager: CacheManager
     private let libraryStore: LibraryStore
     @ObservationIgnored private var lastLineIndex: Int = 0
     @ObservationIgnored private var lastChordIndex: Int = 0
+    @ObservationIgnored private var lastShowTransposed: Bool = false
+    @ObservationIgnored private var lastPitchSemitones: Int = 0
 
     init(
         song: SongEntry,
@@ -103,6 +113,12 @@ final class PlayerViewModel {
         }
 
         chordOverrides = (try? await cacheManager.readChordOverrides(songID: song.id)) ?? []
+
+        lastShowTransposed = showTransposed
+        lastPitchSemitones = engine.pitchSemitones
+        rebuildRehearsalLines()
+        updateCurrentLine()
+        updateCurrentChord()
     }
 
     func loadRemoteMetadata() async {
@@ -115,36 +131,56 @@ final class PlayerViewModel {
             ) {
                 lyrics = lyricsFile.segments
                 try? await cacheManager.writeLyrics(songID: song.id, lyricsFile: lyricsFile)
+                rebuildRehearsalLines()
             }
             isLoadingLyrics = false
         }
     }
 
-    var currentLine: LyricLine? {
+    // Called by PlaybackEngine's timer on every frame
+    func tick() {
+        if showTransposed != lastShowTransposed || engine.pitchSemitones != lastPitchSemitones {
+            lastShowTransposed = showTransposed
+            lastPitchSemitones = engine.pitchSemitones
+            rebuildRehearsalLines()
+        }
+        updateCurrentLine()
+        updateCurrentChord()
+    }
+
+    private func updateCurrentLine() {
         let t = engine.currentTime + lyricsOffset
+        var foundLine: LyricLine? = nil
+
         if lastLineIndex < lyrics.count {
             let line = lyrics[lastLineIndex]
             if t >= line.start && t < line.end {
-                return line
-            }
-            if lastLineIndex + 1 < lyrics.count {
+                foundLine = line
+            } else if lastLineIndex + 1 < lyrics.count {
                 let next = lyrics[lastLineIndex + 1]
                 if t >= next.start && t < next.end {
                     lastLineIndex += 1
-                    return next
+                    foundLine = next
                 }
             }
         }
-        for (i, line) in lyrics.enumerated() {
-            if t >= line.start && t < line.end {
-                lastLineIndex = i
-                return line
+
+        if foundLine == nil {
+            for (i, line) in lyrics.enumerated() {
+                if t >= line.start && t < line.end {
+                    lastLineIndex = i
+                    foundLine = line
+                    break
+                }
             }
         }
-        return nil
+
+        if foundLine?.id != currentLine?.id {
+            currentLine = foundLine
+        }
     }
 
-    var currentChord: ChordEntry? {
+    private func updateCurrentChord() {
         let t = engine.currentTime
         var bestIdx: Int? = nil
 
@@ -153,9 +189,8 @@ final class PlayerViewModel {
             if chord.start <= t {
                 let nextIdx = lastChordIndex + 1
                 if nextIdx >= chords.count || chords[nextIdx].start > t {
-                    return chord
-                }
-                if nextIdx < chords.count && chords[nextIdx].start <= t {
+                    bestIdx = lastChordIndex
+                } else if nextIdx < chords.count && chords[nextIdx].start <= t {
                     lastChordIndex = nextIdx
                     bestIdx = nextIdx
                 }
@@ -172,41 +207,54 @@ final class PlayerViewModel {
             }
         }
 
-        guard let idx = bestIdx else { return nil }
-        lastChordIndex = idx
-        return chords[idx]
-    }
+        let newChord: ChordEntry? = bestIdx.map { chords[$0] }
+        if let idx = bestIdx { lastChordIndex = idx }
 
-    var nextChord: ChordEntry? {
-        guard let current = currentChord,
-              let idx = chords.firstIndex(where: { $0.id == current.id }),
-              idx + 1 < chords.count else { return nil }
-        return chords[idx + 1]
+        if newChord?.id != currentChord?.id {
+            currentChord = newChord
+
+            // Update next chord
+            let newNext: ChordEntry?
+            if let current = newChord,
+               let idx = chords.firstIndex(where: { $0.id == current.id }),
+               idx + 1 < chords.count {
+                newNext = chords[idx + 1]
+            } else {
+                newNext = nil
+            }
+            nextChord = newNext
+
+            // Update display strings
+            let placeholders = Self.placeholderChords
+            if let raw = newChord?.chord, !placeholders.contains(raw) {
+                if showTransposed && engine.pitchSemitones != 0 {
+                    displayChord = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
+                } else {
+                    displayChord = raw
+                }
+            } else {
+                displayChord = ""
+            }
+
+            if let raw = newNext?.chord, !placeholders.contains(raw) {
+                if showTransposed && engine.pitchSemitones != 0 {
+                    displayNextChord = ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
+                } else {
+                    displayNextChord = raw
+                }
+            } else {
+                displayNextChord = ""
+            }
+        }
     }
 
     private static let placeholderChords: Set<String> = ["N", "-", ""]
 
-    var displayChord: String {
-        guard let raw = currentChord?.chord, !Self.placeholderChords.contains(raw) else { return "" }
-        if showTransposed && engine.pitchSemitones != 0 {
-            return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-        }
-        return raw
-    }
-
-    var displayNextChord: String {
-        guard let raw = nextChord?.chord, !Self.placeholderChords.contains(raw) else { return "" }
-        if showTransposed && engine.pitchSemitones != 0 {
-            return ChordTransposer.transpose(raw, semitones: engine.pitchSemitones)
-        }
-        return raw
-    }
-
-    var rehearsalLines: [RehearsalLine] {
+    private func rebuildRehearsalLines() {
         let placeholders = Self.placeholderChords
         let filteredChords = chords.filter { !placeholders.contains($0.chord) }
 
-        return lyrics.enumerated().map { lineIndex, line in
+        rehearsalLines = lyrics.enumerated().map { lineIndex, line in
             let words: [RehearsalWord] = line.words.map { word in
                 let matchedChord = filteredChords.last(where: { chord in
                     chord.start >= word.start && chord.start < word.end
@@ -316,6 +364,7 @@ final class PlayerViewModel {
             chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: toWordIndex, chord: rawChord))
         }
 
+        rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }
 
@@ -326,6 +375,7 @@ final class PlayerViewModel {
         if realIndex < baseWordCount {
             chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: ""))
         }
+        rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }
 
@@ -333,6 +383,7 @@ final class PlayerViewModel {
         let realIndex = resolveOverrideIndex(lineIndex: lineIndex, wordIndex: wordIndex)
         chordOverrides.removeAll { $0.lineIndex == lineIndex && $0.wordIndex == realIndex }
         chordOverrides.append(ChordOverride(lineIndex: lineIndex, wordIndex: realIndex, chord: chord))
+        rebuildRehearsalLines()
         Task { await saveChordOverrides() }
     }
 
