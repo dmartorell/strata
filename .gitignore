@@ -2,6 +2,7 @@ logs/
 node_modules/
 .DS_Store
 .planning/
+.agents/
 __pycache__/
 .env
 xcuserdata/
