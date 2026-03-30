@@ -88,13 +88,13 @@ def audio_pipeline():
         pytest.skip(f"AudioPipeline not deployed — run `modal deploy server/app.py` first: {exc}")
 
 
-def test_separate_returns_four_stems(audio_pipeline, short_mp3_bytes):
-    """Verificar que separate devuelve exactamente 4 stems."""
+def test_separate_returns_tracks(audio_pipeline, short_mp3_bytes):
+    """Verificar que separate devuelve original, instrumental y other."""
     result = audio_pipeline.separate.remote(short_mp3_bytes)
 
     assert isinstance(result, dict), f"Expected dict, got {type(result)}"
-    assert set(result.keys()) == {"vocals", "drums", "bass", "other"}, (
-        f"Expected keys {{vocals, drums, bass, other}}, got {set(result.keys())}"
+    assert set(result.keys()) == {"original", "instrumental", "other"}, (
+        f"Expected keys {{original, instrumental, other}}, got {set(result.keys())}"
     )
 
 

@@ -69,12 +69,9 @@ final class PlayerViewModel {
     }
 
     func load() async throws {
-        let stemNames = ["vocals", "drums", "bass", "other"]
-        var stemURLs: [URL] = []
-        for name in stemNames {
-            stemURLs.append(await cacheManager.stemURL(songID: song.id, stem: name))
-        }
-        try engine.load(stemURLs: stemURLs)
+        let originalURL = await cacheManager.originalURL(songID: song.id)
+        let instrumentalURL = await cacheManager.instrumentalURL(songID: song.id)
+        try engine.load(originalURL: originalURL, instrumentalURL: instrumentalURL)
         engine.setPitch(semitones: song.pitchOffset ?? 0)
         lyricsOffset = song.lyricsOffset ?? 0
 

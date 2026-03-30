@@ -5,8 +5,10 @@ enum APIEndpoint {
     static var baseURL: URL = {
         if let envURL = ProcessInfo.processInfo.environment["SIYAHAMBA_API_URL"],
            let url = URL(string: envURL) {
+            print("[API] Usando entorno custom: \(envURL)")
             return url
         }
+        print("[API] Usando entorno de producción")
         return URL(string: "https://dani-martorell--siyahamba-web.modal.run")!
     }()
 

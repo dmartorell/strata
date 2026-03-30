@@ -2,19 +2,6 @@ import AVFAudio
 import Foundation
 import Observation
 
-// MARK: - Stem
-
-enum Stem: Int, CaseIterable {
-    case vocals = 0
-    case drums = 1
-    case bass = 2
-    case other = 3
-}
-
-// MARK: - PlaybackEngine
-// Nota: deinit no es compatible con @MainActor en Swift 5.9.
-// Llama stop() explicitamente antes de soltar la referencia para liberar el engine.
-
 @Observable
 @MainActor
 final class PlaybackEngine {
@@ -27,15 +14,19 @@ final class PlaybackEngine {
     var pitchSemitones: Int = 0
     var loopStart: TimeInterval? = nil
     var loopEnd: TimeInterval? = nil
+    var vocalsEnabled: Bool = true
 
     // MARK: - Private Audio Graph
 
     @ObservationIgnored private let engine = AVAudioEngine()
-    @ObservationIgnored private var players: [AVAudioPlayerNode] = []
-    @ObservationIgnored private var stemMixers: [AVAudioMixerNode] = []
+    @ObservationIgnored private var originalPlayer = AVAudioPlayerNode()
+    @ObservationIgnored private var instrumentalPlayer = AVAudioPlayerNode()
+    @ObservationIgnored private var originalMixer = AVAudioMixerNode()
+    @ObservationIgnored private var instrumentalMixer = AVAudioMixerNode()
     @ObservationIgnored private let preMixNode = AVAudioMixerNode()
     @ObservationIgnored private let timePitchNode = AVAudioUnitTimePitch()
-    @ObservationIgnored private var stemFiles: [AVAudioFile] = []
+    @ObservationIgnored private var originalFile: AVAudioFile?
+    @ObservationIgnored private var instrumentalFile: AVAudioFile?
 
     // MARK: - Tick callback (set by PlayerView to wire PlayerViewModel.tick())
     @ObservationIgnored var onTick: (() -> Void)?
@@ -44,42 +35,50 @@ final class PlaybackEngine {
 
     @ObservationIgnored private var seekOffset: TimeInterval = 0
     @ObservationIgnored private var updateTimer: Timer?
-    private var stemVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
-    @ObservationIgnored private var preMuteVolumes: [Float] = [1.0, 1.0, 1.0, 1.0]
-    private var manualMute: [Bool] = [false, false, false, false]
-    private(set) var soloedStems: Set<Int> = []
-    private var soloExempt: Set<Int> = []
     @ObservationIgnored private var isLooping: Bool = false
     @ObservationIgnored private var playbackGeneration: Int = 0
 
+    // MARK: - Computed helpers
+
+    private var players: [AVAudioPlayerNode] { [originalPlayer, instrumentalPlayer] }
+    private var files: [AVAudioFile] {
+        [originalFile, instrumentalFile].compactMap { $0 }
+    }
+
     // MARK: - Public API
 
-    func load(stemURLs: [URL]) throws {
+    func load(originalURL: URL, instrumentalURL: URL) throws {
         NotificationCenter.default.removeObserver(self)
 
         if engine.isRunning {
             stop()
         }
 
-        players = (0..<stemURLs.count).map { _ in AVAudioPlayerNode() }
-        stemMixers = (0..<stemURLs.count).map { _ in AVAudioMixerNode() }
-        stemFiles = try stemURLs.map { try AVAudioFile(forReading: $0) }
+        originalPlayer = AVAudioPlayerNode()
+        instrumentalPlayer = AVAudioPlayerNode()
+        originalMixer = AVAudioMixerNode()
+        instrumentalMixer = AVAudioMixerNode()
 
-        duration = stemFiles.map {
+        originalFile = try AVAudioFile(forReading: originalURL)
+        instrumentalFile = try AVAudioFile(forReading: instrumentalURL)
+
+        duration = files.map {
             Double($0.length) / $0.processingFormat.sampleRate
         }.max() ?? 0
 
-        guard let format = stemFiles.first?.processingFormat else { return }
+        guard let format = originalFile?.processingFormat else { return }
 
-        for player in players { engine.attach(player) }
-        for mixer in stemMixers { engine.attach(mixer) }
+        engine.attach(originalPlayer)
+        engine.attach(instrumentalPlayer)
+        engine.attach(originalMixer)
+        engine.attach(instrumentalMixer)
         engine.attach(preMixNode)
         engine.attach(timePitchNode)
 
-        for i in 0..<players.count {
-            engine.connect(players[i], to: stemMixers[i], format: format)
-            engine.connect(stemMixers[i], to: preMixNode, format: format)
-        }
+        engine.connect(originalPlayer, to: originalMixer, format: format)
+        engine.connect(instrumentalPlayer, to: instrumentalMixer, format: format)
+        engine.connect(originalMixer, to: preMixNode, format: format)
+        engine.connect(instrumentalMixer, to: preMixNode, format: format)
         engine.connect(preMixNode, to: timePitchNode, format: format)
         engine.connect(timePitchNode, to: engine.mainMixerNode, format: format)
 
@@ -89,23 +88,20 @@ final class PlaybackEngine {
         currentTime = 0
         isPlaying = false
         pitchSemitones = 0
-        stemVolumes = [1.0, 1.0, 1.0, 1.0]
-        preMuteVolumes = [1.0, 1.0, 1.0, 1.0]
-        manualMute = [false, false, false, false]
-        soloedStems = []
-        soloExempt = []
+        vocalsEnabled = true
         loopStart = nil
         loopEnd = nil
         isLooping = false
 
+        applyTrackVolumes()
         setupNotifications()
     }
 
     func play() {
-        guard !stemFiles.isEmpty, !isPlaying else { return }
+        guard !files.isEmpty, !isPlaying else { return }
         if !engine.isRunning { try? engine.start() }
         players.forEach { $0.stop() }
-        let sampleRate = stemFiles[0].processingFormat.sampleRate
+        let sampleRate = files[0].processingFormat.sampleRate
         if isLooping, let start = loopStart, let end = loopEnd {
             if seekOffset < start || seekOffset >= end {
                 seekOffset = start
@@ -173,7 +169,7 @@ final class PlaybackEngine {
             if isLooping {
                 scheduleLoopAndPlay(from: clampedTime)
             } else {
-                let sampleRate = stemFiles[0].processingFormat.sampleRate
+                let sampleRate = files[0].processingFormat.sampleRate
                 scheduleAndPlay(from: AVAudioFramePosition(clampedTime * sampleRate))
             }
             startTimer()
@@ -208,7 +204,7 @@ final class PlaybackEngine {
             let time = currentTime
             seekOffset = time
             players.forEach { $0.stop() }
-            let sampleRate = stemFiles[0].processingFormat.sampleRate
+            let sampleRate = files[0].processingFormat.sampleRate
             scheduleAndPlay(from: AVAudioFramePosition(time * sampleRate))
         }
     }
@@ -221,79 +217,19 @@ final class PlaybackEngine {
         timePitchNode.pitch = Float(clamped * 100)
     }
 
-    // MARK: - Per-Stem Volume / Mute / Solo
+    // MARK: - Vocal Toggle
 
-    func setVolume(_ volume: Float, for stem: Int) {
-        guard stem >= 0 && stem < 4 else { return }
-        let clamped = max(0.0, min(1.0, volume))
-        stemVolumes[stem] = clamped
-        if clamped == 0 && !manualMute[stem] {
-            manualMute[stem] = true
-        } else if clamped > 0 && manualMute[stem] {
-            manualMute[stem] = false
-            preMuteVolumes[stem] = clamped
-        }
-        if clamped > 0 {
-            preMuteVolumes[stem] = clamped
-        }
-        applyVolumes()
-    }
-
-    func getVolume(for stem: Int) -> Float {
-        guard stem >= 0 && stem < 4 else { return 0 }
-        return stemVolumes[stem]
-    }
-
-    func setMute(_ muted: Bool, for stem: Int) {
-        guard stem >= 0 && stem < 4 else { return }
-        if muted {
-            preMuteVolumes[stem] = stemVolumes[stem] > 0 ? stemVolumes[stem] : preMuteVolumes[stem]
-            manualMute[stem] = true
-            stemVolumes[stem] = 0
-            soloedStems.remove(stem)
-            soloExempt.remove(stem)
-            if soloedStems.isEmpty { soloExempt.removeAll() }
-        } else {
-            manualMute[stem] = false
-            stemVolumes[stem] = preMuteVolumes[stem]
-            if !soloedStems.isEmpty {
-                soloExempt.insert(stem)
-            }
-        }
-        applyVolumes()
-    }
-
-    func isMuted(_ stem: Int) -> Bool {
-        guard stem >= 0 && stem < 4 else { return false }
-        return manualMute[stem]
-    }
-
-    func effectivelyMuted(_ stem: Int) -> Bool {
-        guard stem >= 0 && stem < 4 else { return false }
-        if manualMute[stem] { return true }
-        if !soloedStems.isEmpty
-            && !soloedStems.contains(stem)
-            && !soloExempt.contains(stem) { return true }
-        return false
-    }
-
-    func toggleSolo(for stem: Int) {
-        if soloedStems.contains(stem) {
-            soloedStems.remove(stem)
-            if soloedStems.isEmpty {
-                soloExempt.removeAll()
-            } else {
-                soloExempt.insert(stem)
-            }
-        } else {
-            manualMute[stem] = false
-            soloedStems.insert(stem)
-            soloExempt.remove(stem)
-        }
-        applyVolumes()
+    func setVocals(enabled: Bool) {
+        vocalsEnabled = enabled
+        applyTrackVolumes()
     }
 
     // MARK: - Private
+
+    private func applyTrackVolumes() {
+        originalMixer.outputVolume = vocalsEnabled ? 1.0 : 0.0
+        instrumentalMixer.outputVolume = vocalsEnabled ? 0.0 : 1.0
+    }
 
     private func updateLoopState() {
         guard let start = loopStart, let end = loopEnd, end > start else {
@@ -315,36 +251,42 @@ final class PlaybackEngine {
     private func scheduleLoopAndPlay(from time: TimeInterval) {
         guard let start = loopStart, let end = loopEnd else { return }
         let clampedTime = max(start, min(time, end - 0.001))
-        let sampleRate = stemFiles[0].processingFormat.sampleRate
+        let sampleRate = files[0].processingFormat.sampleRate
         let startFrame = AVAudioFramePosition(clampedTime * sampleRate)
         let endFrame = AVAudioFramePosition(end * sampleRate)
 
-        for i in 0..<players.count {
-            let file = stemFiles[i]
+        let allPlayers = players
+        let allFiles = files
+        for i in 0..<allPlayers.count {
+            let file = allFiles[i]
             let frameCount = AVAudioFrameCount(min(endFrame, file.length) - startFrame)
             guard frameCount > 0 else { continue }
-            players[i].scheduleSegment(file,
+            allPlayers[i].scheduleSegment(file,
                 startingFrame: startFrame,
                 frameCount: frameCount,
                 at: nil,
                 completionCallbackType: .dataPlayedBack) { [weak self] _ in
                 Task { @MainActor in
                     guard let self, self.isLooping else { return }
-                    self.scheduleLoopSegment(stem: i)
+                    self.scheduleLoopSegment(index: i)
                 }
             }
         }
 
         let delayTicks = secondsToHostTicks(0.1)
         let startTime = AVAudioTime(hostTime: mach_absolute_time() + delayTicks)
-        players.forEach { $0.play(at: startTime) }
+        allPlayers.forEach { $0.play(at: startTime) }
 
         _ = start
     }
 
-    private func scheduleLoopSegment(stem: Int) {
+    private func scheduleLoopSegment(index: Int) {
         guard let start = loopStart, let end = loopEnd, isLooping else { return }
-        let sampleRate = stemFiles[stem].processingFormat.sampleRate
+        let allPlayers = players
+        let allFiles = files
+        guard index < allFiles.count else { return }
+        let file = allFiles[index]
+        let sampleRate = file.processingFormat.sampleRate
         let startFrame = AVAudioFramePosition(start * sampleRate)
         let frameCount = AVAudioFrameCount((end - start) * sampleRate)
         guard frameCount > 0 else { return }
@@ -352,21 +294,15 @@ final class PlaybackEngine {
         seekOffset = start
         currentTime = start
 
-        players[stem].scheduleSegment(stemFiles[stem],
+        allPlayers[index].scheduleSegment(file,
             startingFrame: startFrame,
             frameCount: frameCount,
             at: nil,
             completionCallbackType: .dataPlayedBack) { [weak self] _ in
             Task { @MainActor in
                 guard let self, self.isLooping else { return }
-                self.scheduleLoopSegment(stem: stem)
+                self.scheduleLoopSegment(index: index)
             }
-        }
-    }
-
-    private func applyVolumes() {
-        for i in 0..<min(4, stemMixers.count) {
-            stemMixers[i].outputVolume = effectivelyMuted(i) ? 0.0 : stemVolumes[i]
         }
     }
 
@@ -374,13 +310,15 @@ final class PlaybackEngine {
         playbackGeneration += 1
         let generation = playbackGeneration
 
-        players.forEach { $0.stop() }
+        let allPlayers = players
+        let allFiles = files
+        allPlayers.forEach { $0.stop() }
 
-        for i in 0..<players.count {
-            let file = stemFiles[i]
+        for i in 0..<allPlayers.count {
+            let file = allFiles[i]
             let frameCount = AVAudioFrameCount(file.length - framePosition)
             guard frameCount > 0 else { return }
-            players[i].scheduleSegment(
+            allPlayers[i].scheduleSegment(
                 file,
                 startingFrame: framePosition,
                 frameCount: frameCount,
@@ -396,7 +334,7 @@ final class PlaybackEngine {
 
         let delayTicks = secondsToHostTicks(0.1)
         let startTime = AVAudioTime(hostTime: mach_absolute_time() + delayTicks)
-        players.forEach { $0.play(at: startTime) }
+        allPlayers.forEach { $0.play(at: startTime) }
     }
 
     private func secondsToHostTicks(_ seconds: Double) -> UInt64 {
@@ -447,7 +385,7 @@ final class PlaybackEngine {
             if isLooping {
                 scheduleLoopAndPlay(from: savedTime)
             } else {
-                let sampleRate = stemFiles[0].processingFormat.sampleRate
+                let sampleRate = files[0].processingFormat.sampleRate
                 scheduleAndPlay(from: AVAudioFramePosition(savedTime * sampleRate))
             }
             isPlaying = true
@@ -471,9 +409,9 @@ final class PlaybackEngine {
 
     private func updateCurrentTime() {
         guard isPlaying,
-              let nodeTime = players[0].lastRenderTime,
+              let nodeTime = originalPlayer.lastRenderTime,
               nodeTime.isSampleTimeValid,
-              let playerTime = players[0].playerTime(forNodeTime: nodeTime),
+              let playerTime = originalPlayer.playerTime(forNodeTime: nodeTime),
               playerTime.sampleTime >= 0 else { return }
         let raw = seekOffset + Double(playerTime.sampleTime) / playerTime.sampleRate
         if isLooping, let start = loopStart, let end = loopEnd, end > start {

@@ -9,6 +9,9 @@ protocol CacheManagerProtocol: Actor {
     func readLibraryIndex() throws -> [SongEntry]
     func writeLibraryIndex(_ songs: [SongEntry]) throws
     func stemURL(songID: UUID, stem: String) -> URL
+    func originalURL(songID: UUID) -> URL
+    func instrumentalURL(songID: UUID) -> URL
+    func hasLegacyFormat(songID: UUID) -> Bool
     func lyricsURL(songID: UUID) -> URL
     func chordsURL(songID: UUID) -> URL
     func writeLyrics(songID: UUID, lyricsFile: LyricsFile) throws
@@ -72,6 +75,21 @@ extension CacheManager {
 extension CacheManager {
     func stemURL(songID: UUID, stem: String) -> URL {
         songDirectory(for: songID).appendingPathComponent("\(stem).wav")
+    }
+
+    func originalURL(songID: UUID) -> URL {
+        songDirectory(for: songID).appendingPathComponent("original.wav")
+    }
+
+    func instrumentalURL(songID: UUID) -> URL {
+        songDirectory(for: songID).appendingPathComponent("instrumental.wav")
+    }
+
+    func hasLegacyFormat(songID: UUID) -> Bool {
+        let dir = songDirectory(for: songID)
+        let hasVocals = FileManager.default.fileExists(atPath: dir.appendingPathComponent("vocals.wav").path)
+        let hasOriginal = FileManager.default.fileExists(atPath: dir.appendingPathComponent("original.wav").path)
+        return hasVocals && !hasOriginal
     }
 
     func lyricsURL(songID: UUID) -> URL {
@@ -138,7 +156,7 @@ extension CacheManager {
             withIntermediateDirectories: true,
             attributes: nil
         )
-        let requiredFiles = ["vocals.wav", "drums.wav", "bass.wav", "other.wav",
+        let requiredFiles = ["original.wav", "instrumental.wav",
                               "chords.json", "metadata.json"]
         for filename in requiredFiles {
             let src = tempDir.appendingPathComponent(filename)

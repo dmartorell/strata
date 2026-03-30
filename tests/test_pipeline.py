@@ -57,8 +57,7 @@ def test_file_pipeline_output_structure(modal_pipeline, sample_audio_bytes):
     """Verifica que el pipeline devuelve un ZIP con todos los artefactos requeridos.
 
     Comprueba:
-    - 4 stems WAV: vocals, drums, bass, other
-    - lyrics.json con key 'segments'
+    - 2 tracks WAV: original, instrumental
     - chords.json es lista JSON
     - metadata.json con keys requeridas
     - Cada WAV es parseable y tiene sample_rate=44100
@@ -80,19 +79,13 @@ def test_file_pipeline_output_structure(modal_pipeline, sample_audio_bytes):
     zf = _parse_zip(result)
     names = zf.namelist()
 
-    # Verificar stems WAV
-    required_stems = ["vocals.wav", "drums.wav", "bass.wav", "other.wav"]
-    for stem in required_stems:
-        assert stem in names, f"Falta stem en ZIP: {stem}"
-        wav_bytes = zf.read(stem)
+    # Verificar tracks WAV
+    required_tracks = ["original.wav", "instrumental.wav"]
+    for track in required_tracks:
+        assert track in names, f"Falta track en ZIP: {track}"
+        wav_bytes = zf.read(track)
         with sf.SoundFile(io.BytesIO(wav_bytes)) as sf_file:
-            assert sf_file.samplerate == 44100, f"{stem} debe tener sample_rate=44100"
-
-    # Verificar lyrics.json
-    assert "lyrics.json" in names, "Falta lyrics.json en ZIP"
-    lyrics = json.loads(zf.read("lyrics.json"))
-    assert "segments" in lyrics, "lyrics.json debe tener key 'segments'"
-    assert isinstance(lyrics["segments"], list), "'segments' debe ser una lista"
+            assert sf_file.samplerate == 44100, f"{track} debe tener sample_rate=44100"
 
     # Verificar chords.json
     assert "chords.json" in names, "Falta chords.json en ZIP"

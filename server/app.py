@@ -243,9 +243,9 @@ class AudioPipeline:
 
             duration_seconds: float | None = None
             try:
-                vocals_bytes = stems.get("vocals", b"")
-                if vocals_bytes:
-                    with sf.SoundFile(_io.BytesIO(vocals_bytes)) as f:
+                original_bytes = stems.get("original", b"")
+                if original_bytes:
+                    with sf.SoundFile(_io.BytesIO(original_bytes)) as f:
                         duration_seconds = len(f) / f.samplerate
             except Exception:
                 pass
@@ -273,7 +273,8 @@ class AudioPipeline:
 
             record_usage(username=username, source_type=source_type, source_name=source_name, gpu_seconds=gpu_seconds)
 
-            result = package_results(stems, chords, metadata)
+            tracks = {"original": stems["original"], "instrumental": stems["instrumental"]}
+            result = package_results(tracks, chords, metadata)
 
             progress[job_id] = "completed"
             return result

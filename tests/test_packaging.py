@@ -17,26 +17,9 @@ from server.pipeline.packaging import package_results
 # ---------------------------------------------------------------------------
 
 
-FAKE_STEMS = {
-    "vocals": b"VOCALS_WAV_DATA",
-    "drums": b"DRUMS_WAV_DATA",
-    "bass": b"BASS_WAV_DATA",
-    "other": b"OTHER_WAV_DATA",
-}
-
-FAKE_LYRICS = {
-    "language": "en",
-    "segments": [
-        {
-            "text": "Hello world",
-            "start": 0.0,
-            "end": 2.5,
-            "words": [
-                {"word": "Hello", "start": 0.0, "end": 1.0},
-                {"word": "world", "start": 1.2, "end": 2.5},
-            ],
-        }
-    ],
+FAKE_TRACKS = {
+    "original": b"ORIGINAL_WAV_DATA",
+    "instrumental": b"INSTRUMENTAL_WAV_DATA",
 }
 
 FAKE_CHORDS = [
@@ -61,66 +44,56 @@ FAKE_METADATA = {
 
 def test_package_returns_bytes():
     """package_results devuelve bytes no vacios."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     assert isinstance(result, bytes)
     assert len(result) > 0
 
 
 def test_zip_is_valid():
     """El resultado es un ZIP valido y no esta corrupto."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     assert zipfile.is_zipfile(io.BytesIO(result))
 
 
-def test_zip_contains_exactly_7_files():
-    """El ZIP contiene exactamente 7 archivos (4 WAV + 3 JSON)."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+def test_zip_contains_exactly_4_files():
+    """El ZIP contiene exactamente 4 archivos (2 WAV + 2 JSON)."""
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         names = zf.namelist()
-    assert len(names) == 7, f"Esperados 7 archivos, encontrados {len(names)}: {names}"
+    assert len(names) == 4, f"Esperados 4 archivos, encontrados {len(names)}: {names}"
 
 
-def test_zip_contains_all_wav_stems():
-    """El ZIP contiene los 4 stems WAV con los nombres correctos."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+def test_zip_contains_all_wav_tracks():
+    """El ZIP contiene los 2 tracks WAV con los nombres correctos."""
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         names = set(zf.namelist())
-    expected_wavs = {"vocals.wav", "drums.wav", "bass.wav", "other.wav"}
+    expected_wavs = {"original.wav", "instrumental.wav"}
     assert expected_wavs.issubset(names)
 
 
 def test_zip_contains_all_jsons():
-    """El ZIP contiene los 3 archivos JSON con los nombres correctos."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    """El ZIP contiene los 2 archivos JSON con los nombres correctos."""
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         names = set(zf.namelist())
-    expected_jsons = {"lyrics.json", "chords.json", "metadata.json"}
+    expected_jsons = {"chords.json", "metadata.json"}
     assert expected_jsons.issubset(names)
-
-
-def test_lyrics_json_is_parseable():
-    """lyrics.json dentro del ZIP es JSON parseable y contiene los datos correctos."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
-    with zipfile.ZipFile(io.BytesIO(result)) as zf:
-        lyrics_data = json.loads(zf.read("lyrics.json"))
-    assert lyrics_data["language"] == "en"
-    assert len(lyrics_data["segments"]) == 1
-    assert lyrics_data["segments"][0]["text"] == "Hello world"
 
 
 def test_chords_json_is_parseable():
     """chords.json dentro del ZIP es JSON parseable y contiene los datos correctos."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         chords_data = json.loads(zf.read("chords.json"))
     assert len(chords_data) == 2
     assert chords_data[0]["chord"] == "C:maj"
-    assert chords_data[1]["end"] is None  # Ultimo acorde tiene end=None
+    assert chords_data[1]["end"] is None
 
 
 def test_metadata_json_is_parseable():
     """metadata.json dentro del ZIP es JSON parseable y contiene los datos correctos."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         meta_data = json.loads(zf.read("metadata.json"))
     assert meta_data["title"] == "Test Song"
@@ -129,18 +102,16 @@ def test_metadata_json_is_parseable():
 
 
 def test_wav_bytes_preserved():
-    """Los bytes de los stems se escriben sin modificacion en el ZIP."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    """Los bytes de los tracks se escriben sin modificacion en el ZIP."""
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
-        assert zf.read("vocals.wav") == b"VOCALS_WAV_DATA"
-        assert zf.read("drums.wav") == b"DRUMS_WAV_DATA"
-        assert zf.read("bass.wav") == b"BASS_WAV_DATA"
-        assert zf.read("other.wav") == b"OTHER_WAV_DATA"
+        assert zf.read("original.wav") == b"ORIGINAL_WAV_DATA"
+        assert zf.read("instrumental.wav") == b"INSTRUMENTAL_WAV_DATA"
 
 
 def test_zip_uses_compression():
     """El ZIP usa compresion ZIP_DEFLATED."""
-    result = package_results(FAKE_STEMS, FAKE_LYRICS, FAKE_CHORDS, FAKE_METADATA)
+    result = package_results(FAKE_TRACKS, FAKE_CHORDS, FAKE_METADATA)
     with zipfile.ZipFile(io.BytesIO(result)) as zf:
         for info in zf.infolist():
             assert info.compress_type == zipfile.ZIP_DEFLATED, (

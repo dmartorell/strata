@@ -13,32 +13,18 @@ struct WaveformsView: View {
 
     @State private var draggingEdge: LoopEdge? = nil
 
-    private let stemNames = ["vocals", "drums", "bass", "other"]
-
     private enum LoopEdge { case start, end }
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                VStack(spacing: 0) {
-                    ForEach(0..<stemNames.count, id: \.self) { i in
-                        if let cm = cacheManager {
-                            let muted = engine.effectivelyMuted(i)
-                            StemWaveformRow(
-                                stemURL: cm.stemURL(songID: songID, stem: stemNames[i]),
-                                isMuted: muted
-                            )
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.black.opacity(muted ? 0.45 : 0.35))
-                            .clipped()
-                            if i < stemNames.count - 1 {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.3))
-                                    .frame(height: 1)
-                                    .padding(.leading, 1)
-                            }
-                        }
-                    }
+                if let cm = cacheManager {
+                    StemWaveformRow(
+                        stemURL: cm.originalURL(songID: songID)
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.35))
+                    .clipped()
                 }
 
                 loopOverlay(geo: geo)
@@ -192,15 +178,13 @@ private struct PlayheadView: View {
 
 private struct StemWaveformRow: View {
     let stemURL: URL
-    var isMuted: Bool = false
 
     var body: some View {
         GeometryReader { geo in
             WaveformView(audioURL: stemURL) { shape in
-                shape.fill(Color.cyan.opacity(isMuted ? 0.2 : 0.9))
+                shape.fill(Color.cyan.opacity(0.9))
             }
             .padding(.vertical, geo.size.height * 0.2)
         }
-        .animation(.easeOut(duration: 0.2), value: isMuted)
     }
 }

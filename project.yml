@@ -23,6 +23,10 @@ schemes:
         Siyahamba: all
     run:
       config: Debug
+      environmentVariables:
+        - variable: SIYAHAMBA_API_URL
+          value: https://dani-martorell-dev--siyahamba-web.modal.run
+          isEnabled: false
     test:
       config: Debug
       targets:
@@ -43,7 +47,7 @@ targets:
         CFBundleName: Siyahamba
         CFBundleIdentifier: com.siyahamba.client
         CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.1"
+        CFBundleShortVersionString: "1.2"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
@@ -81,7 +85,7 @@ targets:
         CFBundleName: SiyahambaTests
         CFBundleIdentifier: com.siyahamba.client.tests
         CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.1"
+        CFBundleShortVersionString: "1.2"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client.tests
