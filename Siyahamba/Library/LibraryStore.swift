@@ -98,6 +98,17 @@ final class LibraryStore {
         songs.contains { $0.sourceHash == sourceHash }
     }
 
+    func song(forYouTubeURL url: URL) -> SongEntry? {
+        guard let target = try? YouTubeURL(url: url).canonicalURL else { return nil }
+        return songs.first { song in
+            guard let sourceURL = song.sourceURL,
+                  let url = URL(string: sourceURL),
+                  let candidate = try? YouTubeURL(url: url).canonicalURL
+            else { return false }
+            return candidate == target
+        }
+    }
+
     func deleteSongs(ids: Set<UUID>) async {
         let remaining = songs.filter { !ids.contains($0.id) }
         for id in ids {

@@ -49,7 +49,9 @@
 
 ---
 
-### [ ] YT-02 — Crear el conversor local con contrato testeable
+### [x] YT-02 — Crear el conversor local con contrato testeable
+
+> Completado el 2026-08-24. Build Debug correcta. La suite completa continúa bloqueada por los tests heredados de `startURLImport`, previstos para YT-03.
 
 **Depende de:** YT-01
 
@@ -78,7 +80,9 @@
 
 ---
 
-### [ ] YT-03 — Gestionar temporales y procedencia de importaciones convertidas
+### [x] YT-03 — Gestionar temporales y procedencia de importaciones convertidas
+
+> Completado el 2026-08-25. Build Debug correcta. La suite completa queda bloqueada por tests ajenos de `NetworkTests` que aún llaman a `APIClient.getUsage`.
 
 **Depende de:** YT-02
 

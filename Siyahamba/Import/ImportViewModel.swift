@@ -29,7 +29,7 @@ final class ImportViewModel {
 
     func startFileImport(from fileURL: URL, originalURL: URL? = nil, artist: String? = nil, title: String? = nil) {
         Task {
-            await enqueueFileImport(fileURL: fileURL, originalURL: originalURL, artist: artist, title: title)
+            await enqueueFileImport(fileURL: fileURL, originalURL: originalURL, artist: artist, title: title, cleanup: nil)
         }
     }
 
@@ -39,21 +39,51 @@ final class ImportViewModel {
             return PendingImportItem(
                 fileURL: file.fileURL,
                 originalURL: file.originalURL,
+                cleanup: nil,
                 artist: parsed.artist ?? "",
                 title: parsed.title
             )
         }
     }
 
+    @discardableResult
+    func collectYouTubeConversion(_ result: YouTubeConversionResult) -> SongEntry? {
+        if let existingSong = libraryStore.song(forYouTubeURL: result.sourceURL) {
+            cleanUpConvertedFile(at: result.fileURL)
+            phase = .ready(cached: true)
+            return existingSong
+        }
+
+        pendingItems = [PendingImportItem(
+            fileURL: result.fileURL,
+            originalURL: result.sourceURL,
+            cleanup: { [fileURL = result.fileURL] in
+                cleanUpConvertedFile(at: fileURL)
+            },
+            artist: "",
+            title: result.metadata.title
+        )]
+        return nil
+    }
+
     func confirmImport() {
         let items = pendingItems
         pendingItems = []
         for item in items {
-            startFileImport(from: item.fileURL, originalURL: item.originalURL, artist: item.artist, title: item.title)
+            Task {
+                await enqueueFileImport(
+                    fileURL: item.fileURL,
+                    originalURL: item.originalURL,
+                    artist: item.artist,
+                    title: item.title,
+                    cleanup: item.cleanup
+                )
+            }
         }
     }
 
     func cancelPending() {
+        pendingItems.forEach { $0.cleanUpTemporaryFile() }
         pendingItems = []
     }
 
@@ -80,6 +110,7 @@ final class ImportViewModel {
         }
         for item in queue {
             libraryStore.removePlaceholder(id: item.placeholderID)
+            item.cleanUpTemporaryFile()
         }
         queue.removeAll()
         isProcessing = false
@@ -92,11 +123,12 @@ final class ImportViewModel {
 
     // MARK: - Private
 
-    private func enqueueFileImport(fileURL: URL, originalURL: URL?, artist: String?, title: String?) async {
+    private func enqueueFileImport(fileURL: URL, originalURL: URL?, artist: String?, title: String?, cleanup: (() -> Void)?) async {
         do {
             let hash = try await cacheManager.sha256(of: fileURL)
 
             if libraryStore.isCached(sourceHash: hash) {
+                cleanup?()
                 if !isProcessing {
                     phase = .ready(cached: true)
                 }
@@ -119,7 +151,8 @@ final class ImportViewModel {
                 placeholderID: placeholder.id,
                 sourceHash: hash,
                 artist: artist,
-                title: title
+                title: title,
+                cleanup: cleanup
             )
             queue.append(item)
 
@@ -127,6 +160,7 @@ final class ImportViewModel {
                 processNextInQueue()
             }
         } catch {
+            cleanup?()
             phase = .error(error.localizedDescription)
         }
     }
@@ -154,6 +188,7 @@ final class ImportViewModel {
     }
 
     private func runFileImport(item: QueueItem) async {
+        defer { item.cleanUpTemporaryFile() }
         do {
             phase = .validating
             try Task.checkCancellation()
@@ -176,12 +211,13 @@ final class ImportViewModel {
                 token: token
             )
             currentJobId = jobId
+            item.cleanUpTemporaryFile()
 
             try await pollAndFinalize(
                 jobId: jobId,
                 sourceHash: item.sourceHash,
                 displayName: item.fileURL.lastPathComponent,
-                sourceURL: item.originalURL?.path,
+                sourceURL: item.originalURL?.absoluteString,
                 fileName: item.fileURL.lastPathComponent,
                 overrideArtist: item.artist,
                 overrideTitle: item.title
@@ -270,6 +306,15 @@ private struct QueueItem {
     let sourceHash: String
     let artist: String?
     let title: String?
+    let cleanup: (() -> Void)?
+
+    func cleanUpTemporaryFile() {
+        cleanup?()
+    }
+}
+
+private func cleanUpConvertedFile(at fileURL: URL) {
+    try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent())
 }
 
 // MARK: - ZIP Extraction (nonisolated helper)
