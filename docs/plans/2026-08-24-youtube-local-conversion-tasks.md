@@ -141,7 +141,9 @@
 
 ---
 
-### [ ] YT-05 — Integrar la conversión en Biblioteca y retirar y2mate
+### [x] YT-05 — Integrar la conversión en Biblioteca y retirar y2mate
+
+> Completado el 2026-08-25. Build Debug correcta y no quedan referencias a `y2mate` en `Siyahamba/`.
 
 **Depende de:** YT-04
 

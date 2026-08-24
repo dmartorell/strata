@@ -9,6 +9,7 @@ struct LibraryView: View {
     @State private var selection = Set<UUID>()
     @State private var idsToDelete = Set<UUID>()
     @State private var showDeleteConfirmation = false
+    @State private var showYouTubeConversion = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -43,22 +44,26 @@ struct LibraryView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    if let url = URL(string: "https://v1.y2mate.nu/") {
-                        NSWorkspace.shared.open(url)
-                    }
+                    showYouTubeConversion = true
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "play.rectangle.fill")
-                        Text("YT Convert")
+                        Text("Importar YouTube")
                     }
                     .foregroundStyle(Color.accentColor)
                 }
-                .help("Abre y2mate para convertir YouTube a MP3")
+                .help("Convierte e importa el audio de un vídeo de YouTube")
                 .onHover { inside in
                     if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
                 }
             }
 
+        }
+        .sheet(isPresented: $showYouTubeConversion) {
+            YouTubeConversionSheet(
+                viewModel: YouTubeConversionViewModel(importViewModel: importViewModel),
+                onSongSelected: onSongSelected
+            )
         }
     }
 
