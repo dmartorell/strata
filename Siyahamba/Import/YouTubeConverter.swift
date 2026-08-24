@@ -23,6 +23,12 @@ struct YouTubeVideoMetadata: Decodable, Equatable, Sendable {
     let duration: Double?
 }
 
+struct YouTubeConversionResult: Sendable {
+    let fileURL: URL
+    let metadata: YouTubeVideoMetadata
+    let sourceURL: URL
+}
+
 enum YouTubeConversionPhase: Sendable {
     case downloading
     case converting
@@ -52,6 +58,122 @@ enum YouTubeConverterError: LocalizedError, Equatable {
         case .toolFailed(let details): "No se pudo convertir el vídeo. \(details)"
         case .cancelled: "La conversión se canceló."
         }
+    }
+}
+
+protocol YouTubeConverting: Sendable {
+    func inspect(_ request: YouTubeConversionRequest) async throws -> YouTubeVideoMetadata
+    func convert(_ request: YouTubeConversionRequest) async throws -> YouTubeConversionResult
+}
+
+struct YouTubeConverter: YouTubeConverting {
+    private let toolLocator: YouTubeToolLocator
+    private let processExecutor: any YouTubeProcessExecuting
+
+    init(
+        toolLocator: YouTubeToolLocator = .live,
+        processExecutor: any YouTubeProcessExecuting = YouTubeProcessExecutor()
+    ) {
+        self.toolLocator = toolLocator
+        self.processExecutor = processExecutor
+    }
+
+    func inspect(_ request: YouTubeConversionRequest) async throws -> YouTubeVideoMetadata {
+        let video = try YouTubeURL(url: request.url)
+        let executable = try toolLocator.url(for: .ytDlp)
+        let result = try await processExecutor.run(
+            executable: executable,
+            arguments: ["--no-playlist", "--dump-single-json", "--skip-download", video.canonicalURL.absoluteString]
+        )
+        guard result.status == 0 else {
+            throw YouTubeConverterError.unsupportedVideo
+        }
+        let metadata: YouTubeVideoMetadata
+        do {
+            metadata = try JSONDecoder().decode(YouTubeVideoMetadata.self, from: result.standardOutput)
+        } catch {
+            throw YouTubeConverterError.toolFailed("No se pudieron leer los datos del vídeo.")
+        }
+        guard metadata.id == video.videoID else {
+            throw YouTubeConverterError.unsupportedVideo
+        }
+        guard (metadata.duration ?? .infinity) <= 600 else {
+            throw YouTubeConverterError.videoTooLong
+        }
+        return metadata
+    }
+
+    func convert(_ request: YouTubeConversionRequest) async throws -> YouTubeConversionResult {
+        try await convert(request, onProgress: { _ in })
+    }
+
+    func convert(
+        _ request: YouTubeConversionRequest,
+        onProgress: @escaping @Sendable (YouTubeConversionProgress) -> Void
+    ) async throws -> YouTubeConversionResult {
+        onProgress(.init(phase: .downloading, fractionCompleted: 0))
+        do {
+            try Task.checkCancellation()
+        } catch {
+            throw YouTubeConverterError.cancelled
+        }
+        let metadata = try await inspect(request)
+        do {
+            try Task.checkCancellation()
+        } catch {
+            throw YouTubeConverterError.cancelled
+        }
+        let video = try YouTubeURL(url: request.url)
+        let ytDlp = try toolLocator.url(for: .ytDlp)
+        let ffmpeg = try toolLocator.url(for: .ffmpeg)
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("SiyahambaYouTubeConversions", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+        do {
+            let template = directory.appendingPathComponent("audio.%(ext)s").path
+            let result = try await processExecutor.run(
+                executable: ytDlp,
+                arguments: [
+                    "--no-playlist", "--extract-audio", "--audio-format", request.format.rawValue,
+                    "--postprocessor-args", "ffmpeg:-b:a \(request.quality.rawValue)k", "--ffmpeg-location", ffmpeg.path,
+                    "--output", template, "--print", "after_move:filepath", video.canonicalURL.absoluteString
+                ],
+                onOutput: { output in
+                    guard let percentage = Self.downloadPercentage(in: output) else { return }
+                    onProgress(.init(phase: .downloading, fractionCompleted: min(0.8, percentage * 0.8)))
+                }
+            )
+            onProgress(.init(phase: .converting, fractionCompleted: 0.9))
+            guard result.status == 0,
+                  let path = String(data: result.standardOutput, encoding: .utf8)?
+                    .split(whereSeparator: \.isNewline).last.map(String.init)
+            else {
+                throw YouTubeConverterError.toolFailed(String(data: result.standardError, encoding: .utf8) ?? "")
+            }
+            let fileURL = URL(fileURLWithPath: path)
+            let attributes = try fileURL.resourceValues(forKeys: [.fileSizeKey])
+            guard (attributes.fileSize ?? 0) <= 50 * 1024 * 1024 else {
+                throw YouTubeConverterError.outputTooLarge
+            }
+            onProgress(.init(phase: .converting, fractionCompleted: 1))
+            return YouTubeConversionResult(fileURL: fileURL, metadata: metadata, sourceURL: video.canonicalURL)
+        } catch is CancellationError {
+            try? FileManager.default.removeItem(at: directory)
+            throw YouTubeConverterError.cancelled
+        } catch {
+            try? FileManager.default.removeItem(at: directory)
+            throw error
+        }
+    }
+
+    private static func downloadPercentage(in output: String) -> Double? {
+        let pattern = #"([0-9]{1,3}(?:\.[0-9]+)?)%"#
+        guard let range = output.range(of: pattern, options: .regularExpression) else { return nil }
+        return Double(output[range].dropLast())?.isFinite == true
+            ? Double(output[range].dropLast())! / 100
+            : nil
     }
 }
 
