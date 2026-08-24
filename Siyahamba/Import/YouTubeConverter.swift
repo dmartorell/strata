@@ -1,11 +1,11 @@
 import Foundation
 
-enum YouTubeFormat: String, CaseIterable, Sendable {
+enum YouTubeFormat: String, CaseIterable, Hashable, Sendable {
     case mp3
     case m4a
 }
 
-enum YouTubeQuality: Int, CaseIterable, Sendable {
+enum YouTubeQuality: Int, CaseIterable, Hashable, Sendable {
     case low = 128
     case standard = 192
     case high = 320
@@ -64,6 +64,19 @@ enum YouTubeConverterError: LocalizedError, Equatable {
 protocol YouTubeConverting: Sendable {
     func inspect(_ request: YouTubeConversionRequest) async throws -> YouTubeVideoMetadata
     func convert(_ request: YouTubeConversionRequest) async throws -> YouTubeConversionResult
+    func convert(
+        _ request: YouTubeConversionRequest,
+        onProgress: @escaping @Sendable (YouTubeConversionProgress) -> Void
+    ) async throws -> YouTubeConversionResult
+}
+
+extension YouTubeConverting {
+    func convert(
+        _ request: YouTubeConversionRequest,
+        onProgress: @escaping @Sendable (YouTubeConversionProgress) -> Void
+    ) async throws -> YouTubeConversionResult {
+        try await convert(request)
+    }
 }
 
 struct YouTubeConverter: YouTubeConverting {

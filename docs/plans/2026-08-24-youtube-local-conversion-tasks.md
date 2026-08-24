@@ -110,7 +110,9 @@
 
 ---
 
-### [ ] YT-04 — Construir la hoja de conversión y su modelo de estado
+### [x] YT-04 — Construir la hoja de conversión y su modelo de estado
+
+> Completado el 2026-08-25. Build Debug correcta. La suite completa queda bloqueada por tests ajenos de `NetworkTests` que aún llaman a `APIClient.getUsage`.
 
 **Depende de:** YT-02, YT-03
 
