@@ -21,7 +21,9 @@
 
 ## Tickets
 
-### [ ] YT-01 — Empaquetar herramientas locales verificadas
+### [x] YT-01 — Empaquetar herramientas locales verificadas
+
+> Completado el 2026-08-24. La build Debug pasa. `xcodebuild test` sigue bloqueado por dos tests obsoletos de `startURLImport`, que se reemplazarán en YT-03.
 
 **Depende de:** —
 

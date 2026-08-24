@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0261F2C8A6E1A0622C5AE94A /* YouTubeTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DE3A68765722759E4839EFDE /* YouTubeTools.bundle */; };
 		0A2F461B3885E2E2CABA69C4 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AE6EDAED46C23726FD9761 /* LibraryView.swift */; };
 		0D1F22AA24BEAF9E6059855E /* LyricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03C345114B857031F29FBA4 /* LyricsView.swift */; };
 		10F3630434CDE859ADF1BAC5 /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F332BD21E70B278F205CF6 /* ImportViewModel.swift */; };
@@ -45,6 +46,7 @@
 		B0ED8000B26C552AB781E04B /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA9300CD2970136F554A6B0 /* SongEntry.swift */; };
 		B6A36F4C71EABF9F5D189191 /* RehearsalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */; };
 		BCF11E547BDF9005D1324ACA /* RehearsalReferencePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */; };
+		BDDC64BFB14C12BF7554A69B /* YouTubeToolLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD896780B757097D1CF6421 /* YouTubeToolLocator.swift */; };
 		C079780D826DFD9C286485C0 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AECB9D53BC6B8BCD9B3AABA /* LoginView.swift */; };
 		C8DB21DD90C497C9144A0096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0EAA14CF59E71597E0C97AA /* Assets.xcassets */; };
 		CE737FD3CBF21602C5433E1B /* GuitarTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6CC3852F98CAC63B903246 /* GuitarTuning.swift */; };
@@ -56,6 +58,7 @@
 		DF93427BE6EC48626B94E9EF /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16700FB51164FDE6180FA191 /* PlayerViewModel.swift */; };
 		E4F3D15A4413CDFD229A7542 /* guitar.json in Resources */ = {isa = PBXBuildFile; fileRef = C08ABDDD4D02157DB05CBEDF /* guitar.json */; };
 		E7EA6CD0E28241F1AA49FDCB /* ChordModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B533FB9D129D6BB7760EBF1 /* ChordModels.swift */; };
+		EB31F534FE3938733CC8AF07 /* YouTubeToolLocatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */; };
 		EEE7D7A4286C0552C6E6D04F /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E03BE520801EF1D63D673F0 /* APIError.swift */; };
 		F7AFEEF32C39E0EE0D716132 /* GlobalDropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89A38B5CD39DDED1288B257 /* GlobalDropOverlay.swift */; };
 		FD6B4EB8448E7F49C639A8CC /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AF205C42751B22A62E5698 /* AuthViewModelTests.swift */; };
@@ -95,6 +98,7 @@
 		5236B1AA2F4D23765DAE02A7 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		57371222DD562CD76B9AF8FA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		58B8A9A161D77645DB943BB8 /* Siyahamba.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Siyahamba.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeToolLocatorTests.swift; sourceTree = "<group>"; };
 		633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalReferencePanel.swift; sourceTree = "<group>"; };
 		67F332BD21E70B278F205CF6 /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		6BD97ED7C9989AE382B5F656 /* LyricsFontSizePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsFontSizePopover.swift; sourceTree = "<group>"; };
@@ -123,6 +127,7 @@
 		D54B21B54B24100A69FF5332 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D5A923F7E435CA90F8675F1C /* status_line.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status_line.json; sourceTree = "<group>"; };
 		D8099461EF9CB4134ABBC47C /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		DE3A68765722759E4839EFDE /* YouTubeTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = YouTubeTools.bundle; sourceTree = "<group>"; };
 		E8DD1D43B5EA5248C5D70A9D /* ChordDiagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordDiagramView.swift; sourceTree = "<group>"; };
 		EC6CC3852F98CAC63B903246 /* GuitarTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuitarTuning.swift; sourceTree = "<group>"; };
 		F1912C9604AF417B75C329A5 /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
@@ -130,6 +135,7 @@
 		F39EC2CC6074F1A0C0597617 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		F400FBBD92DDC10F2672C237 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FB10079C1DF36ECBA8AD554B /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
+		FBD896780B757097D1CF6421 /* YouTubeToolLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeToolLocator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				C08ABDDD4D02157DB05CBEDF /* guitar.json */,
+				DE3A68765722759E4839EFDE /* YouTubeTools.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -291,6 +298,7 @@
 			children = (
 				74718AA605492FF3863E941A /* ImportViewModelTests.swift */,
 				9254802D554EFBB23B16B35F /* MockAPIClient.swift */,
+				60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */,
 			);
 			path = Import;
 			sourceTree = "<group>";
@@ -303,6 +311,7 @@
 				67F332BD21E70B278F205CF6 /* ImportViewModel.swift */,
 				B81794326C0EB93BE3084483 /* MetadataConfirmationSheet.swift */,
 				8CBD66342D60AB73B59ECCC5 /* PendingImportItem.swift */,
+				FBD896780B757097D1CF6421 /* YouTubeToolLocator.swift */,
 			);
 			path = Import;
 			sourceTree = "<group>";
@@ -397,10 +406,11 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					4769DF25601ACCDF77BE67DE = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 89ZFGW6H88;
 						ProvisioningStyle = Automatic;
 					};
 					E6A0D1EFD62615552D0B6E24 = {
+						DevelopmentTeam = 89ZFGW6H88;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -417,9 +427,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B4A67E301B5F8294CB3ED8C6 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
-				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */,
+				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
 				995F7FA9DFD976BCB5F82964 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -435,6 +446,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8DB21DD90C497C9144A0096 /* Assets.xcassets in Resources */,
+				0261F2C8A6E1A0622C5AE94A /* YouTubeTools.bundle in Resources */,
 				E4F3D15A4413CDFD229A7542 /* guitar.json in Resources */,
 				D33B24B7963919605A8BC49D /* status_line.json in Resources */,
 			);
@@ -452,6 +464,7 @@
 				89AB80DDA4B89ADEDF81CCBB /* KeychainServiceTests.swift in Sources */,
 				6F92DD19567128C19D58170E /* MockAPIClient.swift in Sources */,
 				15D7444EB7C2A83F238CC5AF /* NetworkTests.swift in Sources */,
+				EB31F534FE3938733CC8AF07 /* YouTubeToolLocatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,6 +515,7 @@
 				1F70D9C031DB563943091F12 /* TunerView.swift in Sources */,
 				D4C5ECAFC2EFA7DDCF69AD32 /* UsageView.swift in Sources */,
 				27E5E2CE932F12CFE61BC715 /* WaveformsView.swift in Sources */,
+				BDDC64BFB14C12BF7554A69B /* YouTubeToolLocator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,7 +702,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				INFOPLIST_FILE = SiyahambaTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -710,7 +724,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 89ZFGW6H88;
 				INFOPLIST_FILE = SiyahambaTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -758,7 +772,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */ = {
+		25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/auth0/JWTDecode.swift";
 			requirement = {
@@ -787,7 +801,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		34A0891AF00904CF2550AC40 /* JWTDecode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode" */;
+			package = 25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
 			productName = JWTDecode;
 		};
 		39D297249C7628D1B89EEEEA /* DSWaveformImageViews */ = {
