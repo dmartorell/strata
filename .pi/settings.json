@@ -1,0 +1,6 @@
+{
+  "skills": [
+    "../.claude/skills/swift-audit"
+  ],
+  "enableSkillCommands": true
+}
