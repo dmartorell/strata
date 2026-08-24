@@ -41,6 +41,8 @@ targets:
       - path: Siyahamba
         excludes:
           - "**/*.md"
+    resources:
+      - path: Siyahamba/Resources/YouTubeTools.bundle
     info:
       path: Siyahamba/Info.plist
       properties:
@@ -61,7 +63,7 @@ targets:
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_IDENTITY: "Apple Development"
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: "89ZFGW6H88"
         ENABLE_HARDENED_RUNTIME: YES
         INFOPLIST_FILE: Siyahamba/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -93,7 +95,7 @@ targets:
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGN_IDENTITY: "Apple Development"
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: "89ZFGW6H88"
         INFOPLIST_FILE: SiyahambaTests/Info.plist
     dependencies:
       - target: Siyahamba
