@@ -44,11 +44,13 @@
 		94B9809EE122C3AF42088833 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57371222DD562CD76B9AF8FA /* ContentView.swift */; };
 		A221CA352363A89042C5EAC2 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 7844B5F4924D0D06A83E3DAA /* ZIPFoundation */; };
 		A28998D6A7BEC7327997CF79 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FD8E8A5B3B793E7BB52969 /* FlowLayout.swift */; };
+		A2C8C32CB4BEE1B9B6AD3C1D /* YouTubeConversionSheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E63105C33D5AE3E4DD0AE6B /* YouTubeConversionSheetTests.swift */; };
 		A4A12209C90DCE87551C4B06 /* ChordTransposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF8AC48DD10A79F171B725 /* ChordTransposer.swift */; };
 		ABE111581CCEAD0724E71141 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2413A51BD059860C00C1ADD0 /* TransportBarView.swift */; };
 		AD99B811D410D4FFD0511E88 /* YouTubeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7EDDE888CE37CCA3B7A2AA2 /* YouTubeConverter.swift */; };
 		B0ED8000B26C552AB781E04B /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA9300CD2970136F554A6B0 /* SongEntry.swift */; };
 		B6A36F4C71EABF9F5D189191 /* RehearsalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */; };
+		BC870145B4C59BEC199DC818 /* YouTubeConversionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05E3638EA069C9FEDFB598A /* YouTubeConversionSheet.swift */; };
 		BCF11E547BDF9005D1324ACA /* RehearsalReferencePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633AEE142438FDB0DC0746E1 /* RehearsalReferencePanel.swift */; };
 		BDDC64BFB14C12BF7554A69B /* YouTubeToolLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD896780B757097D1CF6421 /* YouTubeToolLocator.swift */; };
 		C079780D826DFD9C286485C0 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AECB9D53BC6B8BCD9B3AABA /* LoginView.swift */; };
@@ -119,6 +121,7 @@
 		96B5FA285F159E695C0FF4F6 /* YouTubeProcessExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeProcessExecutor.swift; sourceTree = "<group>"; };
 		9B7322E4710E505D9A73FE2E /* YouTubeConversionExecutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeConversionExecutionTests.swift; sourceTree = "<group>"; };
 		9B90613B21171E8A9FD7F611 /* Siyahamba.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Siyahamba.entitlements; sourceTree = "<group>"; };
+		9E63105C33D5AE3E4DD0AE6B /* YouTubeConversionSheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeConversionSheetTests.swift; sourceTree = "<group>"; };
 		A89A38B5CD39DDED1288B257 /* GlobalDropOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalDropOverlay.swift; sourceTree = "<group>"; };
 		AAB3339E702703B990F6865B /* SiyahambaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SiyahambaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC16CDDCBF490D1E0D7291AB /* PitchPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchPopover.swift; sourceTree = "<group>"; };
@@ -136,6 +139,7 @@
 		D5A923F7E435CA90F8675F1C /* status_line.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status_line.json; sourceTree = "<group>"; };
 		D8099461EF9CB4134ABBC47C /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		DE3A68765722759E4839EFDE /* YouTubeTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = YouTubeTools.bundle; sourceTree = "<group>"; };
+		E05E3638EA069C9FEDFB598A /* YouTubeConversionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeConversionSheet.swift; sourceTree = "<group>"; };
 		E8DD1D43B5EA5248C5D70A9D /* ChordDiagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordDiagramView.swift; sourceTree = "<group>"; };
 		EC6CC3852F98CAC63B903246 /* GuitarTuning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuitarTuning.swift; sourceTree = "<group>"; };
 		F1912C9604AF417B75C329A5 /* ImportPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportPhase.swift; sourceTree = "<group>"; };
@@ -307,6 +311,7 @@
 				74718AA605492FF3863E941A /* ImportViewModelTests.swift */,
 				9254802D554EFBB23B16B35F /* MockAPIClient.swift */,
 				9B7322E4710E505D9A73FE2E /* YouTubeConversionExecutionTests.swift */,
+				9E63105C33D5AE3E4DD0AE6B /* YouTubeConversionSheetTests.swift */,
 				CDA61AD6D12F7C81810A79A9 /* YouTubeConverterTests.swift */,
 				60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */,
 			);
@@ -321,6 +326,7 @@
 				67F332BD21E70B278F205CF6 /* ImportViewModel.swift */,
 				B81794326C0EB93BE3084483 /* MetadataConfirmationSheet.swift */,
 				8CBD66342D60AB73B59ECCC5 /* PendingImportItem.swift */,
+				E05E3638EA069C9FEDFB598A /* YouTubeConversionSheet.swift */,
 				B7EDDE888CE37CCA3B7A2AA2 /* YouTubeConverter.swift */,
 				96B5FA285F159E695C0FF4F6 /* YouTubeProcessExecutor.swift */,
 				FBD896780B757097D1CF6421 /* YouTubeToolLocator.swift */,
@@ -477,6 +483,7 @@
 				6F92DD19567128C19D58170E /* MockAPIClient.swift in Sources */,
 				15D7444EB7C2A83F238CC5AF /* NetworkTests.swift in Sources */,
 				63C3361E7EB752C3DA57DFAD /* YouTubeConversionExecutionTests.swift in Sources */,
+				A2C8C32CB4BEE1B9B6AD3C1D /* YouTubeConversionSheetTests.swift in Sources */,
 				207DC33401AD47818505F564 /* YouTubeConverterTests.swift in Sources */,
 				EB31F534FE3938733CC8AF07 /* YouTubeToolLocatorTests.swift in Sources */,
 			);
@@ -529,6 +536,7 @@
 				1F70D9C031DB563943091F12 /* TunerView.swift in Sources */,
 				D4C5ECAFC2EFA7DDCF69AD32 /* UsageView.swift in Sources */,
 				27E5E2CE932F12CFE61BC715 /* WaveformsView.swift in Sources */,
+				BC870145B4C59BEC199DC818 /* YouTubeConversionSheet.swift in Sources */,
 				AD99B811D410D4FFD0511E88 /* YouTubeConverter.swift in Sources */,
 				43CB5181460567A71A068BCE /* YouTubeProcessExecutor.swift in Sources */,
 				BDDC64BFB14C12BF7554A69B /* YouTubeToolLocator.swift in Sources */,
