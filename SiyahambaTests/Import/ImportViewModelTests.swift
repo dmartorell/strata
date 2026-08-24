@@ -53,42 +53,66 @@ struct ImportViewModelTests {
         #expect(callCount == 0)
     }
 
-    @Test func cacheHitURL() async throws {
-        let mockClient = MockImportAPIClient()
-        let (viewModel, _, libraryStore) = try makeViewModel(mockClient: mockClient)
-        let videoID = "dQw4w9WgXcQ"
-        let youtubeURL = "https://www.youtube.com/watch?v=\(videoID)"
-
+    @Test func convertedYouTubeDuplicateUsesCanonicalURL() async throws {
+        let (viewModel, mockClient, libraryStore) = try makeViewModel()
         let existingEntry = SongEntry(
             id: UUID(), title: "Cached YT Song", artist: nil, duration: 210,
-            sourceURL: youtubeURL, fileName: nil, sourceHash: videoID, addedAt: Date()
+            sourceURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fileName: nil,
+            sourceHash: "existing", addedAt: Date()
         )
         await libraryStore.addSong(existingEntry)
+        let result = try makeYouTubeConversionResult(url: "https://youtu.be/dQw4w9WgXcQ")
 
-        viewModel.startURLImport(urlString: youtubeURL)
-        try await Task.sleep(nanoseconds: 200_000_000)
+        let duplicate = viewModel.collectYouTubeConversion(result)
 
-        #expect(viewModel.phase == .ready(cached: true))
-        let callCount = await mockClient.uploadURLCallCount
+        #expect(duplicate?.id == existingEntry.id)
+        #expect(viewModel.pendingItems.isEmpty)
+        #expect(!FileManager.default.fileExists(atPath: result.fileURL.path))
+        let callCount = await mockClient.uploadAudioCallCount
         #expect(callCount == 0)
     }
 
-    // MARK: - URL Validation
+    @Test func convertedYouTubeCancellationCleansTemporaryFile() throws {
+        let (viewModel, _, _) = try makeViewModel()
+        let result = try makeYouTubeConversionResult()
 
-    @Test func invalidYouTubeURL() async throws {
+        #expect(viewModel.collectYouTubeConversion(result) == nil)
+        #expect(viewModel.pendingItems.first?.title == "Vídeo de prueba")
+        viewModel.cancelPending()
+
+        #expect(!FileManager.default.fileExists(atPath: result.fileURL.path))
+    }
+
+    @Test func convertedYouTubeRemainsUntilUploadAndStoresFullURL() async throws {
         let mockClient = MockImportAPIClient()
-        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient)
+        await mockClient.setPollResult(.failure(APIError.processingFailed("fallo esperado")))
+        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
+        let result = try makeYouTubeConversionResult()
 
-        viewModel.startURLImport(urlString: "https://example.com/not-youtube")
-        try await Task.sleep(nanoseconds: 200_000_000)
+        #expect(viewModel.collectYouTubeConversion(result) == nil)
+        let pending = try #require(viewModel.pendingItems.first)
+        #expect(pending.originalURL?.absoluteString == "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        #expect(FileManager.default.fileExists(atPath: result.fileURL.path))
 
-        if case .error(let msg) = viewModel.phase {
-            #expect(msg.contains("YouTube"))
-        } else {
-            Issue.record("Expected .error phase, got \(viewModel.phase)")
-        }
-        let callCount = await mockClient.uploadURLCallCount
-        #expect(callCount == 0)
+        viewModel.confirmImport()
+        #expect(FileManager.default.fileExists(atPath: result.fileURL.path))
+        try await Task.sleep(nanoseconds: 500_000_000)
+
+        #expect(!FileManager.default.fileExists(atPath: result.fileURL.path))
+    }
+
+    private func makeYouTubeConversionResult(
+        url: String = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    ) throws -> YouTubeConversionResult {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let fileURL = directory.appendingPathComponent("video.mp3")
+        try Data(repeating: 0xAB, count: 512).write(to: fileURL)
+        return YouTubeConversionResult(
+            fileURL: fileURL,
+            metadata: YouTubeVideoMetadata(id: "dQw4w9WgXcQ", title: "Vídeo de prueba", duration: 30),
+            sourceURL: try YouTubeURL(url: #require(URL(string: url))).canonicalURL
+        )
     }
 
     // MARK: - Error Handling
