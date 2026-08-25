@@ -52,6 +52,8 @@ jobs:
           chmod +x Scripts/release_appcast.sh .build/sparkle-bin/*
           Scripts/release_appcast.sh
       - name: Publicar GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" dist/Siyahamba-*.zip --generate-notes
       - uses: actions/upload-pages-artifact@v3
         with:
