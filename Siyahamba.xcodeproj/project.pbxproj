@@ -61,7 +61,6 @@
 		C8DB21DD90C497C9144A0096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0EAA14CF59E71597E0C97AA /* Assets.xcassets */; };
 		CE737FD3CBF21602C5433E1B /* GuitarTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6CC3852F98CAC63B903246 /* GuitarTuning.swift */; };
 		D22CD7ACC748015AAEC661DF /* LyricsOffsetPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7DC2801E82ED7F1DF2B027 /* LyricsOffsetPopover.swift */; };
-		D33B24B7963919605A8BC49D /* status_line.json in Resources */ = {isa = PBXBuildFile; fileRef = D5A923F7E435CA90F8675F1C /* status_line.json */; };
 		D4C5ECAFC2EFA7DDCF69AD32 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10079C1DF36ECBA8AD554B /* UsageView.swift */; };
 		D52378394D00E055A2AEFBD6 /* PendingImportItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBD66342D60AB73B59ECCC5 /* PendingImportItem.swift */; };
 		DC2DD3878A7084A5314A210D /* SongMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3377B81E69088DE0345571 /* SongMetadata.swift */; };
@@ -144,7 +143,6 @@
 		D05351CC14D1035D9F129D87 /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		D0CEB4C1FFD029F1D776950C /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		D54B21B54B24100A69FF5332 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D5A923F7E435CA90F8675F1C /* status_line.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status_line.json; sourceTree = "<group>"; };
 		D8099461EF9CB4134ABBC47C /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D93EC2D64039C5DE7335467B /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		DE3A68765722759E4839EFDE /* YouTubeTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = YouTubeTools.bundle; sourceTree = "<group>"; };
@@ -210,7 +208,6 @@
 				4F5218618B628FF7843ECAEA /* Auth */,
 				B6D2606BD3B7D04E5EC8826C /* Import */,
 				07F6AD44BE626C91079F8D3A /* Library */,
-				D2B776AC4A7E7837B2D43C99 /* logs */,
 				F453C4A64129D08EC4E976E8 /* Network */,
 				9512FD51961B27790DAC8BC3 /* Player */,
 				296E54EE153203E22E8C99F3 /* Resources */,
@@ -375,14 +372,6 @@
 			path = Lyrics;
 			sourceTree = "<group>";
 		};
-		D2B776AC4A7E7837B2D43C99 /* logs */ = {
-			isa = PBXGroup;
-			children = (
-				D5A923F7E435CA90F8675F1C /* status_line.json */,
-			);
-			path = logs;
-			sourceTree = "<group>";
-		};
 		F453C4A64129D08EC4E976E8 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -490,7 +479,6 @@
 				C8DB21DD90C497C9144A0096 /* Assets.xcassets in Resources */,
 				0261F2C8A6E1A0622C5AE94A /* YouTubeTools.bundle in Resources */,
 				E4F3D15A4413CDFD229A7542 /* guitar.json in Resources */,
-				D33B24B7963919605A8BC49D /* status_line.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

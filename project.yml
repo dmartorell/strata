@@ -44,6 +44,7 @@ targets:
       - path: Siyahamba
         excludes:
           - "**/*.md"
+          - "logs/**"
     resources:
       - path: Siyahamba/Resources/YouTubeTools.bundle
     info:
