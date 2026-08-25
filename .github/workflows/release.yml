@@ -26,6 +26,8 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security list-keychains -d user -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k temporary build.keychain
+      - name: Preparar herramientas de conversión de YouTube
+        run: Tools/download-youtube-tools.sh
       - name: Archive, exportar y notarizar
         env:
           API_KEY_BASE64: ${{ secrets.APPSTORE_CONNECT_API_KEY_BASE64 }}
@@ -35,6 +37,9 @@ jobs:
           xcodebuild -resolvePackageDependencies -project Siyahamba.xcodeproj -scheme Siyahamba
           xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88
           xcodebuild -exportArchive -archivePath "$PWD/build/Siyahamba.xcarchive" -exportPath "$PWD/build/export" -exportOptionsPlist Scripts/export-options-developer-id.plist
+          for tool in yt-dlp/yt-dlp_macos deno-arm64 deno-x86_64 ffmpeg-arm64 ffmpeg-x86_64; do
+            test -x "build/export/Siyahamba.app/Contents/Resources/YouTubeTools.bundle/${tool}"
+          done
           ditto -c -k --sequesterRsrc --keepParent build/export/Siyahamba.app build/notarization.zip
           echo "$API_KEY_BASE64" | base64 --decode > AuthKey.p8
           xcrun notarytool submit build/notarization.zip --key AuthKey.p8 --key-id "$KEY_ID" --issuer "$ISSUER_ID" --wait
