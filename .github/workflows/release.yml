@@ -20,19 +20,24 @@ jobs:
           CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_P12_BASE64 }}
           CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
         run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "$CERTIFICATE_BASE64" | base64 --decode > certificate.p12
-          security create-keychain -p temporary build.keychain
-          security unlock-keychain -p temporary build.keychain
-          security import certificate.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
-          security list-keychains -d user -s build.keychain
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k temporary build.keychain
+          security create-keychain -p temporary "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p temporary "$KEYCHAIN_PATH"
+          security import certificate.p12 -k "$KEYCHAIN_PATH" -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k temporary "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
       - name: Preparar herramientas de conversión de YouTube
         run: Tools/download-youtube-tools.sh
       - name: Archivar y exportar
         timeout-minutes: 25
         run: |
           xcodebuild -resolvePackageDependencies -project Siyahamba.xcodeproj -scheme Siyahamba
-          xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88
+          xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88 OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"
           xcodebuild -exportArchive -archivePath "$PWD/build/Siyahamba.xcarchive" -exportPath "$PWD/build/export" -exportOptionsPlist Scripts/export-options-developer-id.plist
           for tool in yt-dlp/yt-dlp_macos deno-arm64 deno-x86_64 ffmpeg-arm64 ffmpeg-x86_64; do
             test -x "build/export/Siyahamba.app/Contents/Resources/YouTubeTools.bundle/${tool}"
