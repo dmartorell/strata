@@ -124,6 +124,10 @@ final class ImportViewModel {
     // MARK: - Private
 
     private func enqueueFileImport(fileURL: URL, originalURL: URL?, artist: String?, title: String?, cleanup: (() -> Void)?) async {
+        guard phase != .cancelled else {
+            cleanup?()
+            return
+        }
         do {
             let hash = try await cacheManager.sha256(of: fileURL)
 

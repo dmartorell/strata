@@ -10,6 +10,20 @@ private struct StubProcessExecutor: YouTubeProcessExecuting {
     }
 }
 
+private actor RecordingProcessExecutor: YouTubeProcessExecuting {
+    private let result: YouTubeProcessResult
+    private(set) var arguments: [[String]] = []
+
+    init(result: YouTubeProcessResult) {
+        self.result = result
+    }
+
+    func run(executable: URL, arguments: [String]) async throws -> YouTubeProcessResult {
+        self.arguments.append(arguments)
+        return result
+    }
+}
+
 struct YouTubeConverterTests {
     @Test(arguments: [
         "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -40,6 +54,33 @@ struct YouTubeConverterTests {
 
         #expect(metadata.title == "Canción")
         #expect(metadata.duration == 212)
+    }
+
+    @Test("Indica a yt-dlp el runtime Deno empaquetado")
+    func usesBundledDenoRuntime() async throws {
+        let ytDlp = URL(fileURLWithPath: "/tmp/yt-dlp")
+        let deno = URL(fileURLWithPath: "/tmp/deno-arm64")
+        let locator = YouTubeToolLocator(
+            resourceURL: { name in name == "deno-arm64" ? deno : ytDlp },
+            isExecutable: { _ in true }
+        )
+        let data = #"{"id":"dQw4w9WgXcQ","title":"Canción","duration":212}"#.data(using: .utf8)!
+        let executor = RecordingProcessExecutor(
+            result: .init(status: 0, standardOutput: data, standardError: Data())
+        )
+        let converter = YouTubeConverter(toolLocator: locator, processExecutor: executor)
+        let request = YouTubeConversionRequest(
+            url: try #require(URL(string: "https://youtu.be/dQw4w9WgXcQ")), format: .mp3, quality: .standard
+        )
+
+        _ = try await converter.inspect(request)
+
+        #expect(await executor.arguments == [[
+            "--js-runtimes", "deno:/tmp/deno-arm64",
+            "--extractor-args", "youtube:player_client=android",
+            "--no-playlist", "--dump-single-json", "--skip-download",
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        ]])
     }
 
     @Test("Rechaza vídeos superiores a diez minutos")

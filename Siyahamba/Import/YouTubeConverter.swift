@@ -79,24 +79,51 @@ extension YouTubeConverting {
     }
 }
 
+struct YouTubeConversionTemporaryStore: Sendable {
+    let rootURL: URL
+
+    init(rootURL: URL = FileManager.default.temporaryDirectory.appendingPathComponent("SiyahambaYouTubeConversions", isDirectory: true)) {
+        self.rootURL = rootURL
+    }
+
+    func makeConversionDirectory() throws -> URL {
+        let directory = rootURL.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory
+    }
+
+    func removeAll() throws {
+        guard FileManager.default.fileExists(atPath: rootURL.path) else { return }
+        try FileManager.default.removeItem(at: rootURL)
+    }
+}
+
 struct YouTubeConverter: YouTubeConverting {
     private let toolLocator: YouTubeToolLocator
     private let processExecutor: any YouTubeProcessExecuting
+    private let temporaryStore: YouTubeConversionTemporaryStore
 
     init(
         toolLocator: YouTubeToolLocator = .live,
-        processExecutor: any YouTubeProcessExecuting = YouTubeProcessExecutor()
+        processExecutor: any YouTubeProcessExecuting = YouTubeProcessExecutor(),
+        temporaryStore: YouTubeConversionTemporaryStore = .init()
     ) {
         self.toolLocator = toolLocator
         self.processExecutor = processExecutor
+        self.temporaryStore = temporaryStore
     }
 
     func inspect(_ request: YouTubeConversionRequest) async throws -> YouTubeVideoMetadata {
         let video = try YouTubeURL(url: request.url)
         let executable = try toolLocator.url(for: .ytDlp)
+        let deno = try toolLocator.url(for: .deno)
         let result = try await processExecutor.run(
             executable: executable,
-            arguments: ["--no-playlist", "--dump-single-json", "--skip-download", video.canonicalURL.absoluteString]
+            arguments: [
+                "--js-runtimes", "deno:\(deno.path)",
+                "--extractor-args", "youtube:player_client=android",
+                "--no-playlist", "--dump-single-json", "--skip-download", video.canonicalURL.absoluteString
+            ]
         )
         guard result.status == 0 else {
             throw YouTubeConverterError.unsupportedVideo
@@ -138,17 +165,17 @@ struct YouTubeConverter: YouTubeConverting {
         }
         let video = try YouTubeURL(url: request.url)
         let ytDlp = try toolLocator.url(for: .ytDlp)
+        let deno = try toolLocator.url(for: .deno)
         let ffmpeg = try toolLocator.url(for: .ffmpeg)
-        let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("SiyahambaYouTubeConversions", isDirectory: true)
-            .appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let directory = try temporaryStore.makeConversionDirectory()
 
         do {
             let template = directory.appendingPathComponent("audio.%(ext)s").path
             let result = try await processExecutor.run(
                 executable: ytDlp,
                 arguments: [
+                    "--js-runtimes", "deno:\(deno.path)",
+                    "--extractor-args", "youtube:player_client=android",
                     "--no-playlist", "--extract-audio", "--audio-format", request.format.rawValue,
                     "--postprocessor-args", "ffmpeg:-b:a \(request.quality.rawValue)k", "--ffmpeg-location", ffmpeg.path,
                     "--output", template, "--print", "after_move:filepath", video.canonicalURL.absoluteString

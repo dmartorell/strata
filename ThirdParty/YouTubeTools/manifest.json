@@ -6,6 +6,21 @@
     "architectures": ["arm64", "x86_64"],
     "license": "Unlicense"
   },
+  "deno": {
+    "version": "2.9.4",
+    "source": "https://github.com/denoland/deno/releases/tag/v2.9.4",
+    "artifacts": {
+      "arm64": {
+        "url": "https://github.com/denoland/deno/releases/download/v2.9.4/deno-aarch64-apple-darwin.zip",
+        "sha256": "6d17647fdbf9c587a581dba205054c4ccf732dae0a196cc1e9b44c07589db412"
+      },
+      "x86_64": {
+        "url": "https://github.com/denoland/deno/releases/download/v2.9.4/deno-x86_64-apple-darwin.zip",
+        "sha256": "f757df6d3991e37601c69fad56c22b37c4ea77b5dcfad3636a642c2ba4c9b19f"
+      }
+    },
+    "license": "MIT"
+  },
   "ffmpeg": {
     "version": "9.0.1",
     "source": "https://ffmpeg.org/releases/ffmpeg-9.0.1.tar.xz",
