@@ -29,6 +29,25 @@ struct YouTubeToolLocatorTests {
         #expect(url == intelURL)
     }
 
+    @Test("Selecciona Deno para cada arquitectura")
+    func selectsDenoForEachArchitecture() throws {
+        let arm64URL = URL(fileURLWithPath: "/tmp/deno-arm64")
+        let intelURL = URL(fileURLWithPath: "/tmp/deno-x86_64")
+        let locator = YouTubeToolLocator(
+            resourceURL: { name in
+                switch name {
+                case "deno-arm64": arm64URL
+                case "deno-x86_64": intelURL
+                default: nil
+                }
+            },
+            isExecutable: { _ in true }
+        )
+
+        #expect(try locator.url(for: .deno, architecture: .arm64) == arm64URL)
+        #expect(try locator.url(for: .deno, architecture: .x86_64) == intelURL)
+    }
+
     @Test("Falla con error localizado si falta una herramienta")
     func reportsMissingTool() {
         let locator = YouTubeToolLocator(resourceURL: { _ in nil })

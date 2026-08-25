@@ -11,6 +11,7 @@ El script fija versión, URL y SHA-256. No acepta un artefacto cuyo hash no coin
 ## Licencias
 
 - `yt-dlp` se distribuye bajo Unlicense. Su distribución oficial incorpora licencias de dependencias en el archivo `THIRD_PARTY_LICENSES.txt` del release. Debe copiarse al paquete de distribución antes de una release.
+- Deno se distribuye bajo MIT. Su texto de licencia se conserva en `licenses/Deno-MIT.txt`.
 - FFmpeg se compila desde su código fuente oficial con `--disable-gpl --disable-nonfree --enable-version3`; se distribuye bajo LGPL-3.0-or-later.
 - LAME se compila estáticamente sólo para habilitar codificación MP3 y se distribuye bajo LGPL-2.0-or-later.
 

@@ -170,6 +170,8 @@
 
 ### [ ] YT-06 — Limpieza al arranque, endurecimiento y verificación de release
 
+> Implementación y pruebas automatizadas completadas el 2026-08-25. Smoke de herramientas: MP3 192 y M4A 192 correctos en Apple Silicon y bajo Rosetta x86_64 con `dQw4w9WgXcQ`; build firmada válida. Pendiente smoke de UI completo en hardware Intel real antes de cerrar el ticket.
+
 **Depende de:** YT-01, YT-03, YT-05
 
 **Objetivo:** Cerrar los casos de interrupción y verificar el flujo distribuible en un Mac real sin incorporar dependencia de red en la suite automatizada.

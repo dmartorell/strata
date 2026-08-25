@@ -157,7 +157,7 @@ struct ImportViewModelTests {
 
     // MARK: - Cancel
 
-    @Test func cancelReturnsToIdle() async throws {
+    @Test func cancelSetsCancelledPhase() async throws {
         let mockClient = MockImportAPIClient()
         let (viewModel, _, _) = try makeViewModel(mockClient: mockClient)
 
@@ -170,6 +170,6 @@ struct ImportViewModelTests {
         viewModel.cancel()
         try await Task.sleep(nanoseconds: 200_000_000)
 
-        #expect(viewModel.phase == .idle)
+        #expect(viewModel.phase == .cancelled)
     }
 }

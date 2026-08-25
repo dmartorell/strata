@@ -49,7 +49,7 @@ struct YouTubeConversionSheetTests {
         #expect(viewModel.quality == .high)
     }
 
-    @Test func successfulConversionUpdatesProgressAndHandsOffToMetadataConfirmation() async throws {
+    @Test func successfulConversionUpdatesPhaseAndHandsOffToMetadataConfirmation() async throws {
         let result = try makeResult()
         defer { try? FileManager.default.removeItem(at: result.fileURL.deletingLastPathComponent()) }
         let converter = FakeYouTubeConverter(result: .success(result))
@@ -59,7 +59,6 @@ struct YouTubeConversionSheetTests {
         viewModel.convert()
         try await Task.sleep(nanoseconds: 100_000_000)
 
-        #expect(viewModel.progress == 1)
         #expect(viewModel.progressLabel == "Convirtiendo")
         #expect(viewModel.completedSong == nil)
         #expect(viewModel.state == .completed)

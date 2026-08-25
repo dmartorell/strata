@@ -11,6 +11,12 @@ YT_DLP_VERSION="2026.07.04"
 YT_DLP_URL="https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp_macos.zip"
 YT_DLP_SHA256="b0724470a0cf6dae5175a87eee05d6e75c5a0c10d2c3015166bd4d34e92b1b7b"
 
+DENO_VERSION="2.9.4"
+DENO_ARM64_URL="https://github.com/denoland/deno/releases/download/v${DENO_VERSION}/deno-aarch64-apple-darwin.zip"
+DENO_ARM64_SHA256="6d17647fdbf9c587a581dba205054c4ccf732dae0a196cc1e9b44c07589db412"
+DENO_X86_64_URL="https://github.com/denoland/deno/releases/download/v${DENO_VERSION}/deno-x86_64-apple-darwin.zip"
+DENO_X86_64_SHA256="f757df6d3991e37601c69fad56c22b37c4ea77b5dcfad3636a642c2ba4c9b19f"
+
 FFMPEG_VERSION="9.0.1"
 FFMPEG_URL="https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz"
 FFMPEG_SHA256="cf38e0e28c7e5605942c4a77755349b0145804a397af37eb1fb4c77cb237f635"
@@ -53,6 +59,18 @@ extract_yt_dlp_bundle() {
     mkdir -p "${destination}"
     unzip -q "${archive}" -d "${destination}"
     chmod 755 "${destination}/yt-dlp_macos"
+}
+
+extract_deno() {
+    local archive="$1"
+    local destination="$2"
+
+    if ! unzip -Z1 "${archive}" | grep -Fqx "deno"; then
+        echo "Error: ${archive} no contiene el ejecutable deno" >&2
+        exit 1
+    fi
+    unzip -p "${archive}" deno > "${destination}"
+    chmod 755 "${destination}"
 }
 
 build_ffmpeg() {
@@ -111,10 +129,14 @@ build_ffmpeg() {
 
 mkdir -p "${DESTINATION}"
 rm -rf "${DESTINATION}/yt-dlp"
-rm -f "${DESTINATION}/ffmpeg-arm64" "${DESTINATION}/ffmpeg-x86_64"
+rm -f "${DESTINATION}/deno-arm64" "${DESTINATION}/deno-x86_64" "${DESTINATION}/ffmpeg-arm64" "${DESTINATION}/ffmpeg-x86_64"
 
 download "${YT_DLP_URL}" "${YT_DLP_SHA256}" "${WORK_DIR}/yt-dlp_macos.zip"
 extract_yt_dlp_bundle "${WORK_DIR}/yt-dlp_macos.zip" "${DESTINATION}/yt-dlp"
+download "${DENO_ARM64_URL}" "${DENO_ARM64_SHA256}" "${WORK_DIR}/deno-arm64.zip"
+extract_deno "${WORK_DIR}/deno-arm64.zip" "${DESTINATION}/deno-arm64"
+download "${DENO_X86_64_URL}" "${DENO_X86_64_SHA256}" "${WORK_DIR}/deno-x86_64.zip"
+extract_deno "${WORK_DIR}/deno-x86_64.zip" "${DESTINATION}/deno-x86_64"
 
 download "${LAME_URL}" "${LAME_SHA256}" "${WORK_DIR}/lame.tar.gz"
 download "${FFMPEG_URL}" "${FFMPEG_SHA256}" "${WORK_DIR}/ffmpeg.tar.xz"

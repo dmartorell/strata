@@ -57,6 +57,12 @@ struct SiyahambaApp: App {
             .task {
                 await libraryStore.loadFromDisk()
             }
+            .task {
+                let temporaryStore = YouTubeConversionTemporaryStore()
+                Task.detached(priority: .utility) {
+                    try? temporaryStore.removeAll()
+                }
+            }
         }
         .windowStyle(.titleBar)
         .defaultSize(width: 900, height: 600)

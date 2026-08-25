@@ -2,6 +2,7 @@ import Foundation
 
 enum YouTubeTool: Sendable {
     case ytDlp
+    case deno
     case ffmpeg
 }
 
@@ -61,6 +62,11 @@ struct YouTubeToolLocator: Sendable {
         switch tool {
         case .ytDlp:
             name = "yt-dlp"
+        case .deno:
+            name = switch architecture {
+            case .arm64: "deno-arm64"
+            case .x86_64: "deno-x86_64"
+            }
         case .ffmpeg:
             name = switch architecture {
             case .arm64: "ffmpeg-arm64"

@@ -32,7 +32,7 @@ final class YouTubeConversionViewModel {
     }
 
     var progressLabel: String {
-        progressPhase == .downloading ? "Descargando" : "Convirtiendo"
+        "Convirtiendo"
     }
 
     @ObservationIgnored private let converter: any YouTubeConverting
@@ -167,16 +167,12 @@ struct YouTubeConversionSheet: View {
             }
 
             if vm.isConverting {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(vm.progressLabel)
-                        Spacer()
-                        Text(vm.progress, format: .percent.precision(.fractionLength(0)))
-                            .monospacedDigit()
-                    }
-                    ProgressView(value: vm.progress)
-                        .accessibilityValue(Text(vm.progress, format: .percent.precision(.fractionLength(0))))
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(vm.progressLabel)
                 }
+                .accessibilityElement(children: .combine)
             }
 
             if let errorMessage = vm.errorMessage {

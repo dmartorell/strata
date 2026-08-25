@@ -67,6 +67,7 @@
 		EB31F534FE3938733CC8AF07 /* YouTubeToolLocatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */; };
 		EEE7D7A4286C0552C6E6D04F /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E03BE520801EF1D63D673F0 /* APIError.swift */; };
 		F7AFEEF32C39E0EE0D716132 /* GlobalDropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89A38B5CD39DDED1288B257 /* GlobalDropOverlay.swift */; };
+		FB143F30A48AA690873C83B6 /* YouTubeConversionTemporaryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069216251563209F8702C200 /* YouTubeConversionTemporaryStoreTests.swift */; };
 		FD6B4EB8448E7F49C639A8CC /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AF205C42751B22A62E5698 /* AuthViewModelTests.swift */; };
 		FF574AF1B45020DD82E11D85 /* TunerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C719E714F4E8909653E60EA /* TunerEngine.swift */; };
 		FF8511671CDA71EB33D80530 /* StemControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4E7094033A28CD608F02DC /* StemControlsView.swift */; };
@@ -85,6 +86,7 @@
 /* Begin PBXFileReference section */
 		03AF205C42751B22A62E5698 /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		03CF8AC48DD10A79F171B725 /* ChordTransposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordTransposer.swift; sourceTree = "<group>"; };
+		069216251563209F8702C200 /* YouTubeConversionTemporaryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeConversionTemporaryStoreTests.swift; sourceTree = "<group>"; };
 		0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalSheetView.swift; sourceTree = "<group>"; };
 		0AECB9D53BC6B8BCD9B3AABA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		0B4AE7B0D9E3DAC1CF362B26 /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 				9254802D554EFBB23B16B35F /* MockAPIClient.swift */,
 				9B7322E4710E505D9A73FE2E /* YouTubeConversionExecutionTests.swift */,
 				9E63105C33D5AE3E4DD0AE6B /* YouTubeConversionSheetTests.swift */,
+				069216251563209F8702C200 /* YouTubeConversionTemporaryStoreTests.swift */,
 				CDA61AD6D12F7C81810A79A9 /* YouTubeConverterTests.swift */,
 				60107001A7E29FD9828B980A /* YouTubeToolLocatorTests.swift */,
 			);
@@ -484,6 +487,7 @@
 				15D7444EB7C2A83F238CC5AF /* NetworkTests.swift in Sources */,
 				63C3361E7EB752C3DA57DFAD /* YouTubeConversionExecutionTests.swift in Sources */,
 				A2C8C32CB4BEE1B9B6AD3C1D /* YouTubeConversionSheetTests.swift in Sources */,
+				FB143F30A48AA690873C83B6 /* YouTubeConversionTemporaryStoreTests.swift in Sources */,
 				207DC33401AD47818505F564 /* YouTubeConverterTests.swift in Sources */,
 				EB31F534FE3938733CC8AF07 /* YouTubeToolLocatorTests.swift in Sources */,
 			);
