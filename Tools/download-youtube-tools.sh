@@ -8,8 +8,8 @@ WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "${WORK_DIR}"' EXIT
 
 YT_DLP_VERSION="2026.07.04"
-YT_DLP_URL="https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp_macos.zip"
-YT_DLP_SHA256="b0724470a0cf6dae5175a87eee05d6e75c5a0c10d2c3015166bd4d34e92b1b7b"
+YT_DLP_URL="https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp_macos"
+YT_DLP_SHA256="498bd0dae17855c599d371d68ec5bafc439a9d8640e838be25c765a9792f261b"
 
 DENO_VERSION="2.9.4"
 DENO_ARM64_URL="https://github.com/denoland/deno/releases/download/v${DENO_VERSION}/deno-aarch64-apple-darwin.zip"
@@ -47,18 +47,17 @@ download() {
     verify_sha256 "${destination}" "${expected_sha256}"
 }
 
-extract_yt_dlp_bundle() {
-    local archive="$1"
+install_yt_dlp() {
+    local executable="$1"
     local destination="$2"
 
-    if ! grep -Fqx "yt-dlp_macos" < <(unzip -Z1 "${archive}") || ! grep -Fqx "_internal/Python" < <(unzip -Z1 "${archive}"); then
-        echo "Error: ${archive} no contiene el bundle completo de yt-dlp" >&2
+    if ! file "${executable}" | grep -Fq "Mach-O universal binary"; then
+        echo "Error: ${executable} no es el ejecutable universal de yt-dlp para macOS" >&2
         exit 1
     fi
     rm -rf "${destination}"
     mkdir -p "${destination}"
-    unzip -q "${archive}" -d "${destination}"
-    chmod 755 "${destination}/yt-dlp_macos"
+    install -m 755 "${executable}" "${destination}/yt-dlp_macos"
 }
 
 extract_deno() {
@@ -131,8 +130,8 @@ mkdir -p "${DESTINATION}"
 rm -rf "${DESTINATION}/yt-dlp"
 rm -f "${DESTINATION}/deno-arm64" "${DESTINATION}/deno-x86_64" "${DESTINATION}/ffmpeg-arm64" "${DESTINATION}/ffmpeg-x86_64"
 
-download "${YT_DLP_URL}" "${YT_DLP_SHA256}" "${WORK_DIR}/yt-dlp_macos.zip"
-extract_yt_dlp_bundle "${WORK_DIR}/yt-dlp_macos.zip" "${DESTINATION}/yt-dlp"
+download "${YT_DLP_URL}" "${YT_DLP_SHA256}" "${WORK_DIR}/yt-dlp_macos"
+install_yt_dlp "${WORK_DIR}/yt-dlp_macos" "${DESTINATION}/yt-dlp"
 download "${DENO_ARM64_URL}" "${DENO_ARM64_SHA256}" "${WORK_DIR}/deno-arm64.zip"
 extract_deno "${WORK_DIR}/deno-arm64.zip" "${DESTINATION}/deno-arm64"
 download "${DENO_X86_64_URL}" "${DENO_X86_64_SHA256}" "${WORK_DIR}/deno-x86_64.zip"

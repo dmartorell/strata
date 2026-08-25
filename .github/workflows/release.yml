@@ -33,6 +33,13 @@ jobs:
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
       - name: Preparar herramientas de conversión de YouTube
         run: Tools/download-youtube-tools.sh
+      - name: Firmar herramientas de conversión locales
+        run: |
+          for tool in yt-dlp/yt-dlp_macos ffmpeg-arm64 ffmpeg-x86_64; do
+            path="Siyahamba/Resources/YouTubeTools.bundle/${tool}"
+            codesign --force --options runtime --timestamp --sign "Developer ID Application" --keychain "$KEYCHAIN_PATH" "$path"
+            codesign --verify --strict --verbose=2 "$path"
+          done
       - name: Archivar y exportar
         timeout-minutes: 25
         run: |

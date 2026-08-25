@@ -1,8 +1,8 @@
 {
   "yt-dlp": {
     "version": "2026.07.04",
-    "source": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp_macos.zip",
-    "sha256": "b0724470a0cf6dae5175a87eee05d6e75c5a0c10d2c3015166bd4d34e92b1b7b",
+    "source": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp_macos",
+    "sha256": "498bd0dae17855c599d371d68ec5bafc439a9d8640e838be25c765a9792f261b",
     "architectures": ["arm64", "x86_64"],
     "license": "Unlicense"
   },
