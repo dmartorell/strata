@@ -51,9 +51,12 @@ targets:
       path: Siyahamba/Info.plist
       properties:
         CFBundleName: Siyahamba
+        CFBundleDevelopmentRegion: es
+        CFBundleLocalizations:
+          - es
         CFBundleIdentifier: com.siyahamba.client
-        CFBundleVersion: "2"
-        CFBundleShortVersionString: "1.5"
+        CFBundleVersion: "3"
+        CFBundleShortVersionString: "1.6"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
@@ -66,6 +69,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client
+        DEVELOPMENT_LANGUAGE: es
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
@@ -94,8 +98,8 @@ targets:
       properties:
         CFBundleName: SiyahambaTests
         CFBundleIdentifier: com.siyahamba.client.tests
-        CFBundleVersion: "2"
-        CFBundleShortVersionString: "1.5"
+        CFBundleVersion: "3"
+        CFBundleShortVersionString: "1.6"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client.tests
