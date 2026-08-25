@@ -165,29 +165,29 @@ Las versiones de `yt-dlp`, Deno, FFmpeg y LAME están fijadas con sus SHA-256 en
 3. Ejecuta `xcodegen generate`, build y tests.
 4. Haz una conversión manual de un vídeo público menor de 10 minutos en Apple Silicon e Intel para MP3 192 kbps y M4A 192 kbps.
 
-## Distribución
+## Distribución y actualizaciones
 
-La app se distribuye como `.app` firmado ad-hoc (sin cuenta de Apple Developer de pago).
+La distribución usa firma `Developer ID Application`, notarización de Apple y [Sparkle](https://sparkle-project.org/). macOS valida la app sin el aviso de desarrollador no identificado y, desde la versión 1.5, las actualizaciones se instalan desde `Siyahamba → Buscar actualizaciones…`.
 
-### Exportar el .app
+### Publicar una versión
 
-1. Abrir el proyecto en Xcode (`open Siyahamba.xcodeproj`)
-2. `Product → Archive`
-3. En el Organizer: `Distribute App → Copy App`
-4. Comprimir el `.app` resultante en un `.zip`
+Crear y subir un tag `vX.Y` ejecuta el workflow `.github/workflows/release.yml` en GitHub Actions. El workflow:
 
-### Enviar al usuario
+1. Compila y firma la app con Developer ID.
+2. La envía a notarización y grapa el ticket de Apple.
+3. Firma el ZIP con la clave EdDSA de Sparkle.
+4. Publica el ZIP en [GitHub Releases](https://github.com/dmartorell/strata/releases) y el `appcast.xml` en GitHub Pages.
 
-Enviar el `.zip` por AirDrop, iCloud Drive o cualquier medio.
+```bash
+# Tras incrementar CFBundleVersion y CFBundleShortVersionString en project.yml
+xcodegen generate
+xcodebuild -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Debug test
+git commit -am "chore: bump version to X.Y"
+git tag vX.Y
+git push origin main --tags
+```
 
-### Instalación (instrucciones para el usuario)
-
-1. Descomprimir el `.zip`
-2. Arrastrar `Siyahamba.app` a la carpeta **Aplicaciones**
-3. **Primera vez**: click derecho sobre la app → **Abrir** → confirmar en el diálogo de Gatekeeper
-4. Las siguientes ejecuciones se abren con doble click normal
-
-> Tras cada actualización hay que repetir el paso 3 (click derecho → Abrir) la primera vez.
+La configuración inicial de certificados, API key de Apple y secretos de GitHub está en [`docs/release-process.md`](docs/release-process.md). Los usuarios de versiones anteriores a 1.5 deben instalar una vez el ZIP de la primera release con Sparkle. Después, las actualizaciones son in-app.
 
 ## Acceso
 
