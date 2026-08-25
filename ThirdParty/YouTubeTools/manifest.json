@@ -1,0 +1,45 @@
+{
+  "yt-dlp": {
+    "version": "2026.07.04",
+    "source": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp_macos.zip",
+    "sha256": "b0724470a0cf6dae5175a87eee05d6e75c5a0c10d2c3015166bd4d34e92b1b7b",
+    "architectures": ["arm64", "x86_64"],
+    "license": "Unlicense"
+  },
+  "deno": {
+    "version": "2.9.4",
+    "source": "https://github.com/denoland/deno/releases/tag/v2.9.4",
+    "artifacts": {
+      "arm64": {
+        "url": "https://github.com/denoland/deno/releases/download/v2.9.4/deno-aarch64-apple-darwin.zip",
+        "sha256": "6d17647fdbf9c587a581dba205054c4ccf732dae0a196cc1e9b44c07589db412"
+      },
+      "x86_64": {
+        "url": "https://github.com/denoland/deno/releases/download/v2.9.4/deno-x86_64-apple-darwin.zip",
+        "sha256": "f757df6d3991e37601c69fad56c22b37c4ea77b5dcfad3636a642c2ba4c9b19f"
+      }
+    },
+    "license": "MIT"
+  },
+  "ffmpeg": {
+    "version": "9.0.1",
+    "source": "https://ffmpeg.org/releases/ffmpeg-9.0.1.tar.xz",
+    "sha256": "cf38e0e28c7e5605942c4a77755349b0145804a397af37eb1fb4c77cb237f635",
+    "architectures": ["arm64", "x86_64"],
+    "license": "LGPL-3.0-or-later",
+    "configure": [
+      "--disable-gpl",
+      "--disable-nonfree",
+      "--disable-x86asm",
+      "--enable-version3",
+      "--enable-libmp3lame"
+    ]
+  },
+  "lame": {
+    "version": "3.100",
+    "source": "https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz",
+    "sha256": "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e",
+    "architectures": ["arm64", "x86_64"],
+    "license": "LGPL-2.0-or-later"
+  }
+}

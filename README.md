@@ -144,6 +144,27 @@ export SIYAHAMBA_API_URL="https://tu-url.modal.run"
 
 O modificar `Siyahamba/Network/APIEndpoint.swift`.
 
+## Importar desde YouTube
+
+La Biblioteca incluye «Importar YouTube» para convertir localmente el audio de un único vídeo y enviarlo después al procesamiento habitual de stems. La conversión usa `yt-dlp`, Deno y `ffmpeg` empaquetados en la app, sin descargar herramientas durante el uso.
+
+- Formatos: MP3 y M4A.
+- Calidades: 128, 192 y 320 kbps. El valor inicial es MP3 a 192 kbps.
+- Límites: vídeos de hasta 10 minutos y archivos convertidos de hasta 50 MB.
+- URLs admitidas: `youtube.com/watch`, `youtu.be` y Shorts de YouTube. No se admiten playlists, vídeos privados, con inicio de sesión, restricción de edad, Premium o bloqueados por región.
+- El título del vídeo pasa por la confirmación de metadatos. La URL de origen evita importar dos veces el mismo vídeo.
+
+La conversión debe utilizarse únicamente con contenido propio o para el que se tengan los permisos necesarios. Si un vídeo no está disponible, importa un archivo de audio local.
+
+### Actualizar herramientas para una release
+
+Las versiones de `yt-dlp`, Deno, FFmpeg y LAME están fijadas con sus SHA-256 en `Tools/download-youtube-tools.sh` y documentadas en `ThirdParty/YouTubeTools/manifest.json`. Antes de una release:
+
+1. Actualiza versión, URL, checksum y licencia en el script y el manifiesto.
+2. Ejecuta `Tools/download-youtube-tools.sh` en macOS para regenerar los binarios arm64 y x86_64 dentro de `Siyahamba/Resources/YouTubeTools.bundle`.
+3. Ejecuta `xcodegen generate`, build y tests.
+4. Haz una conversión manual de un vídeo público menor de 10 minutos en Apple Silicon e Intel para MP3 192 kbps y M4A 192 kbps.
+
 ## Distribución
 
 La app se distribuye como `.app` firmado ad-hoc (sin cuenta de Apple Developer de pago).

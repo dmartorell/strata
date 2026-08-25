@@ -237,38 +237,38 @@ func testPollJobStatusTimeout() async throws {
     }
 }
 
-// MARK: - getUsage Tests
+// MARK: - fetchUsage Tests
 
-@Test("getUsage devuelve UsageResponse con Authorization Bearer")
-func testGetUsageSuccess() async throws {
+@Test("fetchUsage devuelve UsageData con Authorization Bearer")
+func testFetchUsageSuccess() async throws {
     let transport = SimpleMockTransport()
     transport.enqueue(statusCode: 200, body: [
         "month": "2026-03",
-        "songs_processed": 5,
-        "gpu_seconds": 123.4,
-        "estimated_cost_usd": 0.05
+        "credit_remaining_usd": 29.95,
+        "monthly_credit_usd": 30.0,
+        "total_spent_usd": 0.05
     ])
     let client = APIClient(transport: transport)
 
-    let usage = try await client.getUsage(token: "valid.token")
+    let usage = try await client.fetchUsage(token: "valid.token")
     #expect(usage.month == "2026-03")
-    #expect(usage.songs_processed == 5)
-    #expect(usage.gpu_seconds == 123.4)
-    #expect(usage.estimated_cost_usd == 0.05)
+    #expect(usage.creditRemainingUsd == 29.95)
+    #expect(usage.monthlyCreditUsd == 30)
+    #expect(usage.totalSpentUsd == 0.05)
 
     let req = try #require(transport.lastRequest)
     #expect(req.value(forHTTPHeaderField: "Authorization") == "Bearer valid.token")
     #expect(req.url?.path == "/usage")
 }
 
-@Test("getUsage con token inválido lanza unauthorized")
-func testGetUsageUnauthorized() async throws {
+@Test("fetchUsage con token inválido lanza unauthorized")
+func testFetchUsageUnauthorized() async throws {
     let transport = SimpleMockTransport()
     transport.enqueue(statusCode: 401, body: [:])
     let client = APIClient(transport: transport)
 
     await #expect(throws: APIError.unauthorized) {
-        _ = try await client.getUsage(token: "expired.token")
+        _ = try await client.fetchUsage(token: "expired.token")
     }
 }
 
@@ -281,6 +281,6 @@ func testAny401LandsAsUnauthorized() async throws {
     let client = APIClient(transport: transport)
 
     await #expect(throws: APIError.unauthorized) {
-        _ = try await client.getUsage(token: "bad.token")
+        _ = try await client.fetchUsage(token: "bad.token")
     }
 }
