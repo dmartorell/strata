@@ -28,11 +28,8 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k temporary build.keychain
       - name: Preparar herramientas de conversión de YouTube
         run: Tools/download-youtube-tools.sh
-      - name: Archive, exportar y notarizar
-        env:
-          API_KEY_BASE64: ${{ secrets.APPSTORE_CONNECT_API_KEY_BASE64 }}
-          KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
-          ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+      - name: Archivar y exportar
+        timeout-minutes: 25
         run: |
           xcodebuild -resolvePackageDependencies -project Siyahamba.xcodeproj -scheme Siyahamba
           xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88
@@ -41,8 +38,17 @@ jobs:
             test -x "build/export/Siyahamba.app/Contents/Resources/YouTubeTools.bundle/${tool}"
           done
           ditto -c -k --sequesterRsrc --keepParent build/export/Siyahamba.app build/notarization.zip
+      - name: Notarizar
+        timeout-minutes: 30
+        env:
+          API_KEY_BASE64: ${{ secrets.APPSTORE_CONNECT_API_KEY_BASE64 }}
+          KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+        run: |
           echo "$API_KEY_BASE64" | base64 --decode > AuthKey.p8
           xcrun notarytool submit build/notarization.zip --key AuthKey.p8 --key-id "$KEY_ID" --issuer "$ISSUER_ID" --wait
+      - name: Grapar y verificar
+        run: |
           xcrun stapler staple build/export/Siyahamba.app
           spctl --assess --type execute --verbose build/export/Siyahamba.app
       - name: Crear ZIP y appcast Sparkle
