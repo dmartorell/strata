@@ -10,8 +10,11 @@ struct ImportViewModelTests {
     func makeViewModel(
         mockClient: MockImportAPIClient = MockImportAPIClient(),
         authToken: String? = nil
-    ) throws -> (ImportViewModel, MockImportAPIClient, LibraryStore) {
-        let cacheManager = try CacheManager()
+    ) throws -> (ImportViewModel, MockImportAPIClient, LibraryStore, CacheManager) {
+        let rootURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("SiyahambaTests", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let cacheManager = try CacheManager(rootURL: rootURL)
         let libraryStore = LibraryStore(cacheManager: cacheManager)
         let authProvider = MockAuthTokenProvider(token: authToken)
 
@@ -21,14 +24,14 @@ struct ImportViewModelTests {
             libraryStore: libraryStore,
             authViewModel: authProvider
         )
-        return (viewModel, mockClient, libraryStore)
+        return (viewModel, mockClient, libraryStore, cacheManager)
     }
 
     // MARK: - Cache Hit Tests
 
     @Test func cacheHitFile() async throws {
         let mockClient = MockImportAPIClient()
-        let (viewModel, _, libraryStore) = try makeViewModel(mockClient: mockClient)
+        let (viewModel, _, libraryStore, cacheManager) = try makeViewModel(mockClient: mockClient)
 
         let tempFile = FileManager.default.temporaryDirectory
             .appendingPathComponent("test_cache_hit_\(UUID().uuidString).mp3")
@@ -36,7 +39,6 @@ struct ImportViewModelTests {
         try fakeAudioData.write(to: tempFile)
         defer { try? FileManager.default.removeItem(at: tempFile) }
 
-        let cacheManager = try CacheManager()
         let hash = try await cacheManager.sha256(of: tempFile)
 
         let existingEntry = SongEntry(
@@ -54,7 +56,7 @@ struct ImportViewModelTests {
     }
 
     @Test func convertedYouTubeDuplicateUsesCanonicalURL() async throws {
-        let (viewModel, mockClient, libraryStore) = try makeViewModel()
+        let (viewModel, mockClient, libraryStore, _) = try makeViewModel()
         let existingEntry = SongEntry(
             id: UUID(), title: "Cached YT Song", artist: nil, duration: 210,
             sourceURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fileName: nil,
@@ -73,7 +75,7 @@ struct ImportViewModelTests {
     }
 
     @Test func convertedYouTubeCancellationCleansTemporaryFile() throws {
-        let (viewModel, _, _) = try makeViewModel()
+        let (viewModel, _, _, _) = try makeViewModel()
         let result = try makeYouTubeConversionResult()
 
         #expect(viewModel.collectYouTubeConversion(result) == nil)
@@ -86,7 +88,7 @@ struct ImportViewModelTests {
     @Test func convertedYouTubeRemainsUntilUploadAndStoresFullURL() async throws {
         let mockClient = MockImportAPIClient()
         await mockClient.setPollResult(.failure(APIError.processingFailed("fallo esperado")))
-        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
+        let (viewModel, _, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
         let result = try makeYouTubeConversionResult()
 
         #expect(viewModel.collectYouTubeConversion(result) == nil)
@@ -120,7 +122,7 @@ struct ImportViewModelTests {
     @Test func uploadNetworkError() async throws {
         let mockClient = MockImportAPIClient()
         await mockClient.setUploadAudioResult(.failure(APIError.httpError(500)))
-        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
+        let (viewModel, _, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
 
         let tempFile = FileManager.default.temporaryDirectory
             .appendingPathComponent("test_upload_error_\(UUID().uuidString).mp3")
@@ -138,7 +140,7 @@ struct ImportViewModelTests {
     @Test func pollError() async throws {
         let mockClient = MockImportAPIClient()
         await mockClient.setPollResult(.failure(APIError.processingFailed("stem separation failed")))
-        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
+        let (viewModel, _, _, _) = try makeViewModel(mockClient: mockClient, authToken: "test-token")
 
         let tempFile = FileManager.default.temporaryDirectory
             .appendingPathComponent("test_poll_error_\(UUID().uuidString).mp3")
@@ -159,7 +161,7 @@ struct ImportViewModelTests {
 
     @Test func cancelSetsCancelledPhase() async throws {
         let mockClient = MockImportAPIClient()
-        let (viewModel, _, _) = try makeViewModel(mockClient: mockClient)
+        let (viewModel, _, _, _) = try makeViewModel(mockClient: mockClient)
 
         let tempFile = FileManager.default.temporaryDirectory
             .appendingPathComponent("test_cancel_\(UUID().uuidString).mp3")

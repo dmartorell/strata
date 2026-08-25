@@ -61,6 +61,27 @@ struct SongEntry: Codable, Identifiable, Sendable {
         self.importStatus = importStatus
     }
 
+    static func existingSourceMP3URL(from sourceURL: String?) -> URL? {
+        guard let sourceURL else { return nil }
+        let url: URL?
+        if let parsedURL = URL(string: sourceURL), parsedURL.isFileURL {
+            url = parsedURL
+        } else if !sourceURL.contains("://") {
+            url = URL(fileURLWithPath: sourceURL)
+        } else {
+            url = nil
+        }
+        guard let url,
+              url.pathExtension.lowercased() == "mp3",
+              FileManager.default.fileExists(atPath: url.path)
+        else { return nil }
+        return url
+    }
+
+    var existingSourceMP3URL: URL? {
+        Self.existingSourceMP3URL(from: sourceURL)
+    }
+
     static func parseArtistAndTitle(from fileName: String) -> (artist: String?, title: String) {
         let nameWithoutExtension = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
         let parts = nameWithoutExtension.split(separator: "-", maxSplits: 1)

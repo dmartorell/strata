@@ -375,6 +375,18 @@ private func extractToTemp(
         resolvedArtist = metadata.artist ?? parsed?.artist
     }
 
+    let persistedMetadata = SongMetadata(
+        title: resolvedTitle,
+        artist: resolvedArtist,
+        durationSeconds: metadata.durationSeconds,
+        sampleRate: metadata.sampleRate,
+        sourceType: metadata.sourceType,
+        processedAt: metadata.processedAt,
+        originalFilename: fileName ?? metadata.originalFilename
+    )
+    let persistedMetadataData = try JSONEncoder().encode(persistedMetadata)
+    try persistedMetadataData.write(to: metadataURL, options: .atomic)
+
     let songID = UUID()
     let entry = SongEntry(
         id: songID,

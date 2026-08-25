@@ -10,6 +10,7 @@ protocol CacheManagerProtocol: Actor {
     func writeLibraryIndex(_ songs: [SongEntry]) throws
     func stemURL(songID: UUID, stem: String) -> URL
     func originalURL(songID: UUID) -> URL
+    func finderRevealURL(songID: UUID, sourceURL: String?) -> URL?
     func instrumentalURL(songID: UUID) -> URL
     func hasLegacyFormat(songID: UUID) -> Bool
     func lyricsURL(songID: UUID) -> URL
@@ -32,6 +33,15 @@ actor CacheManager: CacheManagerProtocol {
             create: false
         )
         rootURL = musicURL.appendingPathComponent("Siyahamba", isDirectory: true)
+        try Self.createRootDirectory(at: rootURL)
+    }
+
+    init(rootURL: URL) throws {
+        self.rootURL = rootURL
+        try Self.createRootDirectory(at: rootURL)
+    }
+
+    private static func createRootDirectory(at rootURL: URL) throws {
         try FileManager.default.createDirectory(
             at: rootURL,
             withIntermediateDirectories: true,
@@ -79,6 +89,10 @@ extension CacheManager {
 
     func originalURL(songID: UUID) -> URL {
         songDirectory(for: songID).appendingPathComponent("original.wav")
+    }
+
+    func finderRevealURL(songID: UUID, sourceURL: String?) -> URL? {
+        SongEntry.existingSourceMP3URL(from: sourceURL)
     }
 
     func instrumentalURL(songID: UUID) -> URL {
