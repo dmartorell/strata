@@ -134,15 +134,24 @@ struct LibraryView: View {
                     if ids.count == 1,
                        let id = ids.first,
                        let song = libraryStore.songs.first(where: { $0.id == id }),
-                       song.isPlaceholder != true,
-                       song.existingSourceMP3URL != nil {
+                       song.isPlaceholder != true {
                         Button {
                             Task {
-                                guard let url = await libraryStore.finderRevealURL(for: id) else { return }
-                                NSWorkspace.shared.activateFileViewerSelecting([url])
+                                guard let url = await libraryStore.rawAudioURL(for: id) else { return }
+                                NSWorkspace.shared.activateFileViewerSelecting([url.deletingLastPathComponent()])
                             }
                         } label: {
-                            Label("Ver en Finder", systemImage: "folder")
+                            Label("Ver raw", systemImage: "folder")
+                        }
+                        if song.existingSourceMP3URL != nil {
+                            Button {
+                                Task {
+                                    guard let url = await libraryStore.finderRevealURL(for: id) else { return }
+                                    NSWorkspace.shared.activateFileViewerSelecting([url])
+                                }
+                            } label: {
+                                Label("Ver en Finder", systemImage: "folder")
+                            }
                         }
                     }
                     Button(role: .destructive) {

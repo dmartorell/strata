@@ -180,6 +180,11 @@ final class LibraryStore {
         }
     }
 
+    func rawAudioURL(for songID: UUID) async -> URL? {
+        guard songs.contains(where: { $0.id == songID }) else { return nil }
+        return await cacheManager.rawAudioURL(songID: songID)
+    }
+
     func finderRevealURL(for songID: UUID) async -> URL? {
         guard let song = songs.first(where: { $0.id == songID }) else { return nil }
         return await cacheManager.finderRevealURL(songID: songID, sourceURL: song.sourceURL)

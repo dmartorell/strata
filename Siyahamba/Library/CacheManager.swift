@@ -10,6 +10,7 @@ protocol CacheManagerProtocol: Actor {
     func writeLibraryIndex(_ songs: [SongEntry]) throws
     func stemURL(songID: UUID, stem: String) -> URL
     func originalURL(songID: UUID) -> URL
+    func rawAudioURL(songID: UUID) -> URL?
     func finderRevealURL(songID: UUID, sourceURL: String?) -> URL?
     func instrumentalURL(songID: UUID) -> URL
     func hasLegacyFormat(songID: UUID) -> Bool
@@ -89,6 +90,11 @@ extension CacheManager {
 
     func originalURL(songID: UUID) -> URL {
         songDirectory(for: songID).appendingPathComponent("original.wav")
+    }
+
+    func rawAudioURL(songID: UUID) -> URL? {
+        let url = originalURL(songID: songID)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
     func finderRevealURL(songID: UUID, sourceURL: String?) -> URL? {
