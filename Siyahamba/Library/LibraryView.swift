@@ -48,10 +48,14 @@ struct LibraryView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "play.rectangle.fill")
-                        Text("Importar YouTube")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .red)
+                        Text("Importar desde YouTube")
+                            .foregroundStyle(.white)
                     }
-                    .foregroundStyle(Color.accentColor)
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
                 .help("Convierte e importa el audio de un vídeo de YouTube")
                 .onHover { inside in
                     if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }

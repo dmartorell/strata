@@ -6,6 +6,7 @@ struct TunerView: View {
     @Environment(TunerEngine.self) private var tuner
     @Environment(PlaybackEngine.self) private var engine
     @State private var isExpanded = false
+    private let isTunerEnabled = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,6 +21,8 @@ struct TunerView: View {
             tunerLabel
         }
         .contentShape(Rectangle())
+        .disabled(!isTunerEnabled)
+        .allowsHitTesting(isTunerEnabled)
         .onTapGesture {
             withAnimation(.easeOut(duration: 0.15)) {
                 if isExpanded {
@@ -55,7 +58,7 @@ struct TunerView: View {
                 .font(.system(size: 13))
                 .animation(nil, value: isExpanded)
         }
-        .foregroundStyle(isExpanded ? Color.yellow : Color.secondary)
+        .foregroundStyle(isTunerEnabled && isExpanded ? Color.yellow : Color.secondary.opacity(0.5))
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
     }
