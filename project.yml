@@ -15,6 +15,9 @@ packages:
   DSWaveformImage:
     url: https://github.com/dmrschmidt/DSWaveformImage
     from: 14.0.0
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.9.5
 
 schemes:
   Siyahamba:
@@ -48,14 +51,17 @@ targets:
       properties:
         CFBundleName: Siyahamba
         CFBundleIdentifier: com.siyahamba.client
-        CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.4"
+        CFBundleVersion: "2"
+        CFBundleShortVersionString: "1.5"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
         NSMicrophoneUsageDescription: "Siyahamba necesita acceso al micrófono para el afinador de guitarra"
         CFBundleExecutable: $(EXECUTABLE_NAME)
         CFBundlePackageType: APPL
+        SUFeedURL: https://dmartorell.github.io/strata/appcast.xml
+        SUPublicEDKey: KcQjjhhkgrjX7Pz5c7SfDG3+zZqvzkmH09gAO/2bQf0=
+        SUEnableAutomaticChecks: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client
@@ -74,6 +80,7 @@ targets:
       - package: ZIPFoundation
       - package: DSWaveformImage
         product: DSWaveformImageViews
+      - package: Sparkle
 
   SiyahambaTests:
     type: bundle.unit-test
@@ -86,8 +93,8 @@ targets:
       properties:
         CFBundleName: SiyahambaTests
         CFBundleIdentifier: com.siyahamba.client.tests
-        CFBundleVersion: "1"
-        CFBundleShortVersionString: "1.4"
+        CFBundleVersion: "2"
+        CFBundleShortVersionString: "1.5"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client.tests

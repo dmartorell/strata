@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4</string>
+	<string>1.5</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>14.0</string>
 	<key>NSHighResolutionCapable</key>
@@ -26,5 +26,11 @@
 	<string>Siyahamba necesita acceso al micrófono para el afinador de guitarra</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://dmartorell.github.io/strata/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>KcQjjhhkgrjX7Pz5c7SfDG3+zZqvzkmH09gAO/2bQf0=</string>
 </dict>
 </plist>

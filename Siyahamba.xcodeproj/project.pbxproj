@@ -16,6 +16,7 @@
 		1857BBC2810F4A92E9CC1432 /* ChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E6EC8153651FC5E404705B9 /* ChordView.swift */; };
 		1CACB3F7236A43889561A866 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89493097162C42FE763A3B3C /* AuthViewModel.swift */; };
 		1F70D9C031DB563943091F12 /* TunerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5327DF1F4E12BBE5D1F687F /* TunerView.swift */; };
+		203BA76257BAE76A1EFD46D4 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93EC2D64039C5DE7335467B /* UpdateController.swift */; };
 		207DC33401AD47818505F564 /* YouTubeConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA61AD6D12F7C81810A79A9 /* YouTubeConverterTests.swift */; };
 		20DBE165F0125655E9AB0C9C /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = 34A0891AF00904CF2550AC40 /* JWTDecode */; };
 		27E5E2CE932F12CFE61BC715 /* WaveformsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFEDC1F014FC958BBFCADAD /* WaveformsView.swift */; };
@@ -50,6 +51,7 @@
 		ABE111581CCEAD0724E71141 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2413A51BD059860C00C1ADD0 /* TransportBarView.swift */; };
 		ACFB4211EE65FC4EF6829908 /* LibraryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F8A4088B082F946D28E34C /* LibraryStoreTests.swift */; };
 		AD99B811D410D4FFD0511E88 /* YouTubeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7EDDE888CE37CCA3B7A2AA2 /* YouTubeConverter.swift */; };
+		AF7CB01298E7B779000106CF /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 83A8310B6194EC70880141F2 /* Sparkle */; };
 		B0ED8000B26C552AB781E04B /* SongEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA9300CD2970136F554A6B0 /* SongEntry.swift */; };
 		B6A36F4C71EABF9F5D189191 /* RehearsalSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0716B128E68C7878BB46FE7C /* RehearsalSheetView.swift */; };
 		BC870145B4C59BEC199DC818 /* YouTubeConversionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05E3638EA069C9FEDFB598A /* YouTubeConversionSheet.swift */; };
@@ -144,6 +146,7 @@
 		D54B21B54B24100A69FF5332 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D5A923F7E435CA90F8675F1C /* status_line.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = status_line.json; sourceTree = "<group>"; };
 		D8099461EF9CB4134ABBC47C /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		D93EC2D64039C5DE7335467B /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		DE3A68765722759E4839EFDE /* YouTubeTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = YouTubeTools.bundle; sourceTree = "<group>"; };
 		E05E3638EA069C9FEDFB598A /* YouTubeConversionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeConversionSheet.swift; sourceTree = "<group>"; };
 		E8DD1D43B5EA5248C5D70A9D /* ChordDiagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChordDiagramView.swift; sourceTree = "<group>"; };
@@ -164,6 +167,7 @@
 				20DBE165F0125655E9AB0C9C /* JWTDecode in Frameworks */,
 				A221CA352363A89042C5EAC2 /* ZIPFoundation in Frameworks */,
 				6507E5CB7383DE96DBDC5F77 /* DSWaveformImageViews in Frameworks */,
+				AF7CB01298E7B779000106CF /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +267,7 @@
 			children = (
 				A89A38B5CD39DDED1288B257 /* GlobalDropOverlay.swift */,
 				75824C7901A6A339E9788213 /* SiyahambaApp.swift */,
+				D93EC2D64039C5DE7335467B /* UpdateController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -426,6 +431,7 @@
 				34A0891AF00904CF2550AC40 /* JWTDecode */,
 				7844B5F4924D0D06A83E3DAA /* ZIPFoundation */,
 				39D297249C7628D1B89EEEEA /* DSWaveformImageViews */,
+				83A8310B6194EC70880141F2 /* Sparkle */,
 			);
 			productName = Siyahamba;
 			productReference = 58B8A9A161D77645DB943BB8 /* Siyahamba.app */;
@@ -463,6 +469,7 @@
 			packageReferences = (
 				B4A67E301B5F8294CB3ED8C6 /* XCRemoteSwiftPackageReference "DSWaveformImage" */,
 				25EBC0E281BDC1BDCF840491 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				E534972E92D0BD8B1B51A1FD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				995F7FA9DFD976BCB5F82964 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -554,6 +561,7 @@
 				ABE111581CCEAD0724E71141 /* TransportBarView.swift in Sources */,
 				FF574AF1B45020DD82E11D85 /* TunerEngine.swift in Sources */,
 				1F70D9C031DB563943091F12 /* TunerView.swift in Sources */,
+				203BA76257BAE76A1EFD46D4 /* UpdateController.swift in Sources */,
 				D4C5ECAFC2EFA7DDCF69AD32 /* UsageView.swift in Sources */,
 				27E5E2CE932F12CFE61BC715 /* WaveformsView.swift in Sources */,
 				BC870145B4C59BEC199DC818 /* YouTubeConversionSheet.swift in Sources */,
@@ -840,6 +848,14 @@
 				minimumVersion = 14.0.0;
 			};
 		};
+		E534972E92D0BD8B1B51A1FD /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -857,6 +873,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 995F7FA9DFD976BCB5F82964 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		83A8310B6194EC70880141F2 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E534972E92D0BD8B1B51A1FD /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
