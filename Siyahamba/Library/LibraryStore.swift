@@ -15,20 +15,19 @@ final class LibraryStore {
 
     func loadFromDisk() async {
         do {
-            let original = try await cacheManager.readLibraryIndex()
+            let indexed = try await cacheManager.readLibraryIndex()
             let root = await cacheManager.rootURL
-            let filtered = original.filter { entry in
-                let dir = root.appendingPathComponent(entry.id.uuidString, isDirectory: true)
-                return FileManager.default.fileExists(atPath: dir.path)
-            }
-            var needsWrite = filtered.count != original.count
-            let migrated = filtered.map { entry -> SongEntry in
+            let indexedIDs = Set(indexed.map(\.id))
+            let recovered = recoverEntries(in: root, excluding: indexedIDs)
+            var needsWrite = recovered.isEmpty == false
+
+            let persisted = (indexed + recovered).map { entry -> SongEntry in
                 guard entry.artist == nil,
-                      let fn = entry.fileName,
-                      let parsed = Optional(SongEntry.parseArtistAndTitle(from: fn)),
-                      let artist = parsed.artist
+                      let fileName = entry.fileName,
+                      let artist = SongEntry.parseArtistAndTitle(from: fileName).artist
                 else { return entry }
                 needsWrite = true
+                let parsed = SongEntry.parseArtistAndTitle(from: fileName)
                 return SongEntry(
                     id: entry.id,
                     title: parsed.title,
@@ -42,16 +41,22 @@ final class LibraryStore {
                     lyricsOffset: entry.lyricsOffset,
                     key: entry.key,
                     displayMode: entry.displayMode,
-                    isPlaceholder: entry.isPlaceholder
+                    isPlaceholder: entry.isPlaceholder,
+                    importStatus: entry.importStatus
                 )
             }
             if needsWrite {
-                try? await cacheManager.writeLibraryIndex(migrated)
+                try? await cacheManager.writeLibraryIndex(persisted)
+            }
+
+            let available = persisted.filter { entry in
+                let directory = root.appendingPathComponent(entry.id.uuidString, isDirectory: true)
+                return FileManager.default.fileExists(atPath: directory.path)
             }
             let placeholders = songs.filter { $0.isPlaceholder == true }
-            var merged = placeholders + migrated.sorted { $0.addedAt > $1.addedAt }
-            for ph in placeholders {
-                merged.removeAll { $0.id == ph.id && $0.isPlaceholder != true }
+            var merged = placeholders + available.sorted { $0.addedAt > $1.addedAt }
+            for placeholder in placeholders {
+                merged.removeAll { $0.id == placeholder.id && $0.isPlaceholder != true }
             }
             songs = merged
             loadError = nil
@@ -59,6 +64,72 @@ final class LibraryStore {
             songs = []
             loadError = error
         }
+    }
+
+    private func recoverEntries(in rootURL: URL, excluding indexedIDs: Set<UUID>) -> [SongEntry] {
+        guard let directoryURLs = try? FileManager.default.contentsOfDirectory(
+            at: rootURL,
+            includingPropertiesForKeys: nil
+        ) else { return [] }
+
+        return directoryURLs.compactMap { directoryURL in
+            guard let id = UUID(uuidString: directoryURL.lastPathComponent),
+                  indexedIDs.contains(id) == false,
+                  containsCachedAudio(in: directoryURL)
+            else { return nil }
+
+            let metadataURL = directoryURL.appendingPathComponent("metadata.json")
+            guard let data = try? Data(contentsOf: metadataURL),
+                  let metadata = try? JSONDecoder().decode(SongMetadata.self, from: data)
+            else { return nil }
+
+            let fileName = metadata.originalFilename
+            let parsed = fileName.map(SongEntry.parseArtistAndTitle)
+            let metadataTitle = URL(fileURLWithPath: metadata.title)
+                .deletingPathExtension()
+                .lastPathComponent
+            let parsedTitle = parsed?.title
+            let genericTitles = ["audio", "video"]
+            let recoveredTitle = if let parsedTitle,
+                                    genericTitles.contains(parsedTitle.lowercased()) == false {
+                parsedTitle
+            } else {
+                metadataTitle
+            }
+
+            return SongEntry(
+                id: id,
+                title: recoveredTitle,
+                artist: metadata.artist ?? parsed?.artist,
+                duration: metadata.durationSeconds ?? 0,
+                fileName: fileName,
+                sourceHash: "recovered-\(id.uuidString.lowercased())",
+                addedAt: processedDate(from: metadata.processedAt) ?? Date.distantPast
+            )
+        }
+    }
+
+    private func containsCachedAudio(in directoryURL: URL) -> Bool {
+        let hasOriginal = FileManager.default.fileExists(
+            atPath: directoryURL.appendingPathComponent("original.wav").path
+        )
+        let hasInstrumental = FileManager.default.fileExists(
+            atPath: directoryURL.appendingPathComponent("instrumental.wav").path
+        )
+        let hasLegacyVocals = FileManager.default.fileExists(
+            atPath: directoryURL.appendingPathComponent("vocals.wav").path
+        )
+        return (hasOriginal && hasInstrumental) || hasLegacyVocals
+    }
+
+    private func processedDate(from value: String?) -> Date? {
+        guard let value else { return nil }
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = fractionalFormatter.date(from: value) {
+            return date
+        }
+        return ISO8601DateFormatter().date(from: value)
     }
 
     func addSong(_ entry: SongEntry) async {
@@ -107,6 +178,11 @@ final class LibraryStore {
             else { return false }
             return candidate == target
         }
+    }
+
+    func finderRevealURL(for songID: UUID) async -> URL? {
+        guard let song = songs.first(where: { $0.id == songID }) else { return nil }
+        return await cacheManager.finderRevealURL(songID: songID, sourceURL: song.sourceURL)
     }
 
     func deleteSongs(ids: Set<UUID>) async {

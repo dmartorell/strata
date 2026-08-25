@@ -66,7 +66,10 @@ struct YouTubeConversionSheetTests {
     }
 
     private func makeViewModel(converter: any YouTubeConverting = FakeYouTubeConverter(result: .failure(YouTubeConverterError.unsupportedVideo))) throws -> YouTubeConversionViewModel {
-        let cacheManager = try CacheManager()
+        let rootURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("SiyahambaTests", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let cacheManager = try CacheManager(rootURL: rootURL)
         let libraryStore = LibraryStore(cacheManager: cacheManager)
         let importViewModel = ImportViewModel(
             apiClient: MockImportAPIClient(),

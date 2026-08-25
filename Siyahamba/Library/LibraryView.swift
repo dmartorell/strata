@@ -130,12 +130,15 @@ struct LibraryView: View {
                     if ids.count == 1,
                        let id = ids.first,
                        let song = libraryStore.songs.first(where: { $0.id == id }),
-                       let path = song.sourceURL,
-                       FileManager.default.fileExists(atPath: path) {
+                       song.isPlaceholder != true,
+                       song.existingSourceMP3URL != nil {
                         Button {
-                            NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)])
+                            Task {
+                                guard let url = await libraryStore.finderRevealURL(for: id) else { return }
+                                NSWorkspace.shared.activateFileViewerSelecting([url])
+                            }
                         } label: {
-                            Label("Mostrar en Finder", systemImage: "folder")
+                            Label("Ver en Finder", systemImage: "folder")
                         }
                     }
                     Button(role: .destructive) {
