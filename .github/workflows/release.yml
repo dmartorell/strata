@@ -1,0 +1,59 @@
+name: Publicar release macOS
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Importar certificado Developer ID
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_P12_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "$CERTIFICATE_BASE64" | base64 --decode > certificate.p12
+          security create-keychain -p temporary build.keychain
+          security unlock-keychain -p temporary build.keychain
+          security import certificate.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -d user -s build.keychain
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k temporary build.keychain
+      - name: Archive, exportar y notarizar
+        env:
+          API_KEY_BASE64: ${{ secrets.APPSTORE_CONNECT_API_KEY_BASE64 }}
+          KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild -resolvePackageDependencies -project Siyahamba.xcodeproj -scheme Siyahamba
+          xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88
+          xcodebuild -exportArchive -archivePath "$PWD/build/Siyahamba.xcarchive" -exportPath "$PWD/build/export" -exportOptionsPlist Scripts/export-options-developer-id.plist
+          ditto -c -k --sequesterRsrc --keepParent build/export/Siyahamba.app build/notarization.zip
+          echo "$API_KEY_BASE64" | base64 --decode > AuthKey.p8
+          xcrun notarytool submit build/notarization.zip --key AuthKey.p8 --key-id "$KEY_ID" --issuer "$ISSUER_ID" --wait
+          xcrun stapler staple build/export/Siyahamba.app
+          spctl --assess --type execute --verbose build/export/Siyahamba.app
+      - name: Crear ZIP y appcast Sparkle
+        env:
+          SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY }}
+          APP_PATH: ${{ github.workspace }}/build/export/Siyahamba.app
+          SPARKLE_BIN: ${{ github.workspace }}/.build/sparkle-bin
+          DOWNLOAD_URL_PREFIX: https://github.com/dmartorell/strata/releases/download/${{ github.ref_name }}/
+        run: |
+          mkdir -p .build/sparkle-bin
+          cp -R "$HOME/Library/Developer/Xcode/DerivedData"/*/SourcePackages/artifacts/sparkle/Sparkle/bin/. .build/sparkle-bin/
+          chmod +x Scripts/release_appcast.sh .build/sparkle-bin/*
+          Scripts/release_appcast.sh
+      - name: Publicar GitHub Release
+        run: gh release create "$GITHUB_REF_NAME" dist/Siyahamba-*.zip --generate-notes
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4

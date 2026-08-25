@@ -19,8 +19,10 @@ struct SiyahambaApp: App {
     @State private var playbackEngine: PlaybackEngine
     @State private var tunerEngine: TunerEngine
     @State private var cacheManager: CacheManager
+    private let updateController: UpdateController
 
     init() {
+        updateController = UpdateController()
         let cm = try! CacheManager()
         let auth = AuthViewModel()
         let store = LibraryStore(cacheManager: cm)
@@ -67,5 +69,14 @@ struct SiyahambaApp: App {
         .windowStyle(.titleBar)
         .defaultSize(width: 900, height: 600)
         .windowResizability(.contentMinSize)
+        .commands {
+            if updateController.isConfigured {
+                CommandGroup(after: .appInfo) {
+                    Button("Buscar actualizaciones…") {
+                        updateController.checkForUpdates()
+                    }
+                }
+            }
+        }
     }
 }
