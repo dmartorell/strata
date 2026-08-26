@@ -35,4 +35,6 @@ git tag vX.Y
 git push origin main --tags
 ```
 
-El workflow firma, notariza, grapa el ticket, publica el ZIP en GitHub Releases y despliega `appcast.xml` en GitHub Pages.
+El workflow firma, notariza, grapa el ticket y publica el ZIP completo en GitHub Releases. Si puede descargar el ZIP de la última release estable, Sparkle genera además un delta desde esa versión y lo publica como otro asset. El ZIP completo siempre queda como fallback para instalaciones nuevas, saltos de versión o fallos del delta. GitHub Pages solo despliega `appcast.xml`.
+
+Si no se puede descargar el ZIP previo o Sparkle no genera un delta, la release continúa con el ZIP completo. Cuando `YouTubeTools.bundle` y su script de descarga no han cambiado, CI exige que cualquier delta generado pese menos del 25% del ZIP completo.

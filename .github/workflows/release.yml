@@ -82,21 +82,72 @@ jobs:
         run: |
           xcrun stapler staple build/export/Siyahamba.app
           spctl --assess --type execute --verbose build/export/Siyahamba.app
+      - name: Descargar ZIP previo para delta Sparkle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! previous_tag="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null)"; then
+            echo "No hay release estable previa. Se publicará solo el ZIP completo."
+            exit 0
+          fi
+
+          mkdir -p .build/previous-release
+          if ! gh release download "$previous_tag" --repo "$GITHUB_REPOSITORY" --pattern 'Siyahamba-*.zip' --dir .build/previous-release; then
+            echo "No se pudo descargar el ZIP de $previous_tag. Se publicará solo el ZIP completo."
+            exit 0
+          fi
+
+          previous_archive="$(find .build/previous-release -maxdepth 1 -type f -name 'Siyahamba-*.zip' -print -quit)"
+          if [[ -z "$previous_archive" ]]; then
+            echo "La release $previous_tag no tiene un ZIP compatible. Se publicará solo el ZIP completo."
+            exit 0
+          fi
+          echo "PREVIOUS_ARCHIVE=$GITHUB_WORKSPACE/$previous_archive" >> "$GITHUB_ENV"
+
+          if git fetch --depth=1 origin "refs/tags/$previous_tag:refs/tags/$previous_tag" && \
+            git diff --quiet "$previous_tag" HEAD -- Siyahamba/Resources/YouTubeTools.bundle Tools/download-youtube-tools.sh; then
+            echo "CHECK_DELTA_SIZE=true" >> "$GITHUB_ENV"
+          else
+            echo "CHECK_DELTA_SIZE=false" >> "$GITHUB_ENV"
+          fi
       - name: Crear ZIP y appcast Sparkle
         env:
           SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY }}
           APP_PATH: ${{ github.workspace }}/build/export/Siyahamba.app
           SPARKLE_BIN: ${{ github.workspace }}/.build/sparkle-bin
           DOWNLOAD_URL_PREFIX: https://github.com/dmartorell/strata/releases/download/${{ github.ref_name }}/
+          PREVIOUS_ARCHIVE: ${{ env.PREVIOUS_ARCHIVE }}
         run: |
           mkdir -p .build/sparkle-bin
           cp -R "$HOME/Library/Developer/Xcode/DerivedData"/*/SourcePackages/artifacts/sparkle/Sparkle/bin/. .build/sparkle-bin/
           chmod +x Scripts/release_appcast.sh .build/sparkle-bin/*
           Scripts/release_appcast.sh
+      - name: Validar delta Sparkle
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          deltas=(dist/*.delta)
+          if (( ${#deltas[@]} == 0 )); then
+            echo "No se generó delta. Se publicará el ZIP completo como fallback."
+            exit 0
+          fi
+
+          full_size="$(stat -f%z dist/Siyahamba-*.zip)"
+          for delta in "${deltas[@]}"; do
+            grep -Fq "$(basename "$delta")" dist/appcast.xml
+            if [[ "${CHECK_DELTA_SIZE:-false}" == "true" ]]; then
+              delta_size="$(stat -f%z "$delta")"
+              test "$delta_size" -lt $((full_size / 4))
+            fi
+          done
       - name: Publicar GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/Siyahamba-*.zip --generate-notes
+        run: |
+          shopt -s nullglob
+          assets=(dist/Siyahamba-*.zip dist/*.delta)
+          gh release create "$GITHUB_REF_NAME" "${assets[@]}" --generate-notes
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
