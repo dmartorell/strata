@@ -1,6 +1,24 @@
 import Foundation
 
 // Port of server/pipeline/fingerings.py — lookup guitar fingerings from bundled guitar.json
+enum ChordFingeringResolver {
+    static func resolve(
+        displayedChord: String,
+        mappedFingerings: [ChordPosition]?,
+        sourceEntry: ChordEntry?
+    ) -> [ChordPosition] {
+        if let mappedFingerings, !mappedFingerings.isEmpty {
+            return mappedFingerings
+        }
+        if sourceEntry?.chord == displayedChord,
+           let sourceFingerings = sourceEntry?.fingerings,
+           !sourceFingerings.isEmpty {
+            return sourceFingerings
+        }
+        return ChordFingerings.lookup(displayedChord)
+    }
+}
+
 enum ChordFingerings {
 
     // MARK: - Private constants (mirrors Python ENHARMONIC, SUFFIX_MAP, _DB_KEY_MAP, DB_KEYS)

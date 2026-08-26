@@ -22,10 +22,12 @@ struct ChordView: View {
         return map
     }
 
-    private func fingerings(for chordName: String, fallbackEntry: ChordEntry?) -> [ChordPosition] {
-        if let f = fingeringsMap[chordName], !f.isEmpty { return f }
-        if let f = fallbackEntry?.fingerings, !f.isEmpty { return f }
-        return ChordFingerings.lookup(chordName)
+    private func fingerings(for chordName: String, sourceEntry: ChordEntry?) -> [ChordPosition] {
+        ChordFingeringResolver.resolve(
+            displayedChord: chordName,
+            mappedFingerings: fingeringsMap[chordName],
+            sourceEntry: sourceEntry
+        )
     }
 
     var body: some View {
@@ -70,7 +72,7 @@ struct ChordView: View {
                 .offset(x: enlarged ? -28 : -14)
 
             if showDiagrams && hasFingerings && !vm.displayChord.isEmpty {
-                let currentFingerings = fingerings(for: vm.displayChord, fallbackEntry: vm.currentChord)
+                let currentFingerings = fingerings(for: vm.displayChord, sourceEntry: vm.currentChord)
                 if !currentFingerings.isEmpty {
                     ChordDiagramView(fingerings: currentFingerings, chord: vm.displayChord)
                         .frame(width: enlarged ? 280 : 140, height: enlarged ? 280 : 140)
@@ -90,7 +92,7 @@ struct ChordView: View {
                 .offset(x: enlarged ? -19 : -10)
 
             if showDiagrams && hasFingerings && !vm.displayNextChord.isEmpty {
-                let nextFingerings = fingerings(for: vm.displayNextChord, fallbackEntry: vm.nextChord)
+                let nextFingerings = fingerings(for: vm.displayNextChord, sourceEntry: vm.nextChord)
                 if !nextFingerings.isEmpty {
                     ChordDiagramView(fingerings: nextFingerings, chord: vm.displayNextChord, interactive: false)
                         .frame(width: enlarged ? 192 : 96, height: enlarged ? 192 : 96)
