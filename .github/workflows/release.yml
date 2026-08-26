@@ -66,6 +66,7 @@ jobs:
           codesign -d --entitlements :- "$YT_DLP_PATH" > "$RUNNER_TEMP/yt-dlp-entitlements.plist"
           test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.cs.disable-library-validation' "$RUNNER_TEMP/yt-dlp-entitlements.plist")" = "true"
           "$YT_DLP_PATH" --version
+          "$TOOLS_PATH/ffmpeg-$(uname -m)" -version
 
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/notarization.zip
       - name: Notarizar

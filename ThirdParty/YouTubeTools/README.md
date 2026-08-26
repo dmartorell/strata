@@ -24,3 +24,5 @@ Los binarios generados se guardan en `Siyahamba/Resources/YouTubeTools.bundle/` 
 `yt-dlp_macos` es un ejecutable PyInstaller que extrae y carga un runtime de Python al arrancar. Al firmarlo con Hardened Runtime debe conservar el entitlement `com.apple.security.cs.disable-library-validation`; de lo contrario macOS rechaza el runtime extraído porque no comparte el Team ID del ejecutable.
 
 El workflow aplica `Scripts/yt-dlp.entitlements` antes del archive y vuelve a aplicarlo después de `xcodebuild -exportArchive`, ya que la exportación vuelve a firmar los Mach-O incluidos en Resources. Después verifica la firma y ejecuta `yt-dlp --version` como smoke test antes de notarizar.
+
+FFmpeg se compila con `--disable-autodetect` para impedir que el runner de release enlace accidentalmente librerías de Homebrew que no se distribuyen con la app. El script rechaza cualquier dependencia que no pertenezca a `/System/Library` o `/usr/lib`, y el workflow ejecuta el FFmpeg exportado antes de notarizar.

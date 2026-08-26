@@ -110,6 +110,7 @@ build_ffmpeg() {
             --extra-ldflags="-arch ${arch} -L${prefix}/lib" \
             --enable-cross-compile \
             --disable-x86asm \
+            --disable-autodetect \
             --disable-doc \
             --disable-debug \
             --disable-shared \
@@ -124,6 +125,14 @@ build_ffmpeg() {
         make -j"${jobs}"
         install -m 755 ffmpeg "${target}"
     )
+
+    local unexpected_dependencies
+    unexpected_dependencies="$(otool -L "${target}" | tail -n +2 | awk '{print $1}' | grep -Ev '^(/System/Library/|/usr/lib/)' || true)"
+    if [[ -n "${unexpected_dependencies}" ]]; then
+        echo "Error: ffmpeg-${arch} contiene dependencias no distribuibles:" >&2
+        echo "${unexpected_dependencies}" >&2
+        exit 1
+    fi
 }
 
 mkdir -p "${DESTINATION}"
