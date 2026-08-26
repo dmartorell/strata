@@ -55,8 +55,8 @@ targets:
         CFBundleLocalizations:
           - es
         CFBundleIdentifier: com.siyahamba.client
-        CFBundleVersion: "12"
-        CFBundleShortVersionString: "1.10.0"
+        CFBundleVersion: "13"
+        CFBundleShortVersionString: "1.11.0"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
