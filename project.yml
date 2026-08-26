@@ -55,8 +55,8 @@ targets:
         CFBundleLocalizations:
           - es
         CFBundleIdentifier: com.siyahamba.client
-        CFBundleVersion: "9"
-        CFBundleShortVersionString: "1.9.3"
+        CFBundleVersion: "10"
+        CFBundleShortVersionString: "1.9.4"
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
         LSMinimumSystemVersion: "14.0"
@@ -98,8 +98,8 @@ targets:
       properties:
         CFBundleName: SiyahambaTests
         CFBundleIdentifier: com.siyahamba.client.tests
-        CFBundleVersion: "9"
-        CFBundleShortVersionString: "1.9.3"
+        CFBundleVersion: "10"
+        CFBundleShortVersionString: "1.9.4"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.siyahamba.client.tests

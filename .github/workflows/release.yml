@@ -35,7 +35,10 @@ jobs:
         run: Tools/download-youtube-tools.sh
       - name: Firmar herramientas de conversión locales
         run: |
-          for tool in yt-dlp/yt-dlp_macos ffmpeg-arm64 ffmpeg-x86_64; do
+          YT_DLP_PATH="Siyahamba/Resources/YouTubeTools.bundle/yt-dlp/yt-dlp_macos"
+          codesign --force --options runtime --timestamp --entitlements Scripts/yt-dlp.entitlements --sign "Developer ID Application" --keychain "$KEYCHAIN_PATH" "$YT_DLP_PATH"
+          codesign --verify --strict --verbose=2 "$YT_DLP_PATH"
+          for tool in ffmpeg-arm64 ffmpeg-x86_64; do
             path="Siyahamba/Resources/YouTubeTools.bundle/${tool}"
             codesign --force --options runtime --timestamp --sign "Developer ID Application" --keychain "$KEYCHAIN_PATH" "$path"
             codesign --verify --strict --verbose=2 "$path"
@@ -46,10 +49,25 @@ jobs:
           xcodebuild -resolvePackageDependencies -project Siyahamba.xcodeproj -scheme Siyahamba
           xcodebuild archive -project Siyahamba.xcodeproj -scheme Siyahamba -configuration Release -archivePath "$PWD/build/Siyahamba.xcarchive" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=89ZFGW6H88 OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"
           xcodebuild -exportArchive -archivePath "$PWD/build/Siyahamba.xcarchive" -exportPath "$PWD/build/export" -exportOptionsPlist Scripts/export-options-developer-id.plist
+          APP_PATH="build/export/Siyahamba.app"
+          TOOLS_PATH="$APP_PATH/Contents/Resources/YouTubeTools.bundle"
           for tool in yt-dlp/yt-dlp_macos deno-arm64 deno-x86_64 ffmpeg-arm64 ffmpeg-x86_64; do
-            test -x "build/export/Siyahamba.app/Contents/Resources/YouTubeTools.bundle/${tool}"
+            test -x "$TOOLS_PATH/${tool}"
           done
-          ditto -c -k --sequesterRsrc --keepParent build/export/Siyahamba.app build/notarization.zip
+
+          # exportArchive vuelve a firmar los Mach-O de Resources y elimina los entitlements
+          # de yt-dlp. El ejecutable PyInstaller necesita cargar su Python extraído y, sin
+          # esta excepción, Hardened Runtime lo bloquea por pertenecer a otro Team ID.
+          YT_DLP_PATH="$TOOLS_PATH/yt-dlp/yt-dlp_macos"
+          codesign --force --options runtime --timestamp --entitlements Scripts/yt-dlp.entitlements --sign "Developer ID Application" --keychain "$KEYCHAIN_PATH" "$YT_DLP_PATH"
+          codesign --force --options runtime --timestamp --preserve-metadata=identifier,entitlements,requirements --sign "Developer ID Application" --keychain "$KEYCHAIN_PATH" "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+
+          codesign -d --entitlements :- "$YT_DLP_PATH" > "$RUNNER_TEMP/yt-dlp-entitlements.plist"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.cs.disable-library-validation' "$RUNNER_TEMP/yt-dlp-entitlements.plist")" = "true"
+          "$YT_DLP_PATH" --version
+
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/notarization.zip
       - name: Notarizar
         timeout-minutes: 30
         env:

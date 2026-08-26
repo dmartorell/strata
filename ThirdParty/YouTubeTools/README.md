@@ -18,3 +18,9 @@ El script fija versión, URL y SHA-256. No acepta un artefacto cuyo hash no coin
 Antes de distribuir Siyahamba fuera de desarrollo, añadir los textos de licencia y la oferta de código fuente requerida para FFmpeg y LAME.
 
 Los binarios generados se guardan en `Siyahamba/Resources/YouTubeTools.bundle/` y no se versionan. Ejecuta el script antes de generar una build distribuible.
+
+## Firma de `yt-dlp`
+
+`yt-dlp_macos` es un ejecutable PyInstaller que extrae y carga un runtime de Python al arrancar. Al firmarlo con Hardened Runtime debe conservar el entitlement `com.apple.security.cs.disable-library-validation`; de lo contrario macOS rechaza el runtime extraído porque no comparte el Team ID del ejecutable.
+
+El workflow aplica `Scripts/yt-dlp.entitlements` antes del archive y vuelve a aplicarlo después de `xcodebuild -exportArchive`, ya que la exportación vuelve a firmar los Mach-O incluidos en Resources. Después verifica la firma y ejecuta `yt-dlp --version` como smoke test antes de notarizar.
